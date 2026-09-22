@@ -239,22 +239,23 @@ function App() {
 `,
     before: {
       text: '화면에 붙었을 때, 값이 바뀌었을 때, 떼어질 때 세 군데에 코드를 나눠 적었다. 채팅방에 연결하는 일처럼 원래 한 덩어리인 작업도 세 곳에 흩어졌다.',
-      code: `class ChatRoom extends React.Component {
-  componentDidMount() {
+      code: `// 안 읽어도 된다. 같은 일이 세 자리에 흩어진 것만 보면 된다.
+class ChatRoom extends React.Component {
+  componentDidMount() {                           // 1. 화면에 붙었을 때 한 번
     this.connection = createConnection(this.props.roomId)
-    this.connection.connect()
+    this.connection.connect()                     //    연결을 연다
   }
 
-  componentDidUpdate(prevProps) {
-    if (prevProps.roomId !== this.props.roomId) {
-      this.connection.disconnect()
+  componentDidUpdate(prevProps) {                 // 2. 값이 바뀔 때마다
+    if (prevProps.roomId !== this.props.roomId) { //    무엇이 바뀌었는지는 손으로 비교
+      this.connection.disconnect()                //    끊고
       this.connection = createConnection(this.props.roomId)
-      this.connection.connect()
+      this.connection.connect()                   //    다시 연다
     }
   }
 
-  componentWillUnmount() {
-    this.connection.disconnect()
+  componentWillUnmount() {                        // 3. 화면에서 떼어질 때
+    this.connection.disconnect()                  //    닫는다
   }
 }
 `,
@@ -297,6 +298,7 @@ function App() {
     id: 'no-effect',
     chapter: '4',
     order: 28,
+    broken: true,
     title: 'Effect가 필요 없는 경우',
     tagline: '계산으로 되는 일에 Effect를 쓰지 않는다',
     kind: 'practice',
@@ -557,6 +559,7 @@ function App() {
     id: 'remove-deps',
     chapter: '4',
     order: 31,
+    broken: true,
     title: 'Effect 의존성 제거하기',
     tagline: '코드를 고쳐서 의존성을 줄인다',
     kind: 'practice',
@@ -764,26 +767,27 @@ function App() {
 `,
     before: {
       text: '창 크기 구독처럼 같은 로직을 여러 컴포넌트에서 쓰려면, 컴포넌트를 감싸는 컴포넌트를 따로 만들어 끼웠다. 감싸는 쪽이 값을 들고 있다가 props로 내려 줬다.',
-      code: `// 컴포넌트를 받아 컴포넌트를 돌려주는 함수를 만들어 끼웠다
-function withWindowWidth(Inner) {
-  return class extends React.Component {
-    state = { width: window.innerWidth }
+      code: `// 안 읽어도 된다. 로직을 나누려고 컴포넌트를 한 겹 더 만든 것만 보면 된다.
+function withWindowWidth(Inner) {                 // Inner를 감싸는 새 컴포넌트를 만들어 돌려준다
+  return class extends React.Component {          // 값을 들고 있어야 해서 class다
+    state = { width: window.innerWidth }          // 창 너비를 기억
 
-    componentDidMount() {
+    componentDidMount() {                         // 붙었을 때 구독 시작
       this.onResize = () => this.setState({ width: window.innerWidth })
       window.addEventListener('resize', this.onResize)
     }
 
-    componentWillUnmount() {
+    componentWillUnmount() {                      // 떼어질 때 구독 해제
       window.removeEventListener('resize', this.onResize)
     }
 
-    render() {
+    render() {                                    // 안쪽 컴포넌트에 width를 props로 내려 준다
       return <Inner {...this.props} width={this.state.width} />
     }
   }
 }
 
+// 세 겹으로 감쌌다. 트리에 껍데기가 세 층 생긴다.
 export default withWindowWidth(withTheme(withRouter(TodoList)))
 `,
     },

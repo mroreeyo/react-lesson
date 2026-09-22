@@ -63,7 +63,12 @@ export default function Lesson({ lesson, done, onComplete, onNavigate, onOpenDem
 
       <section className="block">
         <h3 className="block-head">지금 방식</h3>
-        {lesson.goal && <p className="goal">{lesson.goal}</p>}
+        {lesson.goal && (
+          <p className={lesson.broken ? 'goal goal-broken' : 'goal'}>
+            {lesson.broken && <strong>고쳐야 하는 코드 · </strong>}
+            {lesson.goal}
+          </p>
+        )}
 
         {lesson.kind === 'checklist' &&
           lesson.items.map((item, i) => (

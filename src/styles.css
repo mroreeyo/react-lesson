@@ -857,3 +857,17 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+/* 틀린 코드로 시작하는 레슨: 고쳐야 한다는 것을 편집기 위에서 알린다 */
+.goal-broken {
+  border: 1px solid var(--error-line);
+  border-left-width: 3px;
+  border-radius: 6px;
+  background: var(--error-bg);
+  color: var(--error-text);
+  padding: 0.6rem 0.8rem;
+}
+
+.goal-broken strong {
+  font-weight: 600;
+}

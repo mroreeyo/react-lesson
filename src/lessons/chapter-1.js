@@ -28,17 +28,18 @@ function App() {
 `,
     before: {
       text: '화면 한 조각을 만들려면 class를 만들었다. 메서드마다 this가 무엇을 가리키는지 챙겨야 했고, 생성자에서 bind를 적어 두는 것이 일이었다.',
-      code: `class TodoCard extends React.Component {
-  constructor(props) {
-    super(props)
-    this.handleClick = this.handleClick.bind(this)
+      code: `// 안 읽어도 된다. 줄마다 무엇인지만 적어 둔다.
+class TodoCard extends React.Component {          // 함수 대신 class를 만들었다
+  constructor(props) {                            // 처음 만들어질 때 한 번 도는 자리
+    super(props)                                  // 부모 class에 props를 넘기는 의식
+    this.handleClick = this.handleClick.bind(this) // 클릭 때 this가 사라지지 않게 묶는 줄
   }
 
-  handleClick() {
-    console.log(this.props.title)
+  handleClick() {                                 // 클릭 핸들러
+    console.log(this.props.title)                 // props도 this를 거쳐야 읽힌다
   }
 
-  render() {
+  render() {                                      // 화면을 돌려주는 메서드
     return <li onClick={this.handleClick}>장보기</li>
   }
 }

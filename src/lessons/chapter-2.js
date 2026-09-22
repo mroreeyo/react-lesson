@@ -117,18 +117,19 @@ function App() {
 `,
     before: {
       text: '컴포넌트가 값을 기억하려면 class를 만들고, 생성자에서 this.state에 초기값을 넣고, 바꿀 때는 this.setState를 불렀다. 값을 읽는 곳마다 this가 붙었다.',
-      code: `class TodoCard extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = { done: false }
-    this.toggle = this.toggle.bind(this)
+      code: `// 안 읽어도 된다. 줄마다 무엇인지만 적어 둔다.
+class TodoCard extends React.Component {          // 기억하는 컴포넌트는 class여야 했다
+  constructor(props) {                            // 처음 만들어질 때 한 번 도는 자리
+    super(props)                                  // 부모 class에 props를 넘기는 의식
+    this.state = { done: false }                  // 기억할 값. useState(false)에 해당
+    this.toggle = this.toggle.bind(this)          // 클릭 때 this가 사라지지 않게 묶는 줄
   }
 
-  toggle() {
-    this.setState({ done: !this.state.done })
+  toggle() {                                      // 바꾸는 메서드
+    this.setState({ done: !this.state.done })     // setDone(!done)에 해당
   }
 
-  render() {
+  render() {                                      // 화면을 돌려주는 메서드
     return (
       <li>
         <input type="checkbox" checked={this.state.done} onChange={this.toggle} />
