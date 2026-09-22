@@ -28,8 +28,12 @@ assert.match(missing.message, /App/)
 await expectError('throw new Error("boom"); function App() {}', 'run')
 
 // 19 훅이 주입 목록에 들어 있다
-for (const hook of ['use', 'useActionState', 'useOptimistic', 'useState']) {
+for (const hook of ['use', 'useActionState', 'useOptimistic', 'useState', 'useEffectEvent']) {
   assert.ok(injectedHookNames.includes(hook), `주입 누락: ${hook}`)
 }
+
+// 훅이 아니어도 커리큘럼이 쓰는 것은 바로 써야 한다 (레슨 23·24 Context, 33 memo, 34 ref prop)
+await compileToApp('const C = createContext(null); const M = memo(() => null); function App() { return null }')
+await compileToApp('function App() { const v = useContext(createContext(1)); return <p>{v}</p> }')
 
 console.log(`ok — 주입된 훅 ${injectedHookNames.length}개`)

@@ -10,10 +10,13 @@ export function loadBabel() {
 
 // 사용자 코드에 import가 없어도 되도록, 앱이 쓰는 React 객체와 훅을 인자로 주입한다.
 // 훅 목록을 직접 적지 않고 React 네임스페이스에서 뽑으므로 19의 use/useActionState/useOptimistic도 함께 들어온다.
+// 훅이 아닌 것은 커리큘럼이 실제로 쓰는 것만 넣는다. 주입된 이름은 함수 인자라서
+// 사용자가 같은 이름으로 const를 선언하면 문법 오류가 나므로, 흔한 이름을 함부로 늘리지 않는다.
+const nonHooks = ['Fragment', 'Suspense', 'createContext', 'memo', 'forwardRef']
+
 const injections = {
   React,
-  Fragment: React.Fragment,
-  Suspense: React.Suspense,
+  ...Object.fromEntries(nonHooks.map((k) => [k, React[k]])),
   ...Object.fromEntries(
     Object.entries(React).filter(([k, v]) => k.startsWith('use') && typeof v === 'function'),
   ),
