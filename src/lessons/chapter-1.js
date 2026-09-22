@@ -6,8 +6,8 @@ export default [
     title: '첫 번째 컴포넌트',
     tagline: '화면 한 조각을 함수로 만든다',
     kind: 'practice',
-    jsPrereq: ['함수는 값을 돌려준다', '함수 이름은 그냥 이름이다. 대문자로 시작해도 문법은 같다'],
-    definition: '컴포넌트는 화면 한 조각을 돌려주는 함수다. 이름은 대문자로 시작한다.',
+    jsPrereq: ['함수는 값을 돌려준다', '함수 이름은 이름일 뿐이다. 대문자로 시작해도 JS 문법은 같다'],
+    definition: '컴포넌트는 화면 한 조각을 돌려주는 함수다. 이름은 대문자로 시작한다. 소문자로 시작하면 리액트가 HTML 태그로 보고 그리려 한다.',
     goal: '할 일 카드 한 장이 화면에 나온다.',
     starterCode: `function TodoCard() {
   return (
@@ -45,7 +45,7 @@ function App() {
 `,
     },
     why: [
-      'bind를 빠뜨리면 클릭했을 때 this가 undefined였다. 오류 메시지는 화면 그리기와 아무 상관이 없는 이야기를 했다.',
+      '메서드 안에서 this가 무엇인지 매번 챙겨야 했다. 챙기는 줄(bind)을 빠뜨리면 클릭했을 때 터졌고, 오류 메시지는 화면 그리기와 아무 상관이 없는 이야기를 했다.',
       '배워야 할 것이 화면 만들기가 아니라 class 규칙이었다. 함수 컴포넌트는 그 층을 없앴다. 값을 돌려주는 함수 하나면 된다.',
     ],
     deeper: [
@@ -80,7 +80,7 @@ function App() {
     title: '컴포넌트 import와 export',
     tagline: '파일을 나누고 이름으로 가져온다',
     kind: 'concept',
-    definition: '컴포넌트를 파일마다 하나씩 두고, 쓰는 쪽에서 import로 가져온다.',
+    definition: '컴포넌트를 파일마다 하나씩 두고, 쓰는 쪽에서 import로 가져온다. export default는 이름 없이 값 하나를 내보내고 가져오는 쪽이 이름을 붙인다. 이름을 붙여 내보내면(named) 가져올 때 중괄호로 그 이름을 적는다.',
     // 이 샌드박스는 import를 지원하지 않는다. 그래서 파일 두 개를 나란히 읽는다.
     readOnly: [
       {
@@ -136,7 +136,7 @@ export default function App() {
     tagline: '함수 안에 태그를 그대로 적는다',
     kind: 'practice',
     definition:
-      'JSX는 JS 안에 태그를 적는 문법이다. 태그는 하나로 감싸고, 모두 닫고, class는 className으로 쓴다.',
+      'JSX는 JS 안에 태그를 적는 문법이다. 태그는 하나로 감싸고, 모두 닫는다. class는 JS의 예약어라서 className으로 쓴다.',
     goal: '카드를 제목이 붙은 영역 안에 넣는다.',
     starterCode: `function TodoCard() {
   return (
@@ -267,7 +267,7 @@ function App() {
     kind: 'practice',
     jsPrereq: ['구조 분해로 객체에서 필요한 것만 꺼낸다'],
     definition:
-      'props는 부모가 자식에게 건네는 값이다. 컴포넌트 함수는 그 값을 담은 객체 하나를 받는다.',
+      'props는 부모가 자식에게 건네는 값이다. 자식은 읽기만 한다. 자식이 바꿔도 부모가 다음에 그릴 때 원래 값으로 덮인다.',
     goal: '카드 한 장으로 세 줄을 그린다. 제목과 완료 여부가 밖에서 들어온다.',
     starterCode: `function TodoCard({ title, done }) {
   return (
@@ -324,8 +324,8 @@ function App() {
     tagline: '조건에 따라 다른 것을 그린다',
     kind: 'practice',
     definition:
-      '무엇을 그릴지도 값이다. 삼항 연산자나 `&&`로 조건에 따라 다른 JSX를 값으로 고른다.',
-    goal: '끝난 항목에 표시가 붙고, 목록이 비면 다른 문장이 나온다.',
+      '무엇을 그릴지도 값이다. 삼항 연산자(`a ? b : c`)나 `&&`로 조건에 따라 다른 JSX를 값으로 고른다. `&&`는 왼쪽이 0이면 0을 그리므로 왼쪽을 불리언으로 만든다.',
+    goal: '끝난 항목에 표시가 붙고, 목록이 비면 다른 문장이 나온다. 제목의 렌더링은 리액트가 화면을 그리는 일을 부르는 말이다.',
     starterCode: `function TodoCard({ title, done }) {
   return (
     <li>
@@ -517,7 +517,7 @@ function App() {
       ],
       answerIndex: 1,
       explanation:
-        '같은 입력이면 같은 출력이고, 그리는 동안 부수효과가 없다는 뜻이다. state를 쓰는 것과는 상관없다.',
+        '같은 입력이면 같은 출력이고, 그리는 동안 바깥의 무엇도 바꾸지 않는다는 뜻이다. state를 쓰는 것과는 상관없다.',
     },
   },
 ]

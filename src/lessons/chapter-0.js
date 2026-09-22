@@ -8,7 +8,7 @@ export default [
     kind: 'practice',
     definition:
       '리액트는 데이터를 화면으로 바꾸는 함수를 쓰게 하고, 데이터가 바뀔 때 화면을 맞춰 고치는 일을 가져간다.',
-    goal: '버튼을 눌러 숫자를 바꾸면 화면이 저절로 따라온다.',
+    goal: '버튼을 눌러 숫자를 바꾸면 화면이 저절로 따라온다. useState는 지금은 "값을 기억하는 칸"이라고만 알아 두면 된다. 레슨 12에서 제대로 본다.',
     starterCode: `function App() {
   const [count, setCount] = useState(0)
 
@@ -47,7 +47,7 @@ document.querySelector('#add').addEventListener('click', () => {
       question: '리액트에서 화면에 적힌 숫자를 바꾸려면 무엇을 고치는가',
       options: [
         '화면의 해당 요소를 찾아 textContent를 넣는다',
-        'state를 바꾸고, 화면을 고치는 일은 리액트에 맡긴다',
+        '기억해 둔 값을 바꾸고, 화면을 고치는 일은 리액트에 맡긴다',
         '화면과 변수를 각각 한 번씩 고친다',
       ],
       answerIndex: 1,
@@ -81,6 +81,13 @@ const { title, done } = todo`,
         text: '한 겹만 복사한다. 안쪽 객체는 원본과 같은 것을 가리킨다.',
         code: `const next = [...todos, '빨래']
 const patched = { ...todo, done: true }`,
+      },
+      {
+        title: '&&는 왼쪽이 거짓이면 왼쪽 값을 그대로 돌려준다',
+        text: 'true나 false로 바꿔 주지 않는다. 레슨 8에서 이 성질이 화면에 그대로 드러난다.',
+        code: `0 && '보임'   // 0
+'' && '보임'  // ''
+3 && '보임'   // '보임'`,
       },
     ],
     quiz: {

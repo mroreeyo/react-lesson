@@ -7,7 +7,7 @@ export default [
     tagline: '화면의 상태를 먼저 적는다',
     kind: 'practice',
     definition:
-      '화면이 가질 수 있는 상태를 먼저 적고, 각 상태에서 무엇을 그릴지 정한다. 요소를 찾아 보이고 숨기는 것이 아니라, 상태를 바꿔서 화면을 고른다.',
+      '화면이 가질 수 있는 상태를 먼저 적고, 각 상태에서 무엇을 그릴지 정한다. 요소를 찾아 보이고 숨기는 것이 아니라, 상태를 바꿔서 화면을 고른다. 서로 하나만 고를 수 있는 상태들은 값 하나에 담는다.',
     goal: '전체 · 남은 것 · 끝낸 것 필터가 붙는다. 보여줄 것이 없을 때 문장이 바뀐다.',
     starterCode: `let nextId = 4
 
@@ -255,6 +255,7 @@ function App() {
   return (
     <section>
       <h2>할 일 {todos.length}개</h2>
+      {/* counts의 겉 중괄호는 JS 자리, 안 중괄호는 객체다 */}
       <FilterBar
         filter={filter}
         counts={{ all: todos.length, left: left.length, done: done.length }}
@@ -300,8 +301,8 @@ function App() {
     tagline: '같은 자리면 state가 남는다',
     kind: 'practice',
     definition:
-      'state는 컴포넌트가 아니라 화면 트리의 그 자리에 붙어 있다. 같은 자리에 같은 컴포넌트가 계속 있으면 state가 남고, 자리가 사라지면 state도 사라진다. key를 갈면 같은 자리라도 새 자리로 취급한다.',
-    goal: '이름 고치기 칸이 붙는다. 다른 할 일을 고르면 입력칸이 새로 시작해야 한다.',
+      'state는 컴포넌트가 아니라 화면 트리(컴포넌트가 부모·자식으로 겹친 모양)의 그 자리에 붙어 있다. 같은 자리에 같은 컴포넌트가 계속 있으면 state가 남고, 자리가 사라지면 state도 사라진다. key를 갈면 같은 자리라도 새 자리로 취급한다.',
+    goal: '이름 고치기 칸이 붙는다. 지금은 다른 할 일을 골라도 입력칸이 앞 것을 그대로 들고 있다. key를 줘서 새로 시작하게 고친다.',
     starterCode: `function Editor({ todo, onRename }) {
   // 이 state는 Editor가 있는 자리에 붙어 있다. todo가 바뀌어도 그대로 남는다.
   const [text, setText] = useState(todo.title)
@@ -377,8 +378,9 @@ function App() {
     title: 'reducer로 state 로직 추출하기',
     tagline: '무엇이 일어났는지를 보낸다',
     kind: 'practice',
+    jsPrereq: ['switch는 값에 따라 갈래를 고른다. case마다 return하면 break가 필요 없다'],
     definition:
-      'useReducer는 state를 바꾸는 방법을 한 함수에 모은다. 컴포넌트는 "무엇이 일어났는지"만 보내고, 그 일이 state를 어떻게 바꾸는지는 reducer가 정한다.',
+      'useReducer는 state를 바꾸는 방법을 한 함수에 모은다. 컴포넌트는 "무엇이 일어났는지"만 보내고, 그 일이 state를 어떻게 바꾸는지는 reducer가 정한다. 보내는 함수가 dispatch, 보내는 객체가 action이다.',
     goal: '흩어져 있던 setTodos를 한 곳에 모은다. 앱이 하는 일 목록이 reducer만 읽어도 보인다.',
     starterCode: `let nextId = 4
 
@@ -507,7 +509,7 @@ function App() {
     tagline: '거쳐 가는 컴포넌트를 건너뛴다',
     kind: 'practice',
     definition:
-      'Context는 값을 트리 아래 어디서든 읽을 수 있게 한다. 중간 컴포넌트를 거치지 않고, 읽는 쪽이 직접 가져간다.',
+      'Context는 값을 트리 아래 어디서든 읽을 수 있게 한다. 위에서 Provider로 값을 넣고, 아래에서 useContext로 꺼낸다. 중간 컴포넌트를 거치지 않는다.',
     goal: 'TodoList는 쓰지도 않는 dispatch를 넘겨받지 않게 된다. 항목이 직접 가져간다.',
     starterCode: `const DispatchContext = createContext(null)
 
@@ -600,7 +602,7 @@ function TodoRow({ todo, dispatch }) {
     },
     why: [
       '값 하나를 더 내려보내려면 거쳐 가는 컴포넌트를 전부 고쳐야 했다. 중간 컴포넌트의 props 목록이 자기가 쓰지 않는 것들로 길어졌다.',
-      'Context는 내려보내는 길을 만들지 않고, 읽는 쪽이 직접 가져가게 한다. 중간 컴포넌트는 그 값이 오가는 것을 모른다.',
+      'Context는 내려보내는 길을 만들지 않고, 읽는 쪽이 직접 가져가게 한다. 중간 컴포넌트는 그 값이 오가는 것을 모른다. 값이 바뀌면 그 값을 읽는 컴포넌트만 다시 그려진다.',
     ],
     deeper: [
       {
@@ -640,7 +642,7 @@ function TodoRow({ todo, dispatch }) {
     tagline: '상태와 보내는 길을 함께 내놓는다',
     kind: 'practice',
     definition:
-      'reducer로 바꾸는 방법을 모으고, Context로 state와 dispatch를 트리 아래에 내놓는다. 둘을 따로 둔 Context 두 개로 나누면 읽는 쪽이 필요한 것만 가져간다.',
+      'reducer로 바꾸는 방법을 모으고, Context로 state와 dispatch를 트리 아래에 내놓는다. 둘을 Context 두 개로 나누면, dispatch만 쓰는 컴포넌트는 state가 바뀌어도 다시 그려지지 않는다.',
     goal: '챕터 3의 마지막 모습이다. 필터와 목록과 입력칸이 props 없이 각자 필요한 것만 가져간다.',
     starterCode: `const TodosContext = createContext(null)
 const DispatchContext = createContext(null)

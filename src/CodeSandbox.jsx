@@ -59,7 +59,7 @@ export default function CodeSandbox({ initialCode, resetCode = initialCode, onCo
           </button>
         </header>
         <p className="notice">
-          `App` 컴포넌트를 정의하세요. import는 쓸 수 없고, 훅은 바로 쓰면 됩니다.
+          `App` 컴포넌트를 정의하세요. import는 쓸 수 없고, useState 같은 함수는 바로 쓰면 됩니다.
         </p>
         <textarea
           className="editor"
@@ -74,7 +74,7 @@ export default function CodeSandbox({ initialCode, resetCode = initialCode, onCo
           종료 조건 없는 반복문은 이 탭을 멈춥니다. 저장한 코드는 남지만 새로고침해야 합니다.
         </p>
         <details className="hooks">
-          <summary>주입된 훅 {injectedHookNames.length}개</summary>
+          <summary>바로 쓸 수 있는 함수 {injectedHookNames.length}개</summary>
           <code>{injectedHookNames.join(', ')}</code>
         </details>
       </section>

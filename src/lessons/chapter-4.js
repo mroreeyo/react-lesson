@@ -51,7 +51,7 @@ function App() {
     demo: 'state-ref',
     deeper: [
       {
-        question: 'ref 대신 그냥 변수를 쓰면 안 되는가',
+        question: 'ref 대신 보통 변수를 쓰면 안 되는가',
         answer:
           '컴포넌트 함수 안의 변수는 렌더마다 새로 만들어진다. 다음 렌더에 값이 사라진다. 챕터 3처럼 모듈 바깥에 두면 남지만, 그 컴포넌트를 두 군데 그리면 두 자리가 같은 변수를 나눠 쓰게 된다.',
       },
@@ -92,7 +92,7 @@ function App() {
     tagline: '리액트가 만든 요소를 직접 만진다',
     kind: 'practice',
     definition:
-      '`ref`를 태그에 주면 리액트가 커밋할 때 그 DOM 요소를 `ref.current`에 넣어 준다. 포커스나 스크롤처럼 JSX로 표현할 수 없는 일을 할 때 쓴다.',
+      '`ref`를 태그에 주면 리액트가 커밋할 때 그 DOM 요소(브라우저가 실제로 들고 있는 요소)를 `ref.current`에 넣어 준다. 그리는 동안에는 아직 비어 있으니(null) 핸들러나 Effect에서 읽는다. 포커스나 스크롤처럼 JSX로 표현할 수 없는 일을 할 때 쓴다.',
     goal: '추가한 다음 입력칸에 커서가 저절로 간다.',
     starterCode: `function todosReducer(todos, action) {
   switch (action.type) {
@@ -153,7 +153,7 @@ function App() {
       {
         question: '다른 컴포넌트의 DOM을 만지려면',
         answer:
-          '그 컴포넌트가 `ref`를 받아 안쪽 태그에 넘겨줘야 한다. 리액트 19부터는 `ref`를 그냥 prop으로 받을 수 있다. 레슨 34가 그 이야기다.',
+          '그 컴포넌트가 `ref`를 받아 안쪽 태그에 넘겨줘야 한다. 리액트 19부터는 `ref`를 다른 prop처럼 받을 수 있다. 레슨 34가 그 이야기다.',
       },
     ],
     sources: ['https://react.dev/learn/manipulating-the-dom-with-refs'],
@@ -173,7 +173,7 @@ function App() {
     tagline: '바깥 시스템을 화면 상태에 맞춰 둔다',
     kind: 'practice',
     definition:
-      'useEffect는 렌더가 화면에 반영된 뒤에 돈다. 리액트 바깥에 있는 것을 지금 state에 맞춰 두는 자리다.',
+      'useEffect는 렌더가 화면에 반영된 뒤에 돈다. 리액트 바깥에 있는 것을 지금 state에 맞춰 두는 자리다. 두 번째 인자인 의존성 배열에 적은 값이 지난번과 달라지면 다시 돌고, 빈 배열이면 처음 한 번만 돈다.',
     goal: '새로고침해도 할 일이 남는다. 목록이 바뀔 때마다 브라우저 저장소에 맞춰 둔다.',
     starterCode: `const KEY = 'todo-demo:v1'
 const INITIAL = [{ id: 'a', title: '장보기', done: false }]
@@ -384,8 +384,8 @@ function App() {
     tagline: '시작하고 멈추는 한 덩어리',
     kind: 'practice',
     definition:
-      'Effect는 마운트와 언마운트가 아니라 "맞추기 시작"과 "맞추기 멈춤"으로 생각한다. 의존성이 바뀌면 리액트가 먼저 멈추고 다시 시작한다.',
-    goal: '필터를 바꿀 때마다 이전 구독이 닫히고 새 구독이 열리는 것을 기록으로 본다.',
+      'Effect는 화면에 붙고 떼어지는 시점(마운트·언마운트)이 아니라 "맞추기 시작"과 "맞추기 멈춤"으로 생각한다. 의존성이 바뀌면 리액트가 먼저 멈추고 다시 시작한다.',
+    goal: '바깥에서 오는 신호를 계속 받는 것을 구독이라 한다. 필터를 바꿀 때마다 이전 구독이 닫히고 새 구독이 열리는 것을 기록으로 본다.',
     starterCode: `// 리액트 바깥에 있는 것을 흉내낸 가짜 구독
 function createFeed(filter) {
   let timer = null
@@ -468,7 +468,7 @@ function App() {
     chapter: '4',
     order: 30,
     title: 'Effect에서 이벤트 분리하기',
-    tagline: '다시 맞출 값과 그냥 읽을 값',
+    tagline: '다시 맞출 값과 읽기만 할 값',
     kind: 'practice',
     definition:
       'Effect 안의 코드 중 일부는 "값이 바뀌면 다시 해야 하는 일"이고, 일부는 "그때그때 최신 값을 읽기만 하는 일"이다. 뒤쪽은 useEffectEvent로 떼어 내면 의존성에서 빠진다.',
@@ -530,7 +530,7 @@ function App() {
           '문구를 한 글자 칠 때마다 구독이 닫히고 다시 열린다. 실제 연결이라면 글자 하나에 재접속이 일어난다. 읽기만 하는 값 때문에 다시 맞추는 것은 원한 동작이 아니다.',
       },
       {
-        question: '그럼 의존성에서 그냥 빼면 되지 않는가',
+        question: '그럼 의존성에서 빼기만 하면 되지 않는가',
         answer:
           '빼면 prefix가 첫 값으로 고정된다. 문구를 바꿔도 기록에는 예전 문구가 붙는다. useEffectEvent로 뗀 함수는 불릴 때마다 최신 값을 읽으므로 그 문제가 없다.',
       },
@@ -562,7 +562,7 @@ function App() {
     kind: 'practice',
     definition:
       '의존성은 고르는 것이 아니라 Effect 코드에서 따라 나온다. 줄이고 싶으면 배열을 손보지 않고 코드를 고친다.',
-    goal: '지금 이 Effect는 옵션 객체 때문에 매 렌더마다 다시 돈다. 한 번만 열려야 하는데 12번 열린다. 객체를 Effect 안으로 옮겨 한 번으로 만든다.',
+    goal: '지금 이 Effect는 옵션 객체 때문에 매 렌더마다 다시 돈다. 내용이 같아도 렌더마다 새 객체라서 리액트는 달라졌다고 본다. 한 번만 열려야 하는데 12번 열린다. 객체를 Effect 안으로 옮겨 한 번으로 만든다.',
     starterCode: `const LIMIT = 12
 
 function createFeed(options) {
@@ -628,7 +628,7 @@ function App() {
           '없으면 이 예제가 탭을 멈춘다. 이 레슨에서만 쓰는 제동장치이고, 실제 코드에서 이런 것을 달아 문제를 가리면 안 된다. 고칠 것은 의존성이다.',
       },
       {
-        question: '의존성 배열에서 그냥 빼면 안 되는가',
+        question: '의존성 배열에서 빼기만 하면 안 되는가',
         answer:
           '경고는 사라지고 버그는 남는다. 배열은 "무엇을 읽는지"를 적는 곳이지 "언제 돌릴지"를 고르는 곳이 아니다. 줄이려면 읽는 것을 줄여야 한다.',
       },
@@ -789,7 +789,7 @@ export default withWindowWidth(withTheme(withRouter(TodoList)))
     },
     why: [
       '감싸는 층이 겹겹이 쌓여 트리가 깊어졌다. 개발자 도구를 열면 내가 만든 컴포넌트를 찾기 위해 껍데기를 몇 겹 내려가야 했고, props가 어디서 온 것인지 추적하기 어려웠다.',
-      '문제는 로직만 떼어 갈 방법이 없었다는 것이다. state와 생명주기를 가질 수 있는 것이 컴포넌트뿐이었으니, 로직을 나누려면 컴포넌트를 만들 수밖에 없었다. 훅은 그 능력을 함수에 줬다. 껍데기 없이 로직만 가져간다.',
+      '문제는 로직만 떼어 갈 방법이 없었다는 것이다. state와 생명주기를 가질 수 있는 것이 컴포넌트뿐이었으니, 로직을 나누려면 컴포넌트를 만들 수밖에 없었다. 훅은 그 능력을 함수에 줘서, 껍데기 없이 로직만 가져간다.',
     ],
     deeper: [
       {
@@ -805,7 +805,7 @@ export default withWindowWidth(withTheme(withRouter(TodoList)))
       {
         question: '무엇을 커스텀 훅으로 뺄지 어떻게 정하는가',
         answer:
-          '훅을 부르는 코드 덩어리가 이름을 가질 만한 일 하나일 때다. `useTodos`는 "할 일 목록을 들고 저장소에 맞춰 둔다"는 한 가지 일이다. 그냥 코드를 줄이려고 상관없는 일을 한 훅에 묶으면 나중에 쓰기 어려워진다.',
+          '훅을 부르는 코드 덩어리가 이름을 가질 만한 일 하나일 때다. `useTodos`는 "할 일 목록을 들고 저장소에 맞춰 둔다"는 한 가지 일이다. 코드를 줄이려고만 상관없는 일을 한 훅에 묶으면 나중에 쓰기 어려워진다.',
       },
       {
         question: '레슨 24의 Context는 어디로 갔는가',

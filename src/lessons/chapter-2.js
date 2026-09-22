@@ -8,7 +8,7 @@ export default [
     kind: 'practice',
     jsPrereq: ['함수는 값이다. 변수에 담고, 인자로 넘길 수 있다'],
     definition:
-      'onClick 같은 prop에 함수를 건네면 리액트가 그 일이 생겼을 때 불러 준다. 호출한 결과가 아니라 함수 자체를 건넨다.',
+      'onClick 같은 prop에 함수를 건네면 리액트가 그 일이 생겼을 때 불러 준다. 이렇게 건네는 함수를 핸들러라 부른다. 호출한 결과가 아니라 함수 자체를 건넨다.',
     goal: '체크박스와 버튼이 눌린다. 다만 화면은 아직 안 바뀐다.',
     starterCode: `const todos = [
   { id: 'a', title: '장보기', done: true },
@@ -57,7 +57,7 @@ function App() {
       {
         question: 'onToggle이라는 이름은 리액트가 아는 이름인가',
         answer:
-          '아니다. 그냥 prop 이름이다. 리액트가 아는 것은 소문자 태그에 붙는 onClick, onChange 같은 것들이고, 내 컴포넌트에 붙이는 이름은 내가 정한다.',
+          '아니다. 내가 정한 prop 이름이다. 리액트가 아는 것은 소문자 태그에 붙는 onClick, onChange 같은 것들이고, 내 컴포넌트에 붙이는 이름은 내가 정한다.',
       },
     ],
     sources: ['https://react.dev/learn/responding-to-events'],
@@ -82,7 +82,7 @@ function App() {
     kind: 'practice',
     jsPrereq: ['배열 구조 분해로 두 값을 한 줄에 받는다'],
     definition:
-      'useState는 값 하나와 그 값을 바꾸는 함수를 돌려준다. 바꾸는 함수를 부르면 리액트가 그 컴포넌트를 다시 그린다.',
+      'useState는 값 하나와 그 값을 바꾸는 함수를 돌려준다. 바꾸는 함수를 부르면 리액트가 그 컴포넌트를 다시 그린다. use로 시작하는 이런 함수를 훅이라 부른다.',
     goal: '체크박스가 눌린다. 카드마다 자기 상태를 기억한다.',
     starterCode: `const todos = [
   { id: 'a', title: '장보기' },
@@ -157,15 +157,15 @@ function App() {
     ],
     sources: ['https://react.dev/learn/state-a-components-memory'],
     quiz: {
-      question: '리액트가 어느 state가 어느 것인지 알아내는 방법은 무엇인가',
+      question: '`setDone(true)`를 부르면 무엇이 일어나는가',
       options: [
-        '변수 이름으로 안다',
-        '훅을 부른 순서로 안다',
-        '컴포넌트 이름과 props를 조합해 안다',
+        'done 변수가 그 자리에서 바로 true가 된다',
+        '리액트가 이 컴포넌트를 다시 그리고, 새로 그린 쪽에서 done이 true다',
+        '화면의 체크박스만 바뀌고 done은 그대로다',
       ],
       answerIndex: 1,
       explanation:
-        '호출 순서로 안다. 그래서 조건문이나 반복문 안에서 훅을 부르면 순서가 밀려 값이 어긋난다.',
+        '바꾸는 함수는 다시 그리라는 요청이다. 지금 돌고 있는 코드의 done은 그대로이고, 다음에 그릴 때 새 값이 들어온다. 레슨 14가 이 이야기를 더 한다.',
     },
   },
   {
@@ -339,7 +339,10 @@ const result = App()
     title: '객체 state 업데이트하기',
     tagline: '고치지 않고 새로 만들어 넘긴다',
     kind: 'practice',
-    jsPrereq: ['스프레드는 얕은 복사다. 한 겹만 복사한다'],
+    jsPrereq: [
+      '스프레드는 얕은 복사다. 한 겹만 복사한다',
+      'onChange가 받는 e는 무슨 일이 났는지 담은 객체다. e.target이 그 일이 난 요소, e.target.value가 입력칸의 글자다',
+    ],
     definition:
       '객체 state는 직접 고치지 않는다. 스프레드로 복사해 바꿀 칸만 덮은 새 객체를 만들어 넘긴다.',
     goal: '새 할 일을 적을 입력 폼이 생긴다. 제목과 급함 여부를 한 객체에 담는다.',
@@ -494,7 +497,7 @@ function App() {
       ],
       answerIndex: 1,
       explanation:
-        '넘긴 배열이 지난번과 같은 배열이다. 리액트는 얕게 비교하므로 바뀐 것이 없다고 보고 다시 그리지 않는다.',
+        '넘긴 배열이 지난번과 같은 배열이다. 리액트는 속을 들여다보지 않고 같은 배열인지만 보므로(얕은 비교), 바뀐 것이 없다고 보고 다시 그리지 않는다.',
     },
   },
 ]
