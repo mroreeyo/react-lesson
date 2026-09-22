@@ -4,6 +4,7 @@ import assert from 'node:assert/strict'
 import { readdir } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
+import { compileToApp } from '../runner.js'
 
 const here = dirname(fileURLToPath(import.meta.url))
 const files = (await readdir(here)).filter((f) => /^chapter-\d+\.js$/.test(f)).sort()
@@ -57,4 +58,16 @@ for (const l of lessons) {
   }
 }
 
-console.log(`ok — 레슨 ${lessons.length}개, 챕터 파일 ${files.length}개`)
+// 실습 레슨의 예제는 수정 없이 실행돼야 한다. 실제로 변환·실행해 App을 받아 본다.
+// before.code와 readOnly는 실행하지 않는 코드이므로 대상이 아니다.
+const practice = lessons.filter((l) => l.kind === 'practice')
+for (const l of practice) {
+  const App = await compileToApp(l.starterCode).catch((err) => {
+    assert.fail(`레슨 ${l.order} ${l.title}: starterCode가 실행되지 않는다 — [${err.stage}] ${err.message}`)
+  })
+  assert.equal(typeof App, 'function', `레슨 ${l.order} ${l.title}: App을 못 받았다`)
+}
+
+console.log(
+  `ok — 레슨 ${lessons.length}개(실습 ${practice.length}개 실행 확인), 챕터 파일 ${files.length}개`,
+)
