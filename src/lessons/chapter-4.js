@@ -8,9 +8,18 @@ export default [
     kind: 'practice',
     definition:
       'useRef는 렌더 사이에 남지만 바꿔도 다시 그리지 않는 칸을 준다. 화면에 나오지 않는 값을 둘 자리다.',
-    goal: '모듈 바깥에 있던 nextId를 컴포넌트 안으로 들인다. 다시 그릴 이유가 없는 값이라 ref에 둔다.',
-    starterCode: `function App() {
-  const [todos, setTodos] = useState([{ id: 'a', title: '장보기', done: false }])
+    goal: '챕터 3에서 모듈 바깥에 두었던 nextId를 컴포넌트 안으로 들인다. 다시 그릴 이유가 없는 값이라 ref에 둔다. reducer는 번호를 만들지 않고 받기만 한다.',
+    starterCode: `function todosReducer(todos, action) {
+  switch (action.type) {
+    case 'added':
+      return [...todos, { id: action.id, title: action.title, done: false }]
+    default:
+      throw new Error('모르는 action: ' + action.type)
+  }
+}
+
+function App() {
+  const [todos, dispatch] = useReducer(todosReducer, [{ id: 'a', title: '장보기', done: false }])
   const [draft, setDraft] = useState('')
 
   // 다음에 쓸 번호. 화면에 나오지 않으니 바뀌어도 다시 그릴 이유가 없다.
@@ -18,7 +27,7 @@ export default [
 
   function add() {
     if (draft.trim() === '') return
-    setTodos([...todos, { id: 'n' + nextId.current, title: draft, done: false }])
+    dispatch({ type: 'added', id: 'n' + nextId.current, title: draft })
     nextId.current = nextId.current + 1
     setDraft('')
   }
@@ -44,7 +53,12 @@ export default [
       {
         question: 'ref 대신 그냥 변수를 쓰면 안 되는가',
         answer:
-          '컴포넌트 함수 안의 변수는 렌더마다 새로 만들어진다. 다음 렌더에 값이 사라진다. 모듈 바깥의 변수는 남지만, 그 컴포넌트를 두 군데 그리면 두 자리가 같은 변수를 나눠 쓰게 된다.',
+          '컴포넌트 함수 안의 변수는 렌더마다 새로 만들어진다. 다음 렌더에 값이 사라진다. 챕터 3처럼 모듈 바깥에 두면 남지만, 그 컴포넌트를 두 군데 그리면 두 자리가 같은 변수를 나눠 쓰게 된다.',
+      },
+      {
+        question: '번호를 reducer 안에서 만들면 안 되는가',
+        answer:
+          'reducer는 같은 입력에 같은 결과를 돌려줘야 한다. 안에서 번호를 올리면 부를 때마다 결과가 달라진다. 번호는 핸들러에서 만들어 action에 실어 보내고, reducer는 받은 것을 쓴다.',
       },
       {
         question: '렌더 중에 ref를 읽거나 쓰면 안 되는 이유',
@@ -80,8 +94,17 @@ export default [
     definition:
       '`ref`를 태그에 주면 리액트가 커밋할 때 그 DOM 요소를 `ref.current`에 넣어 준다. 포커스나 스크롤처럼 JSX로 표현할 수 없는 일을 할 때 쓴다.',
     goal: '추가한 다음 입력칸에 커서가 저절로 간다.',
-    starterCode: `function App() {
-  const [todos, setTodos] = useState([{ id: 'a', title: '장보기' }])
+    starterCode: `function todosReducer(todos, action) {
+  switch (action.type) {
+    case 'added':
+      return [...todos, { id: action.id, title: action.title, done: false }]
+    default:
+      throw new Error('모르는 action: ' + action.type)
+  }
+}
+
+function App() {
+  const [todos, dispatch] = useReducer(todosReducer, [{ id: 'a', title: '장보기', done: false }])
   const [draft, setDraft] = useState('')
   const nextId = useRef(2)
 
@@ -90,7 +113,7 @@ export default [
 
   function add() {
     if (draft.trim() === '') return
-    setTodos([...todos, { id: 'n' + nextId.current, title: draft }])
+    dispatch({ type: 'added', id: 'n' + nextId.current, title: draft })
     nextId.current = nextId.current + 1
     setDraft('')
     inputRef.current.focus()
@@ -153,18 +176,32 @@ export default [
       'useEffect는 렌더가 화면에 반영된 뒤에 돈다. 리액트 바깥에 있는 것을 지금 state에 맞춰 두는 자리다.',
     goal: '새로고침해도 할 일이 남는다. 목록이 바뀔 때마다 브라우저 저장소에 맞춰 둔다.',
     starterCode: `const KEY = 'todo-demo:v1'
+const INITIAL = [{ id: 'a', title: '장보기', done: false }]
 
-function load() {
+function todosReducer(todos, action) {
+  switch (action.type) {
+    case 'added':
+      return [...todos, { id: action.id, title: action.title, done: false }]
+    case 'cleared':
+      return []
+    default:
+      throw new Error('모르는 action: ' + action.type)
+  }
+}
+
+// 저장소에서 처음 값을 읽는다. 없거나 막혀 있으면 INITIAL이다.
+function load(key) {
   try {
-    const raw = localStorage.getItem(KEY)
-    return raw === null ? [{ id: 'a', title: '장보기' }] : JSON.parse(raw)
+    const raw = localStorage.getItem(key)
+    return raw === null ? INITIAL : JSON.parse(raw)
   } catch {
-    return [{ id: 'a', title: '장보기' }]
+    return INITIAL
   }
 }
 
 function App() {
-  const [todos, setTodos] = useState(load)
+  // 세 번째 인자는 처음 한 번만 불린다. 매 렌더마다 저장소를 읽지 않는다.
+  const [todos, dispatch] = useReducer(todosReducer, KEY, load)
   const [draft, setDraft] = useState('')
   const nextId = useRef(100)
 
@@ -179,7 +216,7 @@ function App() {
 
   function add() {
     if (draft.trim() === '') return
-    setTodos([...todos, { id: 'n' + nextId.current, title: draft }])
+    dispatch({ type: 'added', id: 'n' + nextId.current, title: draft })
     nextId.current = nextId.current + 1
     setDraft('')
   }
@@ -195,7 +232,7 @@ function App() {
       </ul>
       <input value={draft} placeholder="새 할 일" onChange={(e) => setDraft(e.target.value)} />
       <button onClick={add}>추가</button>
-      <button onClick={() => setTodos([])}>비우기</button>
+      <button onClick={() => dispatch({ type: 'cleared' })}>비우기</button>
     </section>
   )
 }
@@ -233,6 +270,11 @@ function App() {
           '언제 다시 맞출지를 정한다. 배열 안의 값이 지난번과 달라지면 Effect를 다시 돈다. 빈 배열이면 처음 한 번만, 배열을 아예 안 주면 매 렌더마다 돈다.',
       },
       {
+        question: 'useReducer의 세 번째 인자는 무엇인가',
+        answer:
+          '처음 state를 만드는 함수다. 두 번째 인자를 받아 state를 돌려준다. 저장소를 읽는 것처럼 비용이 있는 초기화를 매 렌더가 아니라 처음 한 번만 하려고 쓴다. useState도 함수를 넘기면 같은 일을 한다.',
+      },
+      {
         question: '왜 Effect는 커밋 뒤에 도는가',
         answer:
           '렌더 중에 바깥을 건드리면 순수성이 깨진다. 그리고 화면에 붙기 전이라 크기를 재거나 포커스를 줄 대상도 아직 없다.',
@@ -261,8 +303,19 @@ function App() {
     definition:
       'Effect는 리액트 바깥과 맞출 때 쓴다. props나 state로 계산할 수 있는 값이면 렌더 중에 계산한다.',
     goal: '이 코드는 Effect로 남은 개수를 state에 넣고 있다. 한 박자 늦게 그려진다. Effect와 state를 지우고 계산으로 바꾼다.',
-    starterCode: `function App() {
-  const [todos, setTodos] = useState([
+    starterCode: `function todosReducer(todos, action) {
+  switch (action.type) {
+    case 'toggled':
+      return todos.map((todo) =>
+        todo.id === action.id ? { ...todo, done: !todo.done } : todo,
+      )
+    default:
+      throw new Error('모르는 action: ' + action.type)
+  }
+}
+
+function App() {
+  const [todos, dispatch] = useReducer(todosReducer, [
     { id: 'a', title: '장보기', done: true },
     { id: 'b', title: '설거지', done: false },
   ])
@@ -273,10 +326,6 @@ function App() {
     setLeft(todos.filter((todo) => !todo.done).length)
   }, [todos])
 
-  function toggle(id) {
-    setTodos(todos.map((todo) => (todo.id === id ? { ...todo, done: !todo.done } : todo)))
-  }
-
   return (
     <section>
       <h2>할 일 {todos.length}개</h2>
@@ -284,7 +333,11 @@ function App() {
       <ul>
         {todos.map((todo) => (
           <li key={todo.id}>
-            <input type="checkbox" checked={todo.done} onChange={() => toggle(todo.id)} />
+            <input
+              type="checkbox"
+              checked={todo.done}
+              onChange={() => dispatch({ type: 'toggled', id: todo.id })}
+            />
             <span>{todo.title}</span>
           </li>
         ))}
@@ -607,27 +660,46 @@ function App() {
     kind: 'practice',
     definition:
       '`use`로 시작하는 함수 안에서 훅을 부르면 커스텀 훅이다. 로직만 떼어 여러 컴포넌트가 가져다 쓸 수 있고, state는 쓰는 쪽마다 따로 생긴다.',
-    goal: '챕터 4의 마지막 모습이다. 저장 로직은 useLocalStorage로, 포커스는 useAutoFocus로 떼어 낸다. App에는 화면만 남는다.',
-    starterCode: `// 값을 브라우저 저장소에 맞춰 두는 훅
-function useLocalStorage(key, initial) {
-  const [value, setValue] = useState(() => {
-    try {
-      const raw = localStorage.getItem(key)
-      return raw === null ? initial : JSON.parse(raw)
-    } catch {
-      return initial
-    }
-  })
+    goal: '챕터 4의 마지막 모습이다. reducer와 저장을 useTodos로, 포커스를 useAutoFocus로 떼어 낸다. App에는 화면만 남는다.',
+    starterCode: `const INITIAL = [{ id: 'a', title: '장보기', done: false }]
+
+function todosReducer(todos, action) {
+  switch (action.type) {
+    case 'added':
+      return [...todos, { id: action.id, title: action.title, done: false }]
+    case 'toggled':
+      return todos.map((todo) =>
+        todo.id === action.id ? { ...todo, done: !todo.done } : todo,
+      )
+    case 'cleared':
+      return []
+    default:
+      throw new Error('모르는 action: ' + action.type)
+  }
+}
+
+function load(key) {
+  try {
+    const raw = localStorage.getItem(key)
+    return raw === null ? INITIAL : JSON.parse(raw)
+  } catch {
+    return INITIAL
+  }
+}
+
+// 할 일 목록의 상태와 저장을 한 덩어리로 묶은 훅. 챕터 3의 reducer와 27의 Effect가 여기로 들어왔다.
+function useTodos(key) {
+  const [todos, dispatch] = useReducer(todosReducer, key, load)
 
   useEffect(() => {
     try {
-      localStorage.setItem(key, JSON.stringify(value))
+      localStorage.setItem(key, JSON.stringify(todos))
     } catch {
       // 저장이 막혀도 앱은 그대로 돈다
     }
-  }, [key, value])
+  }, [key, todos])
 
-  return [value, setValue]
+  return [todos, dispatch]
 }
 
 // 화면에 붙을 때 한 번 포커스를 주는 훅
@@ -639,21 +711,31 @@ function useAutoFocus() {
   return ref
 }
 
+function TodoCard({ todo, dispatch }) {
+  return (
+    <li>
+      <input
+        type="checkbox"
+        checked={todo.done}
+        onChange={() => dispatch({ type: 'toggled', id: todo.id })}
+      />
+      <span>{todo.title}</span>
+      {todo.done && <em> · 끝</em>}
+    </li>
+  )
+}
+
 function App() {
-  const [todos, setTodos] = useLocalStorage('todo-demo:v2', [{ id: 'a', title: '장보기', done: false }])
+  const [todos, dispatch] = useTodos('todo-demo:v2')
   const [draft, setDraft] = useState('')
   const nextId = useRef(100)
   const inputRef = useAutoFocus()
 
   const left = todos.filter((todo) => !todo.done).length
 
-  function toggle(id) {
-    setTodos(todos.map((todo) => (todo.id === id ? { ...todo, done: !todo.done } : todo)))
-  }
-
   function add() {
     if (draft.trim() === '') return
-    setTodos([...todos, { id: 'n' + nextId.current, title: draft, done: false }])
+    dispatch({ type: 'added', id: 'n' + nextId.current, title: draft })
     nextId.current = nextId.current + 1
     setDraft('')
     inputRef.current.focus()
@@ -665,11 +747,7 @@ function App() {
       <p>{left === 0 ? '다 끝났다' : '남은 것 ' + left + '개'}</p>
       <ul>
         {todos.map((todo) => (
-          <li key={todo.id}>
-            <input type="checkbox" checked={todo.done} onChange={() => toggle(todo.id)} />
-            <span>{todo.title}</span>
-            {todo.done && <em> · 끝</em>}
-          </li>
+          <TodoCard key={todo.id} todo={todo} dispatch={dispatch} />
         ))}
       </ul>
       <input
@@ -679,7 +757,7 @@ function App() {
         onChange={(e) => setDraft(e.target.value)}
       />
       <button onClick={add}>추가</button>
-      <button onClick={() => setTodos([])}>비우기</button>
+      <button onClick={() => dispatch({ type: 'cleared' })}>비우기</button>
     </section>
   )
 }
@@ -727,7 +805,12 @@ export default withWindowWidth(withTheme(withRouter(TodoList)))
       {
         question: '무엇을 커스텀 훅으로 뺄지 어떻게 정하는가',
         answer:
-          '훅을 부르는 코드 덩어리가 이름을 가질 만한 일 하나일 때다. `useLocalStorage`는 "값을 저장소에 맞춰 둔다"는 한 가지 일이다. 그냥 코드를 줄이려고 여러 일을 한 훅에 묶으면 나중에 쓰기 어려워진다.',
+          '훅을 부르는 코드 덩어리가 이름을 가질 만한 일 하나일 때다. `useTodos`는 "할 일 목록을 들고 저장소에 맞춰 둔다"는 한 가지 일이다. 그냥 코드를 줄이려고 상관없는 일을 한 훅에 묶으면 나중에 쓰기 어려워진다.',
+      },
+      {
+        question: '레슨 24의 Context는 어디로 갔는가',
+        answer:
+          '이 앱은 트리가 두 단계라 dispatch를 props로 한 번만 내리면 된다. Context는 거쳐 가는 컴포넌트가 여럿일 때 쓰는 것이다. 트리가 깊어지면 useTodos가 돌려준 값을 Provider에 담으면 되고, 그때 훅 이름은 그대로다.',
       },
     ],
     sources: ['https://react.dev/learn/reusing-logic-with-custom-hooks'],
