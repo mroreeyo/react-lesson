@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react'
+import Labs from './Labs.jsx'
 import Lesson from './Lesson.jsx'
 import LessonRail from './LessonRail.jsx'
 import Playground from './Playground.jsx'
 import { chapterOf, lessons } from './lessons/index.js'
 import { KEYS, clearProgress, load, save } from './storage.js'
 
-// 실험실 탭은 데모 3종과 함께 붙는다.
 const TABS = [
   { id: 'lessons', label: '레슨' },
+  { id: 'labs', label: '실험실' },
   { id: 'playground', label: '플레이그라운드' },
 ]
 
@@ -19,6 +20,7 @@ export default function App() {
   )
   const [progress, setProgress] = useState(() => load(KEYS.progress, []))
   const [drawerOpen, setDrawerOpen] = useState(false)
+  const [focusedDemo, setFocusedDemo] = useState(null)
 
   useEffect(() => {
     save(KEYS.last, { tab, lessonId })
@@ -37,6 +39,15 @@ export default function App() {
     setDrawerOpen(false)
     window.scrollTo({ top: 0 })
   }
+  const openDemo = (demoId) => {
+    setFocusedDemo(demoId)
+    setTab('labs')
+  }
+  const backToLesson = () => {
+    setFocusedDemo(null)
+    setTab('lessons')
+    window.scrollTo({ top: 0 })
+  }
 
   return (
     <>
@@ -48,7 +59,10 @@ export default function App() {
               key={t.id}
               className={`tab${tab === t.id ? ' is-active' : ''}`}
               aria-current={tab === t.id ? 'page' : undefined}
-              onClick={() => setTab(t.id)}
+              onClick={() => {
+                if (t.id !== 'labs') setFocusedDemo(null)
+                setTab(t.id)
+              }}
             >
               {t.label}
             </button>
@@ -95,6 +109,7 @@ export default function App() {
                   done={progress.includes(lesson.id)}
                   onComplete={complete}
                   onNavigate={goto}
+                  onOpenDemo={openDemo}
                 />
               </>
             ) : (
@@ -102,6 +117,14 @@ export default function App() {
             )}
           </main>
         </div>
+      ) : tab === 'labs' ? (
+        <main className="app-body">
+          <Labs
+            focusId={focusedDemo}
+            onBack={focusedDemo && lesson ? backToLesson : null}
+            backLabel={lesson ? `레슨으로 돌아가기 · ${lesson.order}. ${lesson.title}` : ''}
+          />
+        </main>
       ) : (
         <main className="app-body">
           <Playground />

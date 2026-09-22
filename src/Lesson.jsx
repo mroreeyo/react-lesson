@@ -1,5 +1,6 @@
 import CodeSandbox from './CodeSandbox.jsx'
 import Quiz from './Quiz.jsx'
+import { demoById } from './labs/index.jsx'
 import { chapterOf, lessons, lessonsOf } from './lessons/index.js'
 
 function Paragraphs({ text }) {
@@ -13,7 +14,7 @@ function Paragraphs({ text }) {
  * JS 되짚기 · 한 줄 정의 · 지금 방식 · 없던 시절 · 왜 나왔나 · 더 파고들면 · 확인 문제.
  * 뒤의 세 블록은 있는 레슨에만 나온다.
  */
-export default function Lesson({ lesson, done, onComplete, onNavigate }) {
+export default function Lesson({ lesson, done, onComplete, onNavigate, onOpenDemo }) {
   const chapter = chapterOf(lesson.chapter)
   const siblings = lessonsOf(lesson.chapter)
   const isFirstOfChapter = siblings[0]?.id === lesson.id
@@ -21,6 +22,7 @@ export default function Lesson({ lesson, done, onComplete, onNavigate }) {
   const at = lessons.findIndex((l) => l.id === lesson.id)
   const prev = lessons[at - 1]
   const next = lessons[at + 1]
+  const demo = lesson.demo ? demoById(lesson.demo) : null
 
   return (
     <article className="tab-body lesson">
@@ -98,6 +100,16 @@ export default function Lesson({ lesson, done, onComplete, onNavigate }) {
             <code>{lesson.before.code}</code>
           </pre>
           <p className="panel-hint">이 코드는 실행하지 않는다. 위 예제와 같은 문제를 푸는 짝이다.</p>
+        </section>
+      )}
+
+      {demo && (
+        <section className="block">
+          <h3 className="block-head">실험실</h3>
+          <button className="demo-link" onClick={() => onOpenDemo(demo.id)}>
+            <span className="demo-link-title">{demo.title} 데모 열기 →</span>
+            <span className="demo-link-what">{demo.what}</span>
+          </button>
         </section>
       )}
 

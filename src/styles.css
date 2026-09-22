@@ -647,3 +647,213 @@ body {
     margin-left: 0;
   }
 }
+
+/* ── 실험실 ── */
+.demo {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+  padding: 1.1rem;
+  margin-bottom: 1.5rem;
+  scroll-margin-top: 4.5rem;
+}
+
+.demo.is-focused {
+  border-color: var(--accent);
+}
+
+.demo h3 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.demo-what {
+  margin: 0.25rem 0 1rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.demo-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.demo-controls .ghost {
+  font-size: 0.8rem;
+  padding: 0.35rem 0.6rem;
+}
+
+.switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.8rem;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.demo-note {
+  margin: 0.8rem 0 0;
+  font-size: 0.84rem;
+  line-height: 1.65;
+  color: var(--muted);
+}
+
+.flash-box {
+  position: relative;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0.75rem 0.85rem;
+  margin-bottom: 0.6rem;
+  animation: flash 0.45s ease-out;
+}
+
+.flash-box strong {
+  font-size: 0.9rem;
+}
+
+.flash-box p {
+  margin: 0.2rem 0 0;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.flash-count {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.7rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+
+@keyframes flash {
+  from {
+    border-color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
+  }
+  to {
+    border-color: var(--line);
+    background: transparent;
+  }
+}
+
+/* 깜빡임을 끄면 렌더 횟수 숫자 변화만 남는다 */
+@media (prefers-reduced-motion: reduce) {
+  .flash-box {
+    animation: none;
+  }
+  .progress-fill {
+    transition: none;
+  }
+}
+
+.demo-table {
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+.demo-table th {
+  text-align: left;
+  font-family: var(--font-mono);
+  font-weight: 400;
+  color: var(--muted);
+  padding: 0.15rem 1rem 0.15rem 0;
+}
+
+.demo-table td {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+.key-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.key-col {
+  min-width: 0;
+}
+
+.key-label {
+  margin: 0 0 0.4rem;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.key-label code {
+  font-family: var(--font-mono);
+  color: var(--text);
+}
+
+.key-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.key-list input {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.84rem;
+  padding: 0.35rem 0.5rem;
+}
+
+.key-list input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+/* ── 레슨 본문의 데모 링크 ── */
+.demo-link {
+  display: block;
+  width: 100%;
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  background: none;
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  padding: 0.7rem 0.85rem;
+  cursor: pointer;
+}
+
+.demo-link:hover {
+  background: var(--surface);
+}
+
+.demo-link:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.demo-link-title {
+  display: block;
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: var(--accent);
+}
+
+.demo-link-what {
+  display: block;
+  margin-top: 0.15rem;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+@media (max-width: 560px) {
+  .key-pair {
+    grid-template-columns: 1fr;
+  }
+}
