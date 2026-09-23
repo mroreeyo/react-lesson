@@ -105,13 +105,15 @@ function TodoInput({ ref, value, onChange }) {
 }
 
 function App() {
-  const [todos, setTodos] = useState(['장보기'])
+  const [todos, setTodos] = useState([{ id: 'a', title: '장보기' }])
   const [draft, setDraft] = useState('')
+  const nextId = useRef(2)
   const inputRef = useRef(null)
 
   function add() {
     if (draft.trim() === '') return
-    setTodos([...todos, draft])
+    setTodos([...todos, { id: 'n' + nextId.current, title: draft }])
+    nextId.current = nextId.current + 1
     setDraft('')
     inputRef.current.focus()
   }
@@ -119,8 +121,8 @@ function App() {
   return (
     <section>
       <ul>
-        {todos.map((title, i) => (
-          <li key={title + i}>{title}</li>
+        {todos.map((todo) => (
+          <li key={todo.id}>{todo.title}</li>
         ))}
       </ul>
       <TodoInput ref={inputRef} value={draft} onChange={(e) => setDraft(e.target.value)} />

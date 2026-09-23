@@ -17,6 +17,7 @@ export default function Quiz({ quiz, done, onCorrect, onNext, nextLabel }) {
               <button
                 className={`quiz-option${chosen ? (correct ? ' is-correct' : ' is-wrong') : ''}`}
                 aria-pressed={chosen}
+                disabled={correct}
                 onClick={() => {
                   setPicked(i)
                   if (i === quiz.answerIndex) onCorrect()
@@ -30,7 +31,7 @@ export default function Quiz({ quiz, done, onCorrect, onNext, nextLabel }) {
       </ul>
       {picked !== null && (
         <p className={`quiz-verdict${correct ? ' is-correct' : ''}`} role="status">
-          {correct ? `정답. ${quiz.explanation}` : '아니다. 다시 골라 보세요.'}
+          {correct ? `정답. ${quiz.explanation}` : '틀렸다. 다시 고를 수 있다.'}
         </p>
       )}
       {/* 맞힌 자리에서 바로 넘어간다. 아래 이전/다음 버튼까지 내려갈 필요가 없다. */}
@@ -39,7 +40,7 @@ export default function Quiz({ quiz, done, onCorrect, onNext, nextLabel }) {
           다음 레슨 · {nextLabel} →
         </button>
       )}
-      {done && picked === null && <p className="panel-hint">이미 푼 레슨입니다.</p>}
+      {done && picked === null && <p className="panel-hint">이미 푼 레슨이다.</p>}
     </section>
   )
 }

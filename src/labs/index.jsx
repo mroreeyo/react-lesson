@@ -164,7 +164,7 @@ function KeyDemo() {
       </div>
 
       <p className="demo-note">
-        양쪽 입력창에 아무 글자나 쓰고, 맨 앞에 추가를 눌러 보세요. 같은 데이터에 key만 다릅니다.
+        양쪽 입력창에 아무 글자나 쓰고 맨 앞에 추가를 누른다. 같은 데이터에 key만 다르다.
       </p>
 
       <div className="key-pair">

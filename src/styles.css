@@ -990,3 +990,8 @@ body {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
+
+/* 변환기를 받는 동안 편집기 전체를 흐리게. 글자는 pre가 그리므로 textarea만 흐려서는 안 보인다. */
+.editor:has(.editor-textarea:disabled) {
+  opacity: 0.5;
+}

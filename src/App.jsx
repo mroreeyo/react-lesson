@@ -79,6 +79,8 @@ export default function App() {
             className="ghost"
             disabled={progress.length === 0}
             onClick={() => {
+              // 한 번 누르면 되돌릴 수 없다. 확인을 받는다.
+              if (!window.confirm('완료 표시를 전부 지웁니다. 편집한 코드는 남습니다.')) return
               clearProgress()
               setProgress([])
             }}

@@ -224,7 +224,7 @@ function App() {
   return (
     <section>
       <h2>할 일 {todos.length}개</h2>
-      <p>결과 패널을 다시 실행해도 남아 있다. 편집기 코드를 아무렇게나 한 글자 고쳐 보세요.</p>
+      <p>결과 패널의 "다시 실행"을 눌러도 목록이 남아 있다. 저장소에서 다시 읽기 때문이다.</p>
       <ul>
         {todos.map((todo) => (
           <li key={todo.id}>{todo.title}</li>

@@ -61,7 +61,7 @@ export async function compileToApp(code) {
   }
 
   if (typeof App !== 'function') {
-    throw new CodeError('run', 'App 컴포넌트를 찾지 못했습니다. `function App() { ... }` 을 정의하세요.')
+    throw new CodeError('run', 'App 컴포넌트가 없다. `function App() { ... }`을 정의한다.')
   }
   return App
 }
