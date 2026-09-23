@@ -8,7 +8,8 @@
   --error-bg: #fdf1ef;
   --error-line: #e0b4ac;
   --error-text: #8c2f20;
-  --font-sans: 'IBM Plex Sans KR', system-ui, sans-serif;
+  --font-sans: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui,
+    'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
   --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
 }
 
