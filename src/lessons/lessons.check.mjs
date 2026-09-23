@@ -77,6 +77,8 @@ for (const l of practice) {
   }
 }
 const withSolution = practice.filter((l) => l.solutionCode).length
+// 레슨 1(리액트 소개)만 완성본으로 시작한다. 나머지 실습은 전부 앞 레슨 방식 스타터 + 정답이어야 한다.
+for (const l of practice) if (l.order !== 1) assert.ok(l.solutionCode, `레슨 ${l.order} ${l.title}: solutionCode가 없다`)
 
 console.log(
   `ok — 레슨 ${lessons.length}개(실습 ${practice.length}개 실행 확인, 정답 코드 ${withSolution}개), 챕터 파일 ${files.length}개`,

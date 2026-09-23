@@ -8,8 +8,56 @@ export default [
     kind: 'practice',
     definition:
       'memo는 props가 같으면 컴포넌트를 다시 그리지 않는다. useMemo는 계산 결과를, useCallback은 함수를 렌더 사이에 붙들어 둔다. 셋 다 "지난번과 같은 값"을 만들어 memo가 건너뛸 수 있게 하는 도구다. 이렇게 결과를 기억해 두는 것을 메모이제이션이라 한다.',
-    goal: '"부모만 다시 그리기"를 눌러도 카드의 렌더 횟수가 오르지 않는다. useCallback 줄을 지우고 다시 눌러 보면 오른다.',
+    goal: '지금은 "부모만 다시 그리기"를 누르면 카드 세 장의 렌더 횟수도 같이 오른다. `TodoCard`를 `memo(...)`로 감싸고, `toggle`을 `useCallback(..., [])`으로, `left`를 `useMemo(..., [todos])`로 바꿔 카드 횟수가 멈추게 한다.',
     starterCode: `function useRenderCount() {
+  const count = useRef(0)
+  count.current += 1
+  return count.current
+}
+
+function TodoCard({ todo, onToggle }) {
+  const renders = useRenderCount()
+  return (
+    <li>
+      <input type="checkbox" checked={todo.done} onChange={() => onToggle(todo.id)} />
+      <span>{todo.title}</span>
+      <small> 렌더 {renders}회</small>
+    </li>
+  )
+}
+
+function App() {
+  const [todos, setTodos] = useState([
+    { id: 'a', title: '장보기', done: true },
+    { id: 'b', title: '설거지', done: false },
+    { id: 'c', title: '빨래', done: false },
+  ])
+  const [tick, setTick] = useState(0)
+  const appRenders = useRenderCount()
+
+  // 렌더마다 새 함수가 만들어진다
+  const toggle = (id) => {
+    setTodos((prev) => prev.map((todo) => (todo.id === id ? { ...todo, done: !todo.done } : todo)))
+  }
+
+  // 렌더마다 다시 센다
+  const left = todos.filter((todo) => !todo.done).length
+
+  return (
+    <section>
+      <h2>할 일 {todos.length}개 · 남은 것 {left}개</h2>
+      <p>App 렌더 {appRenders}회</p>
+      <button onClick={() => setTick(tick + 1)}>부모만 다시 그리기 ({tick})</button>
+      <ul>
+        {todos.map((todo) => (
+          <TodoCard key={todo.id} todo={todo} onToggle={toggle} />
+        ))}
+      </ul>
+    </section>
+  )
+}
+`,
+    solutionCode: `function useRenderCount() {
   const count = useRef(0)
   count.current += 1
   return count.current
@@ -98,8 +146,37 @@ function App() {
     kind: 'practice',
     definition:
       'React 19부터 함수 컴포넌트는 `ref`를 다른 prop과 똑같이 받는다. 받은 ref를 안쪽 태그에 그대로 넘기면 부모가 그 요소를 만질 수 있다.',
-    goal: '입력칸이 별도 컴포넌트인데도 부모가 포커스를 줄 수 있다.',
-    starterCode: `// ref가 그냥 들어온다. 구조 분해로 꺼내서 태그에 넘긴다.
+    goal: '`<input>`을 `TodoInput({ ref, value, onChange })` 컴포넌트로 떼어 낸다. ref를 다른 prop처럼 구조 분해로 받아 안쪽 `<input ref={ref} …>`에 그대로 넘기고, App은 `<TodoInput ref={inputRef} …/>`로 쓴다. 두 버튼이 여전히 포커스를 주는지 본다.',
+    starterCode: `function App() {
+  const [todos, setTodos] = useState([{ id: 'a', title: '장보기' }])
+  const [draft, setDraft] = useState('')
+  const nextId = useRef(2)
+  const inputRef = useRef(null)
+
+  function add() {
+    if (draft.trim() === '') return
+    setTodos([...todos, { id: 'n' + nextId.current, title: draft }])
+    nextId.current = nextId.current + 1
+    setDraft('')
+    inputRef.current.focus()
+  }
+
+  return (
+    <section>
+      <ul>
+        {todos.map((todo) => (
+          <li key={todo.id}>{todo.title}</li>
+        ))}
+      </ul>
+      {/* 아직 App 안에 직접 있다. 이걸 컴포넌트로 떼면 ref를 넘겨줘야 한다. */}
+      <input ref={inputRef} value={draft} placeholder="새 할 일" onChange={(e) => setDraft(e.target.value)} />
+      <button onClick={add}>추가</button>
+      <button onClick={() => inputRef.current.focus()}>입력칸으로</button>
+    </section>
+  )
+}
+`,
+    solutionCode: `// ref가 그냥 들어온다. 구조 분해로 꺼내서 태그에 넘긴다.
 function TodoInput({ ref, value, onChange }) {
   return <input ref={ref} value={value} placeholder="새 할 일" onChange={onChange} />
 }
@@ -178,8 +255,68 @@ const TodoInput = forwardRef(function TodoInput(props, ref) {  // 두 번째 인
     kind: 'practice',
     definition:
       'Action은 form에 건네는 비동기 함수다. useActionState는 그 함수를 감싸서, 지난 결과와 지금 제출 중인지를 함께 돌려준다. 제출 중 표시와 실패 처리를 직접 만들 필요가 없다.',
-    goal: '추가를 누르면 버튼이 "저장 중…"으로 바뀌고 0.8초 뒤 목록에 들어간다. 느낌표가 들어가면 실패 문구가 나온다.',
+    goal: '손으로 만든 pending·error state와 handleSubmit을 `useActionState`로 바꾼다. `async function addTodo(prev, formData)`를 만들어 지난 결과와 폼 내용으로 다음 결과를 돌려주고, `<form action={addAction}>`에 건다. `isPending`으로 버튼 문구를 바꾼다.',
     starterCode: `let nextId = 2
+
+// 서버에 저장하는 척. 느낌표가 있으면 실패한다.
+function fakeSave(title) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if (title.includes('!')) reject(new Error('느낌표는 저장할 수 없다'))
+      else resolve()
+    }, 800)
+  })
+}
+
+// 제출 중인지, 실패했는지를 전부 손으로 관리하는 방식
+function App() {
+  const [todos, setTodos] = useState([{ id: 1, title: '장보기' }])
+  const [draft, setDraft] = useState('')
+  const [pending, setPending] = useState(false)
+  const [error, setError] = useState(null)
+
+  async function handleSubmit(e) {
+    e.preventDefault()
+    const title = draft.trim()
+    if (title === '') {
+      setError('비어 있다')
+      return
+    }
+    setPending(true)
+    setError(null)
+    try {
+      await fakeSave(title)
+      setTodos((prev) => [...prev, { id: nextId++, title }])
+      setDraft('')
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setPending(false)
+    }
+  }
+
+  return (
+    <section>
+      <ul>
+        {todos.map((todo) => (
+          <li key={todo.id}>{todo.title}</li>
+        ))}
+      </ul>
+      <form onSubmit={handleSubmit}>
+        <input
+          value={draft}
+          placeholder="새 할 일"
+          disabled={pending}
+          onChange={(e) => setDraft(e.target.value)}
+        />
+        <button disabled={pending}>{pending ? '저장 중…' : '추가'}</button>
+      </form>
+      {error && <p>{error}</p>}
+    </section>
+  )
+}
+`,
+    solutionCode: `let nextId = 2
 
 // 서버에 저장하는 척. 느낌표가 있으면 실패한다.
 function fakeSave(title) {
@@ -293,8 +430,52 @@ function App() {
     kind: 'practice',
     definition:
       'useOptimistic은 action이 도는 동안만 쓰는 임시 state를 준다. 결과를 기다리지 않고 먼저 화면에 그리고, action이 끝나면 임시 값은 버리고 진짜 값으로 돌아간다. 이렇게 성공을 가정하고 먼저 보여주는 것을 낙관적 UI라 한다.',
-    goal: '추가를 누르면 기다리지 않고 바로 목록에 흐리게 뜬다. 0.8초 뒤 진해진다. 느낌표가 들어가면 흐린 항목이 사라진다.',
+    goal: '지금은 추가를 누르면 0.8초 동안 아무 일도 없어 보인다. `useOptimistic(todos, (current, title) => [...current, { id: \'temp\', title, pending: true }])`로 `shown`을 만들고, action 첫머리에서 `addOptimistic(title)`을 부른다. 목록은 shown으로 그리고 pending이면 흐리게.',
     starterCode: `let nextId = 2
+
+function fakeSave(title) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if (title.includes('!')) reject(new Error('느낌표는 저장할 수 없다'))
+      else resolve()
+    }, 800)
+  })
+}
+
+function App() {
+  const [todos, setTodos] = useState([{ id: 1, title: '장보기' }])
+  const [error, setError] = useState(null)
+
+  async function addAction(formData) {
+    const title = formData.get('title').trim()
+    if (title === '') return
+    setError(null)
+    // ── 여기서 먼저 그린다. 아직은 저장이 끝나야 목록이 바뀐다.
+    try {
+      await fakeSave(title)
+      setTodos((prev) => [...prev, { id: nextId++, title }])
+    } catch (err) {
+      setError(err.message)
+    }
+  }
+
+  return (
+    <section>
+      <ul>
+        {todos.map((todo) => (
+          <li key={todo.id}>{todo.title}</li>
+        ))}
+      </ul>
+      <form action={addAction}>
+        <input name="title" placeholder="새 할 일" />
+        <button>추가</button>
+      </form>
+      {error && <p>{error}</p>}
+    </section>
+  )
+}
+`,
+    solutionCode: `let nextId = 2
 
 function fakeSave(title) {
   return new Promise((resolve, reject) => {
@@ -403,8 +584,57 @@ function App() {
     kind: 'practice',
     definition:
       'use는 Promise나 Context를 읽는 훅이다. Promise를 주면 끝날 때까지 가장 가까운 Suspense가 대신 그려지고, 끝나면 그 값으로 그린다. 다른 훅과 달리 if 안에서 불러도 된다.',
-    goal: '목록이 1초 뒤 "서버"에서 오고, 오는 동안 "불러오는 중…"이 보인다. 테마는 조건에 따라 읽거나 안 읽는다.',
+    goal: 'TodoList의 useState+useEffect를 `const todos = use(todosPromise)` 한 줄로 바꾸고, App에서 `<Suspense fallback={<p>불러오는 중…</p>}>`으로 감싼다. Badge는 `useContext`를 `use(ThemeContext)`로 바꿔 `if (!show) return null` 아래로 내린다.',
     starterCode: `const ThemeContext = createContext('light')
+
+// 서버에서 목록을 받는 척. Promise는 컴포넌트 밖에서 한 번만 만든다.
+const todosPromise = new Promise((resolve) => {
+  setTimeout(() => resolve(['장보기', '설거지', '빨래']), 1000)
+})
+
+function TodoList() {
+  // 기다리는 일을 state와 Effect로 직접 한다
+  const [todos, setTodos] = useState(null)
+  useEffect(() => {
+    todosPromise.then(setTodos)
+  }, [])
+
+  if (todos === null) return <p>불러오는 중…</p>
+  return (
+    <ul>
+      {todos.map((title) => (
+        <li key={title}>{title}</li>
+      ))}
+    </ul>
+  )
+}
+
+function Badge({ show }) {
+  // useContext는 훅 규칙 때문에 if 위에 있어야 한다. 안 쓸 때도 읽는다.
+  const theme = useContext(ThemeContext)
+  if (!show) return null
+  return <small>테마: {theme}</small>
+}
+
+function App() {
+  const [showBadge, setShowBadge] = useState(true)
+
+  return (
+    <ThemeContext.Provider value="dark">
+      <section>
+        <h2>할 일</h2>
+        <TodoList />
+        <label>
+          <input type="checkbox" checked={showBadge} onChange={(e) => setShowBadge(e.target.checked)} />
+          테마 표시
+        </label>
+        <Badge show={showBadge} />
+      </section>
+    </ThemeContext.Provider>
+  )
+}
+`,
+    solutionCode: `const ThemeContext = createContext('light')
 
 // 서버에서 목록을 받는 척. Promise는 컴포넌트 밖에서 한 번만 만든다.
 const todosPromise = new Promise((resolve) => {

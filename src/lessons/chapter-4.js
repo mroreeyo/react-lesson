@@ -8,8 +8,47 @@ export default [
     kind: 'practice',
     definition:
       'useRef는 렌더 사이에 남지만 바꿔도 다시 그리지 않는 칸을 준다. 화면에 나오지 않는 값을 둘 자리다.',
-    goal: '챕터 3에서 모듈 바깥에 두었던 nextId를 컴포넌트 안으로 들인다. 다시 그릴 이유가 없는 값이라 ref에 둔다. reducer는 번호를 만들지 않고 받기만 한다.',
-    starterCode: `function todosReducer(todos, action) {
+    goal: '모듈 바깥의 `let nextId`를 지우고 App 안에 `const nextId = useRef(2)`를 둔다. add에서 `\'n\' + nextId.current`로 번호를 만들고 `nextId.current = nextId.current + 1`로 올린다.',
+    starterCode: `// 챕터 3 방식. 컴포넌트 바깥에 있어서, App을 두 군데 그리면 번호를 나눠 쓰게 된다.
+let nextId = 2
+
+function todosReducer(todos, action) {
+  switch (action.type) {
+    case 'added':
+      return [...todos, { id: action.id, title: action.title, done: false }]
+    default:
+      throw new Error('모르는 action: ' + action.type)
+  }
+}
+
+function App() {
+  const [todos, dispatch] = useReducer(todosReducer, [{ id: 'a', title: '장보기', done: false }])
+  const [draft, setDraft] = useState('')
+
+  function add() {
+    if (draft.trim() === '') return
+    dispatch({ type: 'added', id: 'n' + nextId, title: draft })
+    nextId = nextId + 1
+    setDraft('')
+  }
+
+  return (
+    <section>
+      <h2>할 일 {todos.length}개</h2>
+      <ul>
+        {todos.map((todo) => (
+          <li key={todo.id}>
+            {todo.title} <small>({todo.id})</small>
+          </li>
+        ))}
+      </ul>
+      <input value={draft} placeholder="새 할 일" onChange={(e) => setDraft(e.target.value)} />
+      <button onClick={add}>추가</button>
+    </section>
+  )
+}
+`,
+    solutionCode: `function todosReducer(todos, action) {
   switch (action.type) {
     case 'added':
       return [...todos, { id: action.id, title: action.title, done: false }]
@@ -93,8 +132,48 @@ function App() {
     kind: 'practice',
     definition:
       '`ref`를 태그에 주면 리액트가 커밋할 때 그 DOM 요소(브라우저가 실제로 들고 있는 요소)를 `ref.current`에 넣어 준다. 그리는 동안에는 아직 비어 있으니(null) 핸들러나 Effect에서 읽는다. 포커스나 스크롤처럼 JSX로 표현할 수 없는 일을 할 때 쓴다.',
-    goal: '추가한 다음 입력칸에 커서가 저절로 간다.',
+    goal: '`const inputRef = useRef(null)`을 만들어 `<input ref={inputRef} …>`에 준다. add의 끝에서 `inputRef.current.focus()`를 부르고, `입력칸으로` 버튼을 하나 더 만들어 같은 일을 시킨다.',
     starterCode: `function todosReducer(todos, action) {
+  switch (action.type) {
+    case 'added':
+      return [...todos, { id: action.id, title: action.title, done: false }]
+    default:
+      throw new Error('모르는 action: ' + action.type)
+  }
+}
+
+function App() {
+  const [todos, dispatch] = useReducer(todosReducer, [{ id: 'a', title: '장보기', done: false }])
+  const [draft, setDraft] = useState('')
+  const nextId = useRef(2)
+
+  function add() {
+    if (draft.trim() === '') return
+    dispatch({ type: 'added', id: 'n' + nextId.current, title: draft })
+    nextId.current = nextId.current + 1
+    setDraft('')
+    // 추가한 뒤 커서가 입력칸을 떠난다. 다시 클릭해야 한다.
+  }
+
+  return (
+    <section>
+      <h2>할 일 {todos.length}개</h2>
+      <ul>
+        {todos.map((todo) => (
+          <li key={todo.id}>{todo.title}</li>
+        ))}
+      </ul>
+      <input
+        value={draft}
+        placeholder="적고 추가를 누르세요"
+        onChange={(e) => setDraft(e.target.value)}
+      />
+      <button onClick={add}>추가</button>
+    </section>
+  )
+}
+`,
+    solutionCode: `function todosReducer(todos, action) {
   switch (action.type) {
     case 'added':
       return [...todos, { id: action.id, title: action.title, done: false }]
@@ -174,8 +253,62 @@ function App() {
     kind: 'practice',
     definition:
       'useEffect는 렌더가 화면에 반영된 뒤에 돈다. 리액트 바깥에 있는 것을 지금 state에 맞춰 두는 자리다. 두 번째 인자인 의존성 배열에 적은 값이 지난번과 달라지면 다시 돌고, 빈 배열이면 처음 한 번만 돈다.',
-    goal: '새로고침해도 할 일이 남는다. 목록이 바뀔 때마다 브라우저 저장소에 맞춰 둔다.',
+    goal: 'App에 `useEffect`를 추가한다. 안에서 `localStorage.setItem(KEY, JSON.stringify(todos))`를 try/catch로 감싸 부르고, 의존성 배열에 `[todos]`를 준다. 항목을 넣고 "다시 실행"을 눌러 남는지 본다.',
     starterCode: `const KEY = 'todo-demo:v1'
+const INITIAL = [{ id: 'a', title: '장보기', done: false }]
+
+function todosReducer(todos, action) {
+  switch (action.type) {
+    case 'added':
+      return [...todos, { id: action.id, title: action.title, done: false }]
+    case 'cleared':
+      return []
+    default:
+      throw new Error('모르는 action: ' + action.type)
+  }
+}
+
+// 저장소에서 처음 값을 읽는다. 읽기는 되는데, 아직 아무도 쓰지 않는다.
+function load(key) {
+  try {
+    const raw = localStorage.getItem(key)
+    return raw === null ? INITIAL : JSON.parse(raw)
+  } catch {
+    return INITIAL
+  }
+}
+
+function App() {
+  const [todos, dispatch] = useReducer(todosReducer, KEY, load)
+  const [draft, setDraft] = useState('')
+  const nextId = useRef(100)
+
+  // ── 여기에 useEffect. todos가 바뀔 때마다 저장소에 쓴다.
+
+  function add() {
+    if (draft.trim() === '') return
+    dispatch({ type: 'added', id: 'n' + nextId.current, title: draft })
+    nextId.current = nextId.current + 1
+    setDraft('')
+  }
+
+  return (
+    <section>
+      <h2>할 일 {todos.length}개</h2>
+      <p>지금은 "다시 실행"을 누르면 넣은 항목이 사라진다. 저장하는 코드가 없어서다.</p>
+      <ul>
+        {todos.map((todo) => (
+          <li key={todo.id}>{todo.title}</li>
+        ))}
+      </ul>
+      <input value={draft} placeholder="새 할 일" onChange={(e) => setDraft(e.target.value)} />
+      <button onClick={add}>추가</button>
+      <button onClick={() => dispatch({ type: 'cleared' })}>비우기</button>
+    </section>
+  )
+}
+`,
+    solutionCode: `const KEY = 'todo-demo:v1'
 const INITIAL = [{ id: 'a', title: '장보기', done: false }]
 
 function todosReducer(todos, action) {
@@ -299,6 +432,46 @@ class ChatRoom extends React.Component {
     chapter: '4',
     order: 28,
     broken: true,
+    solutionCode: `function todosReducer(todos, action) {
+  switch (action.type) {
+    case 'toggled':
+      return todos.map((todo) =>
+        todo.id === action.id ? { ...todo, done: !todo.done } : todo,
+      )
+    default:
+      throw new Error('모르는 action: ' + action.type)
+  }
+}
+
+function App() {
+  const [todos, dispatch] = useReducer(todosReducer, [
+    { id: 'a', title: '장보기', done: true },
+    { id: 'b', title: '설거지', done: false },
+  ])
+
+  // Effect도 state도 필요 없다. 그리는 동안 계산하면 한 번에 맞는 값이 나온다.
+  const left = todos.filter((todo) => !todo.done).length
+
+  return (
+    <section>
+      <h2>할 일 {todos.length}개</h2>
+      <p>남은 것 {left}개</p>
+      <ul>
+        {todos.map((todo) => (
+          <li key={todo.id}>
+            <input
+              type="checkbox"
+              checked={todo.done}
+              onChange={() => dispatch({ type: 'toggled', id: todo.id })}
+            />
+            <span>{todo.title}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )
+}
+`,
     title: 'Effect가 필요 없는 경우',
     tagline: '계산으로 되는 일에 Effect를 쓰지 않는다',
     kind: 'practice',
@@ -387,8 +560,54 @@ function App() {
     kind: 'practice',
     definition:
       'Effect는 화면에 붙고 떼어지는 시점(마운트·언마운트)이 아니라 "맞추기 시작"과 "맞추기 멈춤"으로 생각한다. 의존성이 바뀌면 리액트가 먼저 멈추고 다시 시작한다.',
-    goal: '바깥에서 오는 신호를 계속 받는 것을 구독이라 한다. 필터를 바꿀 때마다 이전 구독이 닫히고 새 구독이 열리는 것을 기록으로 본다.',
+    goal: '바깥에서 오는 신호를 계속 받는 것을 구독이라 한다. 지금은 필터를 바꿔도 이전 구독이 안 닫혀 갱신이 겹친다. Effect 끝에 `return () => feed.close(push)`를 넣어, 필터를 바꾸면 닫힘 → 열림이 짝으로 찍히게 한다.',
     starterCode: `// 리액트 바깥에 있는 것을 흉내낸 가짜 구독
+function createFeed(filter) {
+  let timer = null
+  return {
+    open(onEvent) {
+      onEvent('열림: ' + filter)
+      timer = setInterval(() => onEvent('갱신: ' + filter), 2000)
+    },
+    close(onEvent) {
+      clearInterval(timer)
+      onEvent('닫힘: ' + filter)
+    },
+  }
+}
+
+function App() {
+  const [filter, setFilter] = useState('all')
+  const [log, setLog] = useState([])
+
+  useEffect(() => {
+    const push = (line) => setLog((prev) => [...prev, line])
+    const feed = createFeed(filter)
+    feed.open(push)
+    // ── 멈추는 코드가 없다. 필터를 두 번 바꾸면 구독 세 개가 같이 돈다.
+  }, [filter])
+
+  return (
+    <section>
+      <div>
+        {['all', 'left', 'done'].map((name) => (
+          <button key={name} onClick={() => setFilter(name)} disabled={filter === name}>
+            {name}
+          </button>
+        ))}
+        <button onClick={() => setLog([])}>기록 비우기</button>
+      </div>
+      <p>지금 맞추는 대상: {filter}</p>
+      <ol>
+        {log.map((line, i) => (
+          <li key={i}>{line}</li>
+        ))}
+      </ol>
+    </section>
+  )
+}
+`,
+    solutionCode: `// 리액트 바깥에 있는 것을 흉내낸 가짜 구독
 function createFeed(filter) {
   let timer = null
   return {
@@ -474,8 +693,58 @@ function App() {
     kind: 'practice',
     definition:
       'Effect 안의 코드 중 일부는 "값이 바뀌면 다시 해야 하는 일"이고, 일부는 "그때그때 최신 값을 읽기만 하는 일"이다. 뒤쪽은 useEffectEvent로 떼어 내면 의존성에서 빠진다.',
-    goal: '알림 문구를 바꿔도 구독이 다시 열리지 않는다. 필터를 바꿀 때만 다시 열린다.',
+    goal: '지금은 문구를 한 글자 칠 때마다 구독이 다시 열린다. `onEvent`를 `useEffectEvent(...)`로 감싸고, 의존성 배열에서 `prefix`를 뺀다. 문구를 바꿔도 열림이 안 찍히고, 새 문구는 붙는지 본다.',
     starterCode: `function createFeed(filter) {
+  let timer = null
+  return {
+    open(onEvent) {
+      onEvent('열림: ' + filter)
+      timer = setInterval(() => onEvent('갱신'), 2500)
+    },
+    close() {
+      clearInterval(timer)
+    },
+  }
+}
+
+function App() {
+  const [filter, setFilter] = useState('all')
+  const [prefix, setPrefix] = useState('[알림]')
+  const [log, setLog] = useState([])
+
+  // prefix를 읽는 보통 함수다. 그래서 prefix가 의존성에 들어가야 최신 문구가 붙는다.
+  const onEvent = (line) => {
+    setLog((prev) => [...prev, prefix + ' ' + line])
+  }
+
+  useEffect(() => {
+    const feed = createFeed(filter)
+    feed.open(onEvent)
+    return () => feed.close()
+  }, [filter, prefix]) // prefix 때문에 문구를 칠 때마다 다시 연다
+
+  return (
+    <section>
+      <div>
+        {['all', 'left', 'done'].map((name) => (
+          <button key={name} onClick={() => setFilter(name)} disabled={filter === name}>
+            {name}
+          </button>
+        ))}
+      </div>
+      <input value={prefix} onChange={(e) => setPrefix(e.target.value)} />
+      <p>맞추는 대상 {filter} · 문구 {prefix}</p>
+      <button onClick={() => setLog([])}>기록 비우기</button>
+      <ol>
+        {log.map((line, i) => (
+          <li key={i}>{line}</li>
+        ))}
+      </ol>
+    </section>
+  )
+}
+`,
+    solutionCode: `function createFeed(filter) {
   let timer = null
   return {
     open(onEvent) {
@@ -560,6 +829,57 @@ function App() {
     chapter: '4',
     order: 31,
     broken: true,
+    solutionCode: `const LIMIT = 12
+
+function createFeed(options) {
+  let timer = null
+  return {
+    open(onEvent) {
+      onEvent('열림: ' + options.filter)
+      timer = setInterval(() => onEvent('갱신'), 3000)
+    },
+    close() {
+      clearInterval(timer)
+    },
+  }
+}
+
+function App() {
+  const [filter, setFilter] = useState('all')
+  const [log, setLog] = useState([])
+
+  useEffect(() => {
+    // 객체를 Effect 안에서 만든다. 이제 의존성은 filter뿐이고, 필터가 바뀔 때만 다시 연다.
+    const options = { filter: filter }
+    const push = (line) => setLog((prev) => (prev.length >= LIMIT ? prev : [...prev, line]))
+    const feed = createFeed(options)
+    feed.open(push)
+    return () => feed.close()
+  }, [filter])
+
+  return (
+    <section>
+      <div>
+        {['all', 'left', 'done'].map((name) => (
+          <button key={name} onClick={() => setFilter(name)} disabled={filter === name}>
+            {name}
+          </button>
+        ))}
+        <button onClick={() => setLog([])}>기록 비우기</button>
+      </div>
+      <p>
+        열린 횟수 {log.length}
+        {log.length >= LIMIT && ' (제동장치가 막았다. 원래는 안 멈춘다)'}
+      </p>
+      <ol>
+        {log.map((line, i) => (
+          <li key={i}>{line}</li>
+        ))}
+      </ol>
+    </section>
+  )
+}
+`,
     title: 'Effect 의존성 제거하기',
     tagline: '코드를 고쳐서 의존성을 줄인다',
     kind: 'practice',
@@ -663,8 +983,98 @@ function App() {
     kind: 'practice',
     definition:
       '`use`로 시작하는 함수 안에서 훅을 부르면 커스텀 훅이다. 로직만 떼어 여러 컴포넌트가 가져다 쓸 수 있고, state는 쓰는 쪽마다 따로 생긴다.',
-    goal: '챕터 4의 마지막 모습이다. reducer와 저장을 useTodos로, 포커스를 useAutoFocus로 떼어 낸다. App에는 화면만 남는다.',
+    goal: 'App 안의 두 덩어리를 훅으로 뺀다. useReducer + 저장 Effect는 `useTodos(key)`로(반환 `[todos, dispatch]`), ref + 포커스 Effect는 `useAutoFocus()`로(반환 ref). App은 그 둘을 부르기만 한다.',
     starterCode: `const INITIAL = [{ id: 'a', title: '장보기', done: false }]
+
+function todosReducer(todos, action) {
+  switch (action.type) {
+    case 'added':
+      return [...todos, { id: action.id, title: action.title, done: false }]
+    case 'toggled':
+      return todos.map((todo) =>
+        todo.id === action.id ? { ...todo, done: !todo.done } : todo,
+      )
+    case 'cleared':
+      return []
+    default:
+      throw new Error('모르는 action: ' + action.type)
+  }
+}
+
+function load(key) {
+  try {
+    const raw = localStorage.getItem(key)
+    return raw === null ? INITIAL : JSON.parse(raw)
+  } catch {
+    return INITIAL
+  }
+}
+
+function TodoCard({ todo, dispatch }) {
+  return (
+    <li>
+      <input
+        type="checkbox"
+        checked={todo.done}
+        onChange={() => dispatch({ type: 'toggled', id: todo.id })}
+      />
+      <span>{todo.title}</span>
+      {todo.done && <em> · 끝</em>}
+    </li>
+  )
+}
+
+function App() {
+  // ── 덩어리 1: 목록 상태와 저장. useTodos('todo-demo:v2')로 뺀다.
+  const [todos, dispatch] = useReducer(todosReducer, 'todo-demo:v2', load)
+  useEffect(() => {
+    try {
+      localStorage.setItem('todo-demo:v2', JSON.stringify(todos))
+    } catch {
+      // 저장이 막혀도 앱은 그대로 돈다
+    }
+  }, [todos])
+
+  // ── 덩어리 2: 붙을 때 포커스. useAutoFocus()로 뺀다.
+  const inputRef = useRef(null)
+  useEffect(() => {
+    inputRef.current.focus()
+  }, [])
+
+  const [draft, setDraft] = useState('')
+  const nextId = useRef(100)
+  const left = todos.filter((todo) => !todo.done).length
+
+  function add() {
+    if (draft.trim() === '') return
+    dispatch({ type: 'added', id: 'n' + nextId.current, title: draft })
+    nextId.current = nextId.current + 1
+    setDraft('')
+    inputRef.current.focus()
+  }
+
+  return (
+    <section>
+      <h2>할 일 {todos.length}개</h2>
+      <p>{left === 0 ? '다 끝났다' : '남은 것 ' + left + '개'}</p>
+      <ul>
+        {todos.map((todo) => (
+          <TodoCard key={todo.id} todo={todo} dispatch={dispatch} />
+        ))}
+      </ul>
+      <input
+        ref={inputRef}
+        value={draft}
+        placeholder="새 할 일"
+        onChange={(e) => setDraft(e.target.value)}
+      />
+      <button onClick={add}>추가</button>
+      <button onClick={() => dispatch({ type: 'cleared' })}>비우기</button>
+    </section>
+  )
+}
+`,
+    solutionCode: `const INITIAL = [{ id: 'a', title: '장보기', done: false }]
 
 function todosReducer(todos, action) {
   switch (action.type) {

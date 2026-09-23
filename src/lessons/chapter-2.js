@@ -9,8 +9,41 @@ export default [
     jsPrereq: ['함수는 값이다. 변수에 담고, 인자로 넘길 수 있다'],
     definition:
       'onClick 같은 prop에 함수를 건네면 리액트가 그 일이 생겼을 때 불러 준다. 이렇게 건네는 함수를 핸들러라 부른다. 호출한 결과가 아니라 함수 자체를 건넨다.',
-    goal: '체크박스와 버튼이 눌린다. 다만 화면은 아직 안 바뀐다.',
+    goal: 'TodoCard가 `onToggle`을 props로 받아 체크박스의 `onChange`에 건네게 한다. App에서 카드마다 `onToggle={() => console.log(\'토글\', todo.title)}`을 넘기고, 추가 버튼에 `onClick={handleAdd}`를 건다(괄호 없이).',
     starterCode: `const todos = [
+  { id: 'a', title: '장보기', done: true },
+  { id: 'b', title: '설거지', done: false },
+  { id: 'c', title: '빨래', done: false },
+]
+
+function TodoCard({ title, done }) {
+  return (
+    <li>
+      <input type="checkbox" checked={done} readOnly />
+      <span>{title}</span>
+    </li>
+  )
+}
+
+function App() {
+  function handleAdd() {
+    alert('추가는 아직 안 된다')
+  }
+
+  return (
+    <section>
+      <h2>할 일 {todos.length}개</h2>
+      <ul>
+        {todos.map((todo) => (
+          <TodoCard key={todo.id} title={todo.title} done={todo.done} />
+        ))}
+      </ul>
+      <button>추가</button>
+    </section>
+  )
+}
+`,
+    solutionCode: `const todos = [
   { id: 'a', title: '장보기', done: true },
   { id: 'b', title: '설거지', done: false },
   { id: 'c', title: '빨래', done: false },
@@ -83,8 +116,37 @@ function App() {
     jsPrereq: ['배열 구조 분해로 두 값을 한 줄에 받는다'],
     definition:
       'useState는 값 하나와 그 값을 바꾸는 함수를 돌려준다. 바꾸는 함수를 부르면 리액트가 그 컴포넌트를 다시 그린다. use로 시작하는 이런 함수를 훅이라 부른다.',
-    goal: '체크박스가 눌린다. 카드마다 자기 상태를 기억한다.',
+    goal: 'TodoCard 안에 `const [done, setDone] = useState(false)`를 둔다. 체크박스의 `checked`를 `done`으로, `onChange`를 `() => setDone(!done)`으로 잇고, done이면 `<em> · 끝</em>`을 붙인다.',
     starterCode: `const todos = [
+  { id: 'a', title: '장보기' },
+  { id: 'b', title: '설거지' },
+  { id: 'c', title: '빨래' },
+]
+
+function TodoCard({ title }) {
+  // 아직 아무것도 기억하지 못한다. 눌러도 그대로다.
+  return (
+    <li>
+      <input type="checkbox" checked={false} readOnly />
+      <span>{title}</span>
+    </li>
+  )
+}
+
+function App() {
+  return (
+    <section>
+      <h2>할 일 {todos.length}개</h2>
+      <ul>
+        {todos.map((todo) => (
+          <TodoCard key={todo.id} title={todo.title} />
+        ))}
+      </ul>
+    </section>
+  )
+}
+`,
+    solutionCode: `const todos = [
   { id: 'a', title: '장보기' },
   { id: 'b', title: '설거지' },
   { id: 'c', title: '빨래' },
@@ -238,8 +300,23 @@ const result = App()
     kind: 'practice',
     definition:
       'state를 바꿔도 지금 돌고 있는 코드의 변수는 바뀌지 않는다. 그 변수는 이번 렌더에 찍힌 사진이고, 새 값은 다음 렌더에 들어온다.',
-    goal: '왜 방금 바꾼 값이 바로 안 읽히는지 눈으로 확인한다.',
+    goal: 'handleClick 안에서 `setCount(count + 1)` 바로 다음 줄에 `alert(\'방금 읽은 count는 \' + count)`를 넣는다. 눌러서 화면의 숫자와 alert의 숫자를 견준다.',
     starterCode: `function App() {
+  const [count, setCount] = useState(0)
+
+  function handleClick() {
+    setCount(count + 1)
+  }
+
+  return (
+    <section>
+      <h2>추가한 횟수 {count}</h2>
+      <button onClick={handleClick}>추가</button>
+    </section>
+  )
+}
+`,
+    solutionCode: `function App() {
   const [count, setCount] = useState(0)
 
   function handleClick() {
@@ -286,8 +363,26 @@ const result = App()
     kind: 'practice',
     definition:
       '리액트는 이벤트 하나가 끝날 때까지 바꿀 값을 모아 두었다가 한 번에 처리한다. 값 대신 함수를 넘기면 앞의 결과를 받아 이어서 계산한다.',
-    goal: '두 버튼의 차이를 직접 눌러 확인한다.',
+    goal: '`addThreeRight`를 만든다. `setCount((n) => n + 1)`을 세 번 부른다. 그 함수를 잇는 두 번째 버튼 `+3 (함수를 넘기면)`을 추가하고, 두 버튼의 결과를 견준다.',
     starterCode: `function App() {
+  const [count, setCount] = useState(0)
+
+  function addThreeWrong() {
+    setCount(count + 1)
+    setCount(count + 1)
+    setCount(count + 1)
+  }
+
+  return (
+    <section>
+      <h2>{count}</h2>
+      <button onClick={addThreeWrong}>+3 (값을 넘기면)</button>
+      <button onClick={() => setCount(0)}>0으로</button>
+    </section>
+  )
+}
+`,
+    solutionCode: `function App() {
   const [count, setCount] = useState(0)
 
   function addThreeWrong() {
@@ -346,8 +441,31 @@ const result = App()
     ],
     definition:
       '객체 state는 직접 고치지 않는다. 스프레드로 복사해 바꿀 칸만 덮은 새 객체를 만들어 넘긴다.',
-    goal: '새 할 일을 적을 입력 폼이 생긴다. 제목과 급함 여부를 한 객체에 담는다.',
+    goal: '급함 체크박스를 잇는다: `onChange={(e) => setDraft({ ...draft, urgent: e.target.checked })}`. 그다음 title 쪽의 `...draft`를 지워 보고 무엇이 사라지는지 본 뒤 되돌린다.',
     starterCode: `function App() {
+  const [draft, setDraft] = useState({ title: '', urgent: false })
+
+  return (
+    <section>
+      <input
+        value={draft.title}
+        placeholder="새 할 일"
+        onChange={(e) => setDraft({ ...draft, title: e.target.value })}
+      />
+      <label>
+        {/* 아직 안 이어져 있다. 눌러도 그대로다. */}
+        <input type="checkbox" checked={draft.urgent} readOnly />
+        급함
+      </label>
+      <p>
+        {draft.title === '' ? '(비어 있음)' : draft.title}
+        {draft.urgent && ' · 급함'}
+      </p>
+    </section>
+  )
+}
+`,
+    solutionCode: `function App() {
   const [draft, setDraft] = useState({ title: '', urgent: false })
 
   return (
@@ -411,8 +529,59 @@ const result = App()
     ],
     definition:
       '배열 state도 직접 고치지 않는다. 추가는 스프레드로, 수정은 map으로, 삭제는 filter로 새 배열을 만들어 넘긴다.',
-    goal: '할 일이 추가되고 체크박스가 눌린다. 챕터 2에서 만들려던 앱이 여기서 완성된다.',
+    goal: '`toggle`과 `add`의 몸통을 채운다. toggle은 `todos.map`으로 해당 항목만 done을 뒤집은 새 배열을, add는 `[...todos, 새 항목]`을 setTodos에 넘긴다. 원본 배열은 건드리지 않는다.',
     starterCode: `let nextId = 4
+
+function TodoCard({ todo, onToggle }) {
+  return (
+    <li>
+      <input type="checkbox" checked={todo.done} onChange={() => onToggle(todo.id)} />
+      <span>{todo.title}</span>
+      {todo.done && <em> · 끝</em>}
+    </li>
+  )
+}
+
+function App() {
+  const [todos, setTodos] = useState([
+    { id: 'a', title: '장보기', done: true },
+    { id: 'b', title: '설거지', done: false },
+    { id: 'c', title: '빨래', done: false },
+  ])
+  const [draft, setDraft] = useState('')
+
+  function toggle(id) {
+    // ── todos.map으로 id가 같은 항목만 { ...todo, done: !todo.done }으로 바꾼 새 배열을 setTodos에 넘긴다
+  }
+
+  function add() {
+    if (draft.trim() === '') return
+    // ── [...todos, { id: 'n' + nextId++, title: draft, done: false }]를 setTodos에 넘긴다
+    setDraft('')
+  }
+
+  const left = todos.filter((todo) => !todo.done).length
+
+  return (
+    <section>
+      <h2>할 일 {todos.length}개</h2>
+      <p>{left === 0 ? '다 끝났다' : '남은 것 ' + left + '개'}</p>
+      <ul>
+        {todos.map((todo) => (
+          <TodoCard key={todo.id} todo={todo} onToggle={toggle} />
+        ))}
+      </ul>
+      <input
+        value={draft}
+        placeholder="새 할 일"
+        onChange={(e) => setDraft(e.target.value)}
+      />
+      <button onClick={add}>추가</button>
+    </section>
+  )
+}
+`,
+    solutionCode: `let nextId = 4
 
 function TodoCard({ todo, onToggle }) {
   return (

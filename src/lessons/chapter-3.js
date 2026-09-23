@@ -8,8 +8,52 @@ export default [
     kind: 'practice',
     definition:
       '화면이 가질 수 있는 상태를 먼저 적고, 각 상태에서 무엇을 그릴지 정한다. 요소를 찾아 보이고 숨기는 것이 아니라, 상태를 바꿔서 화면을 고른다. 서로 하나만 고를 수 있는 상태들은 값 하나에 담는다.',
-    goal: '전체 · 남은 것 · 끝낸 것 필터가 붙는다. 보여줄 것이 없을 때 문장이 바뀐다.',
+    goal: '`filter` state를 만든다(`\'all\'`로 시작). 버튼 세 개로 `\'all\'`·`\'left\'`·`\'done\'`을 고르게 하고, `shown`을 filter에 따라 계산해 목록 대신 그린다. shown이 비면 `여기 보여줄 것이 없다`.',
     starterCode: `let nextId = 4
+
+function TodoCard({ todo, onToggle }) {
+  return (
+    <li>
+      <input type="checkbox" checked={todo.done} onChange={() => onToggle(todo.id)} />
+      <span>{todo.title}</span>
+      {todo.done && <em> · 끝</em>}
+    </li>
+  )
+}
+
+function App() {
+  const [todos, setTodos] = useState([
+    { id: 'a', title: '장보기', done: true },
+    { id: 'b', title: '설거지', done: false },
+    { id: 'c', title: '빨래', done: false },
+  ])
+  const [draft, setDraft] = useState('')
+
+  function toggle(id) {
+    setTodos(todos.map((todo) => (todo.id === id ? { ...todo, done: !todo.done } : todo)))
+  }
+
+  function add() {
+    if (draft.trim() === '') return
+    setTodos([...todos, { id: 'n' + nextId++, title: draft, done: false }])
+    setDraft('')
+  }
+
+  return (
+    <section>
+      <h2>할 일 {todos.length}개</h2>
+      <ul>
+        {todos.map((todo) => (
+          <TodoCard key={todo.id} todo={todo} onToggle={toggle} />
+        ))}
+      </ul>
+      <input value={draft} placeholder="새 할 일" onChange={(e) => setDraft(e.target.value)} />
+      <button onClick={add}>추가</button>
+    </section>
+  )
+}
+`,
+    solutionCode: `let nextId = 4
 
 function TodoCard({ todo, onToggle }) {
   return (
@@ -99,6 +143,54 @@ function App() {
     chapter: '3',
     order: 19,
     broken: true,
+    solutionCode: `let nextId = 4
+
+function TodoCard({ todo, onToggle }) {
+  return (
+    <li>
+      <input type="checkbox" checked={todo.done} onChange={() => onToggle(todo.id)} />
+      <span>{todo.title}</span>
+      {todo.done && <em> · 끝</em>}
+    </li>
+  )
+}
+
+function App() {
+  const [todos, setTodos] = useState([
+    { id: 'a', title: '장보기', done: true },
+    { id: 'b', title: '설거지', done: false },
+    { id: 'c', title: '빨래', done: false },
+  ])
+  const [draft, setDraft] = useState('')
+
+  // state가 아니라 계산이다. todos가 바뀌면 저절로 맞는다.
+  const leftCount = todos.filter((todo) => !todo.done).length
+
+  function toggle(id) {
+    setTodos(todos.map((todo) => (todo.id === id ? { ...todo, done: !todo.done } : todo)))
+  }
+
+  function add() {
+    if (draft.trim() === '') return
+    setTodos([...todos, { id: 'n' + nextId++, title: draft, done: false }])
+    setDraft('')
+  }
+
+  return (
+    <section>
+      <h2>할 일 {todos.length}개</h2>
+      <p>남은 것 {leftCount}개</p>
+      <ul>
+        {todos.map((todo) => (
+          <TodoCard key={todo.id} todo={todo} onToggle={toggle} />
+        ))}
+      </ul>
+      <input value={draft} placeholder="새 할 일" onChange={(e) => setDraft(e.target.value)} />
+      <button onClick={add}>추가</button>
+    </section>
+  )
+}
+`,
     title: 'state 구조 선택하기',
     tagline: '계산할 수 있는 값은 state에 두지 않는다',
     kind: 'practice',
@@ -194,8 +286,67 @@ function App() {
     kind: 'practice',
     definition:
       '두 컴포넌트가 같은 값을 보거나 바꿔야 하면, 그 값을 둘의 가장 가까운 공통 부모로 올린다. 값은 props로 내려가고, 바꾸는 함수도 props로 내려간다.',
-    goal: '필터 바와 목록을 각자 컴포넌트로 뗀다. 둘이 같은 filter를 보게 된다.',
+    goal: '버튼 세 개를 `FilterBar({ filter, counts, onChange })`로, 목록을 `TodoList({ todos, onToggle })`로 떼어 낸다. `filter` state는 App에 남기고 둘에게 props로 내린다. FilterBar 버튼에 개수도 보여준다.',
     starterCode: `let nextId = 4
+
+function TodoCard({ todo, onToggle }) {
+  return (
+    <li>
+      <input type="checkbox" checked={todo.done} onChange={() => onToggle(todo.id)} />
+      <span>{todo.title}</span>
+      {todo.done && <em> · 끝</em>}
+    </li>
+  )
+}
+
+function App() {
+  const [todos, setTodos] = useState([
+    { id: 'a', title: '장보기', done: true },
+    { id: 'b', title: '설거지', done: false },
+    { id: 'c', title: '빨래', done: false },
+  ])
+  const [filter, setFilter] = useState('all')
+  const [draft, setDraft] = useState('')
+
+  const shown =
+    filter === 'left' ? todos.filter((todo) => !todo.done)
+    : filter === 'done' ? todos.filter((todo) => todo.done)
+    : todos
+
+  function toggle(id) {
+    setTodos(todos.map((todo) => (todo.id === id ? { ...todo, done: !todo.done } : todo)))
+  }
+
+  function add() {
+    if (draft.trim() === '') return
+    setTodos([...todos, { id: 'n' + nextId++, title: draft, done: false }])
+    setDraft('')
+  }
+
+  return (
+    <section>
+      <h2>할 일 {todos.length}개</h2>
+      <div>
+        <button onClick={() => setFilter('all')} disabled={filter === 'all'}>전체</button>
+        <button onClick={() => setFilter('left')} disabled={filter === 'left'}>남은 것</button>
+        <button onClick={() => setFilter('done')} disabled={filter === 'done'}>끝낸 것</button>
+      </div>
+      {shown.length === 0 ? (
+        <p>여기 보여줄 것이 없다</p>
+      ) : (
+        <ul>
+          {shown.map((todo) => (
+            <TodoCard key={todo.id} todo={todo} onToggle={toggle} />
+          ))}
+        </ul>
+      )}
+      <input value={draft} placeholder="새 할 일" onChange={(e) => setDraft(e.target.value)} />
+      <button onClick={add}>추가</button>
+    </section>
+  )
+}
+`,
+    solutionCode: `let nextId = 4
 
 function FilterBar({ filter, counts, onChange }) {
   return (
@@ -299,6 +450,48 @@ function App() {
     chapter: '3',
     order: 21,
     broken: true,
+    solutionCode: `function Editor({ todo, onRename }) {
+  const [text, setText] = useState(todo.title)
+
+  return (
+    <div>
+      <input value={text} onChange={(e) => setText(e.target.value)} />
+      <button onClick={() => onRename(todo.id, text)}>이름 바꾸기</button>
+    </div>
+  )
+}
+
+function App() {
+  const [todos, setTodos] = useState([
+    { id: 'a', title: '장보기' },
+    { id: 'b', title: '설거지' },
+    { id: 'c', title: '빨래' },
+  ])
+  const [pickedId, setPickedId] = useState('a')
+  const picked = todos.find((todo) => todo.id === pickedId)
+
+  function rename(id, title) {
+    setTodos(todos.map((todo) => (todo.id === id ? { ...todo, title: title } : todo)))
+  }
+
+  return (
+    <section>
+      <ul>
+        {todos.map((todo) => (
+          <li key={todo.id}>
+            <button onClick={() => setPickedId(todo.id)} disabled={todo.id === pickedId}>
+              {todo.title}
+            </button>
+          </li>
+        ))}
+      </ul>
+
+      {/* key가 바뀌면 리액트는 다른 자리로 본다. Editor의 state가 새로 시작한다. */}
+      <Editor key={picked.id} todo={picked} onRename={rename} />
+    </section>
+  )
+}
+`,
     title: 'state 보존과 초기화',
     tagline: '같은 자리면 state가 남는다',
     kind: 'practice',
@@ -383,8 +576,72 @@ function App() {
     jsPrereq: ['switch는 값에 따라 갈래를 고른다. case마다 return하면 break가 필요 없다'],
     definition:
       'useReducer는 state를 바꾸는 방법을 한 함수에 모은다. 컴포넌트는 "무엇이 일어났는지"만 보내고, 그 일이 state를 어떻게 바꾸는지는 reducer가 정한다. 보내는 함수가 dispatch, 보내는 객체가 action이다.',
-    goal: '흩어져 있던 setTodos를 한 곳에 모은다. 앱이 하는 일 목록이 reducer만 읽어도 보인다.',
+    goal: 'reducer의 네 `case`를 채운다. added는 스프레드로 새 항목을 붙이고, toggled는 map, deleted는 filter, allDone은 map으로 전부 done을 true로. 각 case는 새 배열을 돌려준다.',
     starterCode: `let nextId = 4
+
+// 뼈대만 있다. 각 case가 지금은 todos를 그대로 돌려줘서 아무 일도 안 일어난다.
+function todosReducer(todos, action) {
+  switch (action.type) {
+    case 'added':
+      // ── [...todos, { id: 'n' + nextId++, title: action.title, done: false }]
+      return todos
+    case 'toggled':
+      // ── action.id인 항목만 done을 뒤집은 새 배열
+      return todos
+    case 'deleted':
+      // ── action.id가 아닌 것만 남긴 새 배열
+      return todos
+    case 'allDone':
+      // ── 전부 done: true인 새 배열
+      return todos
+    default:
+      throw new Error('모르는 action: ' + action.type)
+  }
+}
+
+function App() {
+  const [todos, dispatch] = useReducer(todosReducer, [
+    { id: 'a', title: '장보기', done: true },
+    { id: 'b', title: '설거지', done: false },
+    { id: 'c', title: '빨래', done: false },
+  ])
+  const [draft, setDraft] = useState('')
+
+  const left = todos.filter((todo) => !todo.done).length
+
+  return (
+    <section>
+      <h2>할 일 {todos.length}개</h2>
+      <p>{left === 0 ? '다 끝났다' : '남은 것 ' + left + '개'}</p>
+      <ul>
+        {todos.map((todo) => (
+          <li key={todo.id}>
+            <input
+              type="checkbox"
+              checked={todo.done}
+              onChange={() => dispatch({ type: 'toggled', id: todo.id })}
+            />
+            <span>{todo.title}</span>
+            <button onClick={() => dispatch({ type: 'deleted', id: todo.id })}>지우기</button>
+          </li>
+        ))}
+      </ul>
+      <input value={draft} placeholder="새 할 일" onChange={(e) => setDraft(e.target.value)} />
+      <button
+        onClick={() => {
+          if (draft.trim() === '') return
+          dispatch({ type: 'added', title: draft })
+          setDraft('')
+        }}
+      >
+        추가
+      </button>
+      <button onClick={() => dispatch({ type: 'allDone' })}>전부 끝내기</button>
+    </section>
+  )
+}
+`,
+    solutionCode: `let nextId = 4
 
 function todosReducer(todos, action) {
   switch (action.type) {
@@ -512,8 +769,76 @@ function App() {
     kind: 'practice',
     definition:
       'Context는 값을 트리 아래 어디서든 읽을 수 있게 한다. 위에서 Provider로 값을 넣고, 아래에서 useContext로 꺼낸다. 중간 컴포넌트를 거치지 않는다.',
-    goal: 'TodoList는 쓰지도 않는 dispatch를 넘겨받지 않게 된다. 항목이 직접 가져간다.',
-    starterCode: `const DispatchContext = createContext(null)
+    goal: 'App의 JSX를 `<DispatchContext.Provider value={dispatch}>`로 감싼다. TodoCard는 props 대신 `useContext(DispatchContext)`로 dispatch를 꺼낸다. TodoList와 TodoCard의 `dispatch` prop을 지운다.',
+    starterCode: `// 만들어 두었지만 아직 아무도 안 쓴다
+const DispatchContext = createContext(null)
+
+let nextId = 4
+
+function todosReducer(todos, action) {
+  switch (action.type) {
+    case 'added':
+      return [...todos, { id: 'n' + nextId++, title: action.title, done: false }]
+    case 'toggled':
+      return todos.map((todo) =>
+        todo.id === action.id ? { ...todo, done: !todo.done } : todo,
+      )
+    default:
+      throw new Error('모르는 action: ' + action.type)
+  }
+}
+
+function TodoCard({ todo, dispatch }) {
+  return (
+    <li>
+      <input
+        type="checkbox"
+        checked={todo.done}
+        onChange={() => dispatch({ type: 'toggled', id: todo.id })}
+      />
+      <span>{todo.title}</span>
+      {todo.done && <em> · 끝</em>}
+    </li>
+  )
+}
+
+// dispatch를 쓰지 않는데 아래로 넘기려고 받는다
+function TodoList({ todos, dispatch }) {
+  return (
+    <ul>
+      {todos.map((todo) => (
+        <TodoCard key={todo.id} todo={todo} dispatch={dispatch} />
+      ))}
+    </ul>
+  )
+}
+
+function App() {
+  const [todos, dispatch] = useReducer(todosReducer, [
+    { id: 'a', title: '장보기', done: true },
+    { id: 'b', title: '설거지', done: false },
+  ])
+  const [draft, setDraft] = useState('')
+
+  return (
+    <section>
+      <h2>할 일 {todos.length}개</h2>
+      <TodoList todos={todos} dispatch={dispatch} />
+      <input value={draft} placeholder="새 할 일" onChange={(e) => setDraft(e.target.value)} />
+      <button
+        onClick={() => {
+          if (draft.trim() === '') return
+          dispatch({ type: 'added', title: draft })
+          setDraft('')
+        }}
+      >
+        추가
+      </button>
+    </section>
+  )
+}
+`,
+    solutionCode: `const DispatchContext = createContext(null)
 
 let nextId = 4
 
@@ -645,8 +970,116 @@ function TodoRow({ todo, dispatch }) {
     kind: 'practice',
     definition:
       'reducer로 바꾸는 방법을 모으고, Context로 state와 dispatch를 트리 아래에 내놓는다. 둘을 Context 두 개로 나누면, dispatch만 쓰는 컴포넌트는 state가 바뀌어도 다시 그려지지 않는다.',
-    goal: '챕터 3의 마지막 모습이다. 필터와 목록과 입력칸이 props 없이 각자 필요한 것만 가져간다.',
-    starterCode: `const TodosContext = createContext(null)
+    goal: 'App을 `TodosContext.Provider`(todos)와 `DispatchContext.Provider`(dispatch)로 감싼다. FilterBar·TodoList는 `useContext(TodosContext)`로, TodoCard·AddForm은 `useContext(DispatchContext)`로 가져가게 하고, 그 props를 전부 지운다.',
+    starterCode: `// 둘 다 만들어 두었지만 아직 아무도 안 쓴다. 값은 props로 내려가고 있다.
+const TodosContext = createContext(null)
+const DispatchContext = createContext(null)
+
+let nextId = 4
+
+function todosReducer(todos, action) {
+  switch (action.type) {
+    case 'added':
+      return [...todos, { id: 'n' + nextId++, title: action.title, done: false }]
+    case 'toggled':
+      return todos.map((todo) =>
+        todo.id === action.id ? { ...todo, done: !todo.done } : todo,
+      )
+    case 'deleted':
+      return todos.filter((todo) => todo.id !== action.id)
+    default:
+      throw new Error('모르는 action: ' + action.type)
+  }
+}
+
+function FilterBar({ todos, filter, onChange }) {
+  const left = todos.filter((todo) => !todo.done).length
+
+  return (
+    <div>
+      <button onClick={() => onChange('all')} disabled={filter === 'all'}>
+        전체 {todos.length}
+      </button>
+      <button onClick={() => onChange('left')} disabled={filter === 'left'}>
+        남은 것 {left}
+      </button>
+      <button onClick={() => onChange('done')} disabled={filter === 'done'}>
+        끝낸 것 {todos.length - left}
+      </button>
+    </div>
+  )
+}
+
+function TodoCard({ todo, dispatch }) {
+  return (
+    <li>
+      <input
+        type="checkbox"
+        checked={todo.done}
+        onChange={() => dispatch({ type: 'toggled', id: todo.id })}
+      />
+      <span>{todo.title}</span>
+      {todo.done && <em> · 끝</em>}
+      <button onClick={() => dispatch({ type: 'deleted', id: todo.id })}>지우기</button>
+    </li>
+  )
+}
+
+function TodoList({ todos, filter, dispatch }) {
+  const shown =
+    filter === 'left' ? todos.filter((todo) => !todo.done)
+    : filter === 'done' ? todos.filter((todo) => todo.done)
+    : todos
+
+  if (shown.length === 0) return <p>여기 보여줄 것이 없다</p>
+
+  return (
+    <ul>
+      {shown.map((todo) => (
+        <TodoCard key={todo.id} todo={todo} dispatch={dispatch} />
+      ))}
+    </ul>
+  )
+}
+
+function AddForm({ dispatch }) {
+  const [draft, setDraft] = useState('')
+
+  return (
+    <div>
+      <input value={draft} placeholder="새 할 일" onChange={(e) => setDraft(e.target.value)} />
+      <button
+        onClick={() => {
+          if (draft.trim() === '') return
+          dispatch({ type: 'added', title: draft })
+          setDraft('')
+        }}
+      >
+        추가
+      </button>
+    </div>
+  )
+}
+
+function App() {
+  const [todos, dispatch] = useReducer(todosReducer, [
+    { id: 'a', title: '장보기', done: true },
+    { id: 'b', title: '설거지', done: false },
+    { id: 'c', title: '빨래', done: false },
+  ])
+  const [filter, setFilter] = useState('all')
+
+  return (
+    <section>
+      <h2>할 일</h2>
+      <FilterBar todos={todos} filter={filter} onChange={setFilter} />
+      <TodoList todos={todos} filter={filter} dispatch={dispatch} />
+      <AddForm dispatch={dispatch} />
+    </section>
+  )
+}
+`,
+    solutionCode: `const TodosContext = createContext(null)
 const DispatchContext = createContext(null)
 
 let nextId = 4
