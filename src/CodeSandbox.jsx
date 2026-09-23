@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
+import CodeEditor from './CodeEditor.jsx'
 import { hintFor } from './errorHints.js'
 import ResultPanel from './ResultPanel.jsx'
 import { CodeError, compileToApp, injectedHookNames, loadBabel } from './runner.js'
@@ -8,6 +9,7 @@ import { CodeError, compileToApp, injectedHookNames, loadBabel } from './runner.
  * 코드 상태를 직접 들고 있으므로, 레슨을 넘길 때는 key로 갈아 초기 코드를 되돌린다.
  */
 export default function CodeSandbox({ initialCode, resetCode = initialCode, onCodeChange }) {
+  const editorId = useId()
   const [code, setCode] = useState(initialCode)
   const [App, setApp] = useState(null)
   const [error, setError] = useState(null)
@@ -67,14 +69,14 @@ export default function CodeSandbox({ initialCode, resetCode = initialCode, onCo
         </header>
         <p className="notice">
           `App` 컴포넌트를 정의하세요. import는 쓸 수 없고, useState 같은 함수는 바로 쓰면 됩니다.
+          Tab은 들여쓰기이고, 키보드로 편집기를 나가려면 Esc 다음 Tab입니다.
         </p>
-        <textarea
-          className="editor"
-          spellCheck={false}
+        <CodeEditor
+          id={editorId}
+          label="예제 코드 편집기"
           value={code}
           disabled={!ready}
-          aria-label="예제 코드 편집기"
-          onChange={(e) => setCode(e.target.value)}
+          onChange={setCode}
         />
         {!ready && <p className="panel-hint">변환기를 불러오는 중…</p>}
         <p className="warn">

@@ -1,7 +1,10 @@
+import { useCallback, useState } from 'react'
+import Code from './Code.jsx'
 import CodeSandbox from './CodeSandbox.jsx'
 import Quiz from './Quiz.jsx'
 import { demoById } from './labs/index.jsx'
 import { chapterOf, lessons, lessonsOf } from './lessons/index.js'
+import { KEYS, load, save } from './storage.js'
 
 function Paragraphs({ text }) {
   return text
@@ -23,6 +26,19 @@ export default function Lesson({ lesson, done, onComplete, onNavigate, onOpenDem
   const prev = lessons[at - 1]
   const next = lessons[at + 1]
   const demo = lesson.demo ? demoById(lesson.demo) : null
+
+  // 레슨별 편집 초안. 이 컴포넌트는 lesson.id로 key가 걸려 레슨마다 새로 읽는다.
+  // 초기 코드는 고정이고 앞 레슨의 수정을 물려받지 않지만, 이 레슨에서 고친 것은 남는다.
+  const [initialCode] = useState(() => load(KEYS.drafts, {})[lesson.id] ?? lesson.starterCode)
+  const saveDraft = useCallback(
+    (code) => {
+      const drafts = load(KEYS.drafts, {})
+      if (code === lesson.starterCode) delete drafts[lesson.id]
+      else drafts[lesson.id] = code
+      save(KEYS.drafts, drafts)
+    },
+    [lesson.id, lesson.starterCode],
+  )
 
   return (
     <article className="tab-body lesson">
@@ -75,9 +91,7 @@ export default function Lesson({ lesson, done, onComplete, onNavigate, onOpenDem
             <div className="check-item" key={i}>
               <h4>{item.title}</h4>
               <p>{item.text}</p>
-              <pre className="code-static">
-                <code>{item.code}</code>
-              </pre>
+              <Code code={item.code} />
             </div>
           ))}
 
@@ -85,15 +99,16 @@ export default function Lesson({ lesson, done, onComplete, onNavigate, onOpenDem
           lesson.readOnly?.map((file) => (
             <div className="file" key={file.filename}>
               <p className="filename">{file.filename}</p>
-              <pre className="code-static">
-                <code>{file.code}</code>
-              </pre>
+              <Code code={file.code} />
             </div>
           ))}
 
         {lesson.kind === 'practice' && (
-          // 레슨마다 초기 코드는 고정이다. key로 갈아 앞 레슨의 수정이 물려오지 않게 한다.
-          <CodeSandbox key={lesson.id} initialCode={lesson.starterCode} />
+          <CodeSandbox
+            initialCode={initialCode}
+            resetCode={lesson.starterCode}
+            onCodeChange={saveDraft}
+          />
         )}
       </section>
 
@@ -101,9 +116,7 @@ export default function Lesson({ lesson, done, onComplete, onNavigate, onOpenDem
         <section className="block">
           <h3 className="block-head">없던 시절</h3>
           <p>{lesson.before.text}</p>
-          <pre className="code-static">
-            <code>{lesson.before.code}</code>
-          </pre>
+          <Code code={lesson.before.code} />
           <p className="panel-hint">이 코드는 실행하지 않는다. 위 예제와 같은 문제를 푸는 짝이다.</p>
         </section>
       )}
@@ -139,7 +152,13 @@ export default function Lesson({ lesson, done, onComplete, onNavigate, onOpenDem
         </section>
       )}
 
-      <Quiz quiz={lesson.quiz} done={done} onCorrect={() => onComplete(lesson.id)} />
+      <Quiz
+        quiz={lesson.quiz}
+        done={done}
+        onCorrect={() => onComplete(lesson.id)}
+        onNext={next ? () => onNavigate(next.id) : null}
+        nextLabel={next ? `${next.order}. ${next.title}` : ''}
+      />
 
       {lesson.sources?.length > 0 && (
         <p className="sources">

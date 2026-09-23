@@ -894,3 +894,99 @@ body {
     scroll-margin-top: 1rem;
   }
 }
+
+/* ── 코드 편집기: textarea 위에 색 입힌 pre가 겹친다 ── */
+.editor {
+  min-height: 24rem;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 0.84rem;
+  line-height: 1.7;
+  tab-size: 2;
+}
+
+.editor:focus-within {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.editor-textarea:disabled {
+  opacity: 0.5;
+}
+
+.editor-textarea {
+  color: transparent; /* 글자는 pre가 그린다. 커서와 선택만 textarea가 담당한다 */
+  caret-color: var(--text);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* ── 구문 색: 편집기와 읽기 전용 블록이 같은 팔레트를 쓴다 ── */
+:root {
+  --tk-keyword: #7a2c9a;
+  --tk-string: #8a4600;
+  --tk-number: #0b5e8e;
+  --tk-comment: #6b665d;
+  --tk-tag: #1f5f4f;
+  --tk-attr: #4a4a9a;
+  --tk-function: #8a3b5c;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --tk-keyword: #d9a8ff;
+    --tk-string: #f2b46b;
+    --tk-number: #7fc9f2;
+    --tk-comment: #9b96a3;
+    --tk-tag: #6fd2b4;
+    --tk-attr: #c6c2ff;
+    --tk-function: #f0a4c0;
+  }
+}
+
+.token.keyword { color: var(--tk-keyword); }
+.token.string,
+.token.attr-value { color: var(--tk-string); }
+.token.number,
+.token.boolean { color: var(--tk-number); }
+.token.comment { color: var(--tk-comment); font-style: italic; }
+.token.tag,
+.token.tag .token.punctuation { color: var(--tk-tag); }
+.token.attr-name { color: var(--tk-attr); }
+.token.function,
+.token.class-name { color: var(--tk-function); }
+.token.punctuation,
+.token.operator { color: var(--text); opacity: 0.75; }
+.token.script .token.punctuation { opacity: 0.75; }
+
+.code-static .token.comment { font-style: italic; }
+
+/* ── 확인 문제 정답 뒤 바로 다음 레슨 ── */
+.quiz-next {
+  display: inline-block;
+  margin-top: 0.7rem;
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  background: var(--accent);
+  color: var(--surface);
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 500;
+  padding: 0.5rem 0.85rem;
+  cursor: pointer;
+}
+
+.quiz-next:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}

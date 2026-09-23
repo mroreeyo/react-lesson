@@ -4,6 +4,8 @@ export const KEYS = {
   progress: 'reactlab:progress:v1',
   last: 'reactlab:last:v1',
   playground: 'reactlab:playground:v1',
+  // 레슨별 편집 초안 { [lessonId]: code }. 초기 코드와 같아지면 지운다.
+  drafts: 'reactlab:drafts:v1',
 }
 
 export function load(key, fallback) {

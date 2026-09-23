@@ -25,9 +25,11 @@ node src/lessons/lessons.check.mjs # 레슨 데이터 모델 점검
 | `src/Lesson.jsx` | 본문 블록 렌더. 챕터 도입·마무리, 이전/다음 |
 | `src/Quiz.jsx` | 3지선다. 정답이면 완료, 오답은 재시도 |
 | `src/CodeSandbox.jsx` | 편집기 + 결과 패널 한 쌍. 레슨과 플레이그라운드가 같이 쓴다 |
+| `src/CodeEditor.jsx` · `src/highlight.js` · `src/Code.jsx` | react-simple-code-editor + Prism(jsx). Tab 들여쓰기, Enter 자동 들여쓰기, Esc→Tab으로 나감. 읽기 전용 블록도 같은 색 |
 | `src/Labs.jsx` · `src/labs/index.jsx` | 실험실 탭과 데모 3종. 레슨에서 링크로 들어오고 돌아간다 |
 
 블록 순서는 JS 되짚기 · 한 줄 정의 · 지금 방식 · 없던 시절 · 왜 나왔나 · 더 파고들면 · 확인 문제.
+확인 문제를 맞히면 그 자리에 "다음 레슨" 버튼이 나온다.
 뒤의 세 블록은 있는 레슨에만 나온다. `kind`가 `practice`면 편집기, `concept`면 읽기 전용 코드,
 `checklist`면 항목별 반복이다. 레슨을 넘길 때 편집기는 `key`로 갈려 초기 코드로 돌아간다.
 
@@ -43,7 +45,9 @@ JSX를 변환하고, `new Function`에 앱이 쓰는 React 객체와 훅을 주�
 오류는 세 갈래로 화면에 표시된다: 문법 오류(변환 실패), 실행 오류(`App` 미정의·최상위 예외),
 렌더 중 오류(오류 경계). 오류가 나면 직전 정상 화면은 지운다.
 
-localStorage 키는 `src/storage.js`에 셋(`progress` · `last` · `playground`). 읽기·쓰기 실패를 허용한다.
+localStorage 키는 `src/storage.js`에 넷(`progress` · `last` · `playground` · `drafts`). 읽기·쓰기 실패를 허용한다.
+`drafts`는 레슨별 편집 초안이다. 초기 코드는 레슨마다 고정이고 앞 레슨의 수정을 물려받지 않지만,
+그 레슨에서 고친 것은 남는다. "원래 코드로"를 누르면 초안이 지워진다.
 저장이 막힌 브라우저에서도 앱은 그대로 동작하고 기록만 남지 않는다.
 
 ## 배포
