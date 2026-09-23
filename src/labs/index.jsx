@@ -2,8 +2,8 @@ import { memo, useRef, useState } from 'react'
 
 /**
  * 실험실 데모 3종. 코드가 아니라 동작을 보여준다.
- * 렌더 횟수는 렌더 중에 세므로 StrictMode가 켜진 개발 모드에서는 2씩 오른다.
- * 배포 빌드에서는 1씩 오른다. 학습자가 보는 것은 배포 빌드다.
+ * 렌더 횟수를 렌더 중에 세므로, Labs.jsx가 데모를 결과 패널과 같은 별도 root에 그린다.
+ * 앱 트리 안에 그리면 개발 모드의 StrictMode가 렌더를 두 번 돌려 숫자가 두 배가 된다.
  */
 
 function useRenderCount() {
