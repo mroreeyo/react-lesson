@@ -10,7 +10,14 @@ export function load(key, fallback) {
   try {
     const raw = localStorage.getItem(key)
     if (raw === null) return fallback
-    return key === KEYS.playground ? raw : JSON.parse(raw)
+    if (key === KEYS.playground) return raw
+    const value = JSON.parse(raw)
+    // 저장소는 신뢰 경계다. 모양이 기대와 다르면(null, 문자열, 배열 대신 객체) 버리고 기본값을 쓴다.
+    const sameShape =
+      value !== null &&
+      typeof value === typeof fallback &&
+      Array.isArray(value) === Array.isArray(fallback)
+    return sameShape ? value : fallback
   } catch {
     return fallback
   }

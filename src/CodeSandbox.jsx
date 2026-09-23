@@ -14,6 +14,8 @@ export default function CodeSandbox({ initialCode, resetCode = initialCode, onCo
   const [ready, setReady] = useState(false)
   const runIdRef = useRef(0)
   const [runKey, setRunKey] = useState(0)
+  // 코드를 안 고치고 처음부터 다시 돌릴 때 올린다. 결과 패널의 key에 섞여 App이 새로 마운트된다.
+  const [rerun, setRerun] = useState(0)
 
   // 편집기가 처음 보일 때 Babel 청크를 미리 받기 시작한다.
   useEffect(() => {
@@ -87,6 +89,9 @@ export default function CodeSandbox({ initialCode, resetCode = initialCode, onCo
       <section className="pane">
         <header className="pane-head">
           <h3>결과</h3>
+          <button className="ghost" onClick={() => setRerun((n) => n + 1)} disabled={!App}>
+            다시 실행
+          </button>
         </header>
         {error && (
           <div className="panel-error">
@@ -95,7 +100,7 @@ export default function CodeSandbox({ initialCode, resetCode = initialCode, onCo
             <pre>{error.message}</pre>
           </div>
         )}
-        <ResultPanel App={App} runKey={runKey} />
+        <ResultPanel App={App} runKey={`${runKey}-${rerun}`} />
       </section>
     </div>
   )

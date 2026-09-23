@@ -104,7 +104,9 @@ export default function App() {
                 >
                   챕터 {lesson.chapter}. {chapterOf(lesson.chapter)?.title} · {lesson.title}
                 </button>
+                {/* 레슨이 바뀌면 안의 state(확인 문제 선택, 펼친 블록)를 전부 새로 시작한다. 레슨 21의 그 key다. */}
                 <Lesson
+                  key={lesson.id}
                   lesson={lesson}
                   done={progress.includes(lesson.id)}
                   onComplete={complete}

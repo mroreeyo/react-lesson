@@ -56,4 +56,23 @@ assert.equal(hintFor('Minified React error #3100; visit'), null) // 경계: 310�
 assert.equal(hintFor('완전히 모르는 오류'), null)
 assert.equal(hintFor(''), null)
 
-console.log(`ok — 주입된 훅 ${injectedHookNames.length}개, 오류 문구 힌트 확인`)
+// 저장소는 신뢰 경계다. 깨진 값이 들어 있어도 기본값으로 부팅해야 한다.
+const store = new Map()
+globalThis.localStorage = {
+  getItem: (k) => (store.has(k) ? store.get(k) : null),
+  setItem: (k, v) => store.set(k, String(v)),
+  removeItem: (k) => store.delete(k),
+}
+const { KEYS, load, save } = await import('./storage.js')
+save(KEYS.progress, ['a'])
+assert.deepEqual(load(KEYS.progress, []), ['a'])
+for (const bad of ['"oops"', 'null', '5', '{}', '{bro', '']) {
+  store.set(KEYS.progress, bad)
+  assert.deepEqual(load(KEYS.progress, []), [], `깨진 progress ${bad}`)
+  store.set(KEYS.last, bad === '{}' ? '[]' : bad)
+  assert.deepEqual(load(KEYS.last, {}), {}, `깨진 last ${bad}`)
+}
+store.set(KEYS.playground, 'function App() {}')
+assert.equal(load(KEYS.playground, 'x'), 'function App() {}')
+
+console.log(`ok — 주입된 훅 ${injectedHookNames.length}개, 오류 문구 힌트, 저장소 방어 확인`)

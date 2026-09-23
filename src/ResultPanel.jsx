@@ -1,4 +1,4 @@
-import { Component, Suspense, useEffect, useRef } from 'react'
+import { Component, Suspense, useEffect, useRef, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import { hintFor } from './errorHints.js'
 
@@ -33,6 +33,27 @@ export default function ResultPanel({ App, runKey }) {
   const hostRef = useRef(null)
   const rootRef = useRef(null)
 
+  // 이벤트 핸들러나 비동기 코드에서 던진 오류는 오류 경계가 못 잡는다. 창에서 받아 화면에 보인다.
+  // 결과 패널이 있는 동안 도는 사용자 코드가 그 출처다. 코드가 바뀌면(runKey) 지운다.
+  const [asyncError, setAsyncError] = useState(null)
+  useEffect(() => {
+    setAsyncError(null)
+  }, [App, runKey])
+  useEffect(() => {
+    if (!App) return
+    const onError = (e) => {
+      const message = e.error?.message ?? e.message
+      if (message) setAsyncError(message)
+    }
+    const onReject = (e) => setAsyncError(e.reason?.message ?? String(e.reason))
+    window.addEventListener('error', onError)
+    window.addEventListener('unhandledrejection', onReject)
+    return () => {
+      window.removeEventListener('error', onError)
+      window.removeEventListener('unhandledrejection', onReject)
+    }
+  }, [App])
+
   useEffect(() => {
     // StrictMode에서 effect가 두 번 돌아도 컨테이너당 root는 하나만 만든다.
     if (!rootRef.current) rootRef.current = createRoot(hostRef.current)
@@ -63,5 +84,16 @@ export default function ResultPanel({ App, runKey }) {
     )
   }, [App, runKey])
 
-  return <div className="result-host" ref={hostRef} />
+  return (
+    <>
+      {asyncError && (
+        <div className="panel-error">
+          <strong>이벤트 처리 중 오류</strong>
+          {hintFor(asyncError) && <p className="hint">{hintFor(asyncError)}</p>}
+          <pre>{asyncError}</pre>
+        </div>
+      )}
+      <div className="result-host" ref={hostRef} />
+    </>
+  )
 }

@@ -1,12 +1,18 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { chapters, lessonsOf } from './lessons/index.js'
 
 const firstSentence = (text) => (text ? `${text.split('\n\n')[0].split('. ')[0]}.` : '')
 
 /** 챕터 6개로 접히는 목록. 접힌 상태에서는 챕터 도입 문장이 한 줄 요약으로 보인다. */
 export default function LessonRail({ currentId, progress, onPick }) {
-  const current = chapters.find((c) => lessonsOf(c.id).some((l) => l.id === currentId))
-  const [open, setOpen] = useState(() => new Set([current?.id ?? '0']))
+  const currentChapterId = chapters.find((c) => lessonsOf(c.id).some((l) => l.id === currentId))?.id
+  const [open, setOpen] = useState(() => new Set([currentChapterId ?? '0']))
+
+  // 이전/다음으로 챕터 경계를 넘으면 새 챕터를 펼쳐 현재 레슨이 목록에 보이게 한다.
+  useEffect(() => {
+    if (!currentChapterId) return
+    setOpen((prev) => (prev.has(currentChapterId) ? prev : new Set(prev).add(currentChapterId)))
+  }, [currentChapterId])
 
   const toggle = (id) =>
     setOpen((prev) => {
