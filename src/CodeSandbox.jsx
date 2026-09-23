@@ -1,4 +1,5 @@
 import { useEffect, useId, useRef, useState } from 'react'
+import Code from './Code.jsx'
 import CodeEditor from './CodeEditor.jsx'
 import { hintFor } from './errorHints.js'
 import ResultPanel from './ResultPanel.jsx'
@@ -8,7 +9,12 @@ import { CodeError, compileToApp, injectedHookNames, loadBabel } from './runner.
  * 편집기와 결과 패널 한 쌍. 레슨의 '지금 방식' 블록과 플레이그라운드가 같이 쓴다.
  * 코드 상태를 직접 들고 있으므로, 레슨을 넘길 때는 key로 갈아 초기 코드를 되돌린다.
  */
-export default function CodeSandbox({ initialCode, resetCode = initialCode, onCodeChange }) {
+export default function CodeSandbox({
+  initialCode,
+  resetCode = initialCode,
+  solutionCode,
+  onCodeChange,
+}) {
   const editorId = useId()
   const [code, setCode] = useState(initialCode)
   const [App, setApp] = useState(null)
@@ -86,6 +92,19 @@ export default function CodeSandbox({ initialCode, resetCode = initialCode, onCo
           <summary>바로 쓸 수 있는 함수 {injectedHookNames.length}개</summary>
           <code>{injectedHookNames.join(', ')}</code>
         </details>
+        {solutionCode && (
+          // 모를 때 펼친다. 맞는지는 앱이 판단하지 않는다. 결과 화면과 이 코드를 보고 스스로 본다.
+          <details className="solution">
+            <summary>정답 코드 보기</summary>
+            <p className="panel-hint">
+              막히면 펼친다. 맞았는지는 결과 화면과 이 코드를 견주어 스스로 본다.
+            </p>
+            <Code code={solutionCode} />
+            <button className="ghost" onClick={() => setCode(solutionCode)} disabled={code === solutionCode}>
+              편집기에 넣기
+            </button>
+          </details>
+        )}
       </section>
 
       <section className="pane">

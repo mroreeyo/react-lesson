@@ -80,8 +80,9 @@ export default function Lesson({ lesson, done, onComplete, onNavigate, onOpenDem
       <section className="block">
         <h3 className="block-head">지금 방식</h3>
         {lesson.goal && (
-          <p className={lesson.broken ? 'goal goal-broken' : 'goal'}>
+          <p className={lesson.broken ? 'goal goal-broken' : lesson.solutionCode ? 'goal goal-task' : 'goal'}>
             {lesson.broken && <strong>고쳐야 하는 코드 · </strong>}
+            {!lesson.broken && lesson.solutionCode && <strong>할 일 · </strong>}
             {lesson.goal}
           </p>
         )}
@@ -107,6 +108,7 @@ export default function Lesson({ lesson, done, onComplete, onNavigate, onOpenDem
           <CodeSandbox
             initialCode={initialCode}
             resetCode={lesson.starterCode}
+            solutionCode={lesson.solutionCode}
             onCodeChange={saveDraft}
           />
         )}

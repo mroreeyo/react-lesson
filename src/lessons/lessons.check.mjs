@@ -66,8 +66,18 @@ for (const l of practice) {
     assert.fail(`레슨 ${l.order} ${l.title}: starterCode가 실행되지 않는다 — [${err.stage}] ${err.message}`)
   })
   assert.equal(typeof App, 'function', `레슨 ${l.order} ${l.title}: App을 못 받았다`)
+
+  // 스타터는 앞 레슨 방식으로 돌아가는 상태, 정답은 이 레슨의 완성본. 둘 다 실행돼야 하고 달라야 한다.
+  if (l.solutionCode) {
+    const Sol = await compileToApp(l.solutionCode).catch((err) => {
+      assert.fail(`레슨 ${l.order} ${l.title}: solutionCode가 실행되지 않는다 — [${err.stage}] ${err.message}`)
+    })
+    assert.equal(typeof Sol, 'function', `레슨 ${l.order} ${l.title}: 정답의 App을 못 받았다`)
+    assert.notEqual(l.solutionCode, l.starterCode, `레슨 ${l.order} ${l.title}: 스타터와 정답이 같다`)
+  }
 }
+const withSolution = practice.filter((l) => l.solutionCode).length
 
 console.log(
-  `ok — 레슨 ${lessons.length}개(실습 ${practice.length}개 실행 확인), 챕터 파일 ${files.length}개`,
+  `ok — 레슨 ${lessons.length}개(실습 ${practice.length}개 실행 확인, 정답 코드 ${withSolution}개), 챕터 파일 ${files.length}개`,
 )

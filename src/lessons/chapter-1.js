@@ -8,8 +8,19 @@ export default [
     kind: 'practice',
     jsPrereq: ['함수는 값을 돌려준다', '함수 이름은 이름일 뿐이다. 대문자로 시작해도 JS 문법은 같다'],
     definition: '컴포넌트는 화면 한 조각을 돌려주는 함수다. 이름은 대문자로 시작한다. 소문자로 시작하면 리액트가 HTML 태그로 보고 그리려 한다.',
-    goal: '할 일 카드 한 장이 화면에 나온다.',
-    starterCode: `function TodoCard() {
+    goal: 'App 안에 손으로 적힌 `<li>` 덩어리를 `TodoCard`라는 컴포넌트로 떼어 낸다. App에서는 `<TodoCard />`로 쓴다.',
+    starterCode: `function App() {
+  return (
+    <ul>
+      <li>
+        <input type="checkbox" />
+        <span>장보기</span>
+      </li>
+    </ul>
+  )
+}
+`,
+    solutionCode: `function TodoCard() {
   return (
     <li>
       <input type="checkbox" />
@@ -138,8 +149,25 @@ export default function App() {
     kind: 'practice',
     definition:
       'JSX는 JS 안에 태그를 적는 문법이다. 태그는 하나로 감싸고, 모두 닫는다. class는 JS의 예약어라서 className으로 쓴다.',
-    goal: '카드를 제목이 붙은 영역 안에 넣는다.',
+    goal: 'App이 `<section>` 하나를 돌려주게 하고, 그 안에 `<h2>할 일</h2>`과 `<ul>`을 나란히 넣는다. TodoCard의 `<li>`에 className="todo"를 준다.',
     starterCode: `function TodoCard() {
+  return (
+    <li>
+      <input type="checkbox" />
+      <span>장보기</span>
+    </li>
+  )
+}
+
+function App() {
+  return (
+    <ul>
+      <TodoCard />
+    </ul>
+  )
+}
+`,
+    solutionCode: `function TodoCard() {
   return (
     <li className="todo">
       <input type="checkbox" />
@@ -211,8 +239,31 @@ function App() {
       '`if`나 `for`는 값이 되지 않는다',
     ],
     definition: '중괄호 안에는 값이 되는 JS 코드를 적을 수 있다. 그 값이 화면에 들어간다.',
-    goal: '제목과 개수를 변수에서 가져온다.',
+    goal: '위에 선언된 `title`과 `total`을 화면에 넣는다. `<span>장보기</span>`은 `{title}`로, `<h2>할 일</h2>`은 `할 일 {total}개`로.',
     starterCode: `const title = '장보기'
+const total = 3
+
+function TodoCard() {
+  return (
+    <li className="todo">
+      <input type="checkbox" />
+      <span>장보기</span>
+    </li>
+  )
+}
+
+function App() {
+  return (
+    <section>
+      <h2>할 일</h2>
+      <ul>
+        <TodoCard />
+      </ul>
+    </section>
+  )
+}
+`,
+    solutionCode: `const title = '장보기'
 const total = 3
 
 function TodoCard() {
@@ -269,8 +320,30 @@ function App() {
     jsPrereq: ['구조 분해로 객체에서 필요한 것만 꺼낸다'],
     definition:
       'props는 부모가 자식에게 건네는 값이다. 자식은 읽기만 한다. 자식이 바꿔도 부모가 다음에 그릴 때 원래 값으로 덮인다.',
-    goal: '카드 한 장으로 세 줄을 그린다. 제목과 완료 여부가 밖에서 들어온다.',
-    starterCode: `function TodoCard({ title, done }) {
+    goal: 'TodoCard가 `title`과 `done`을 props로 받게 한다. App에서 세 장을 각각 다른 값으로 그린다: 장보기(끝남), 설거지, 빨래. 위의 `title` 변수는 지운다.',
+    starterCode: `const title = '장보기'
+
+function TodoCard() {
+  return (
+    <li>
+      <input type="checkbox" />
+      <span>{title}</span>
+    </li>
+  )
+}
+
+function App() {
+  return (
+    <section>
+      <h2>할 일 3개</h2>
+      <ul>
+        <TodoCard />
+      </ul>
+    </section>
+  )
+}
+`,
+    solutionCode: `function TodoCard({ title, done }) {
   return (
     <li>
       <input type="checkbox" checked={done} readOnly />
@@ -326,8 +399,30 @@ function App() {
     kind: 'practice',
     definition:
       '무엇을 그릴지도 값이다. 삼항 연산자(`a ? b : c`)나 `&&`로 조건에 따라 다른 JSX를 값으로 고른다. `&&`는 왼쪽이 0이면 0을 그리므로 왼쪽을 불리언으로 만든다.',
-    goal: '끝난 항목에 표시가 붙고, 목록이 비면 다른 문장이 나온다. 제목의 렌더링은 리액트가 화면을 그리는 일을 부르는 말이다.',
+    goal: 'done이 true인 카드에만 `<em> · 끝</em>`을 붙인다. App에 `const total = 3`을 두고, total이 0이면 목록 대신 `<p>할 일이 없다</p>`를 그린다. (제목의 렌더링은 리액트가 화면을 그리는 일을 부르는 말이다.)',
     starterCode: `function TodoCard({ title, done }) {
+  return (
+    <li>
+      <input type="checkbox" checked={done} readOnly />
+      <span>{title}</span>
+    </li>
+  )
+}
+
+function App() {
+  return (
+    <section>
+      <h2>할 일 3개</h2>
+      <ul>
+        <TodoCard title="장보기" done={true} />
+        <TodoCard title="설거지" done={false} />
+        <TodoCard title="빨래" done={false} />
+      </ul>
+    </section>
+  )
+}
+`,
+    solutionCode: `function TodoCard({ title, done }) {
   return (
     <li>
       <input type="checkbox" checked={done} readOnly />
@@ -385,8 +480,37 @@ function App() {
     jsPrereq: ['map은 원본을 두고 새 배열을 돌려준다'],
     definition:
       '배열을 map으로 돌려 JSX 배열을 만들면 리액트가 순서대로 그린다. 항목마다 key가 필요하다.',
-    goal: '할 일이 배열에서 목록으로 늘어난다. 항목을 더하려면 배열만 고친다.',
+    goal: '손으로 적힌 `<TodoCard>` 세 줄을 `todos.map(...)`으로 바꾼다. 항목마다 `key={todo.id}`를 준다. `<h2>`의 3도 `todos.length`로.',
     starterCode: `const todos = [
+  { id: 'a', title: '장보기', done: true },
+  { id: 'b', title: '설거지', done: false },
+  { id: 'c', title: '빨래', done: false },
+]
+
+function TodoCard({ title, done }) {
+  return (
+    <li>
+      <input type="checkbox" checked={done} readOnly />
+      <span>{title}</span>
+      {done && <em> · 끝</em>}
+    </li>
+  )
+}
+
+function App() {
+  return (
+    <section>
+      <h2>할 일 3개</h2>
+      <ul>
+        <TodoCard title="장보기" done={true} />
+        <TodoCard title="설거지" done={false} />
+        <TodoCard title="빨래" done={false} />
+      </ul>
+    </section>
+  )
+}
+`,
+    solutionCode: `const todos = [
   { id: 'a', title: '장보기', done: true },
   { id: 'b', title: '설거지', done: false },
   { id: 'c', title: '빨래', done: false },
@@ -463,8 +587,37 @@ function App() {
     kind: 'practice',
     definition:
       '컴포넌트는 같은 props로 부르면 같은 화면을 돌려줘야 한다. 그리는 동안 바깥 값을 고치지 않는다.',
-    goal: '남은 개수를 계산해 보여준다. 계산은 그리는 동안 해도 되지만, 고치는 것은 안 된다.',
+    goal: 'App 안에서 남은 개수를 `todos.filter(...)`로 세어 `left`에 담고, `<h2>` 아래에 `남은 것 N개`(0이면 `다 끝났다`)를 보여준다. 계산만 하고 todos를 고치지는 않는다.',
     starterCode: `const todos = [
+  { id: 'a', title: '장보기', done: true },
+  { id: 'b', title: '설거지', done: false },
+  { id: 'c', title: '빨래', done: false },
+]
+
+function TodoCard({ title, done }) {
+  return (
+    <li>
+      <input type="checkbox" checked={done} readOnly />
+      <span>{title}</span>
+      {done && <em> · 끝</em>}
+    </li>
+  )
+}
+
+function App() {
+  return (
+    <section>
+      <h2>할 일 {todos.length}개</h2>
+      <ul>
+        {todos.map((todo) => (
+          <TodoCard key={todo.id} title={todo.title} done={todo.done} />
+        ))}
+      </ul>
+    </section>
+  )
+}
+`,
+    solutionCode: `const todos = [
   { id: 'a', title: '장보기', done: true },
   { id: 'b', title: '설거지', done: false },
   { id: 'c', title: '빨래', done: false },
