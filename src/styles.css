@@ -871,3 +871,26 @@ body {
 .goal-broken strong {
   font-weight: 600;
 }
+
+/* 오류 문구 첫 줄: 무엇이 잘못됐고 무엇을 고치면 되는지 */
+.panel-error .hint {
+  margin: 0.4rem 0 0;
+  font-size: 0.86rem;
+  line-height: 1.55;
+}
+
+.panel-error .hint + pre {
+  margin-top: 0.5rem;
+  opacity: 0.85;
+}
+
+/* 768px 미만: 헤더가 세 줄로 접혀 134px가 된다. 화면의 1/6을 고정으로 먹지 않게 흐르게 둔다. */
+@media (max-width: 768px) {
+  .app-head {
+    position: static;
+  }
+
+  .demo {
+    scroll-margin-top: 1rem;
+  }
+}

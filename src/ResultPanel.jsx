@@ -1,5 +1,6 @@
 import { Component, Suspense, useEffect, useRef } from 'react'
 import { createRoot } from 'react-dom/client'
+import { hintFor } from './errorHints.js'
 
 class RenderBoundary extends Component {
   state = { error: null }
@@ -8,10 +9,13 @@ class RenderBoundary extends Component {
   }
   render() {
     if (this.state.error) {
+      const message = this.state.error.message
+      const hint = hintFor(message)
       return (
         <div className="panel-error">
           <strong>렌더 중 오류</strong>
-          <pre>{this.state.error.message}</pre>
+          {hint && <p className="hint">{hint}</p>}
+          <pre>{message}</pre>
         </div>
       )
     }

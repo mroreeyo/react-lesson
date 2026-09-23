@@ -36,4 +36,24 @@ for (const hook of ['use', 'useActionState', 'useOptimistic', 'useState', 'useEf
 await compileToApp('const C = createContext(null); const M = memo(() => null); function App() { return null }')
 await compileToApp('function App() { const v = useContext(createContext(1)); return <p>{v}</p> }')
 
-console.log(`ok — 주입된 훅 ${injectedHookNames.length}개`)
+// 오류 문구: 원문을 "무엇이 잘못됐고 무엇을 고치면 되는지"로 바꾼다
+const { hintFor } = await import('./errorHints.js')
+const closing = await expectError('function App() { return <p>hi</p }', 'compile')
+assert.match(hintFor(closing.message) ?? '', /닫히지 않았다/)
+const adjacent = await expectError('function App() { return <p>a</p><p>b</p> }', 'compile')
+assert.match(hintFor(adjacent.message) ?? '', /하나로 감싸거나/)
+const undef = await expectError('const x = foo; function App() { return null }', 'run')
+assert.match(hintFor(undef.message) ?? '', /`foo`이\(가\) 정의되지 않았다/)
+assert.match(hintFor('Objects are not valid as a React child (found: object with keys {a})') ?? '', /객체를 화면에/)
+assert.match(hintFor('Too many re-renders. React limits the number of renders') ?? '', /렌더 중에 state/)
+// 배포 빌드는 번호만 준다
+assert.match(hintFor('Minified React error #31; visit https://react.dev/errors/31?args[]=object') ?? '', /객체를 화면에/)
+assert.match(hintFor('Minified React error #310; visit https://react.dev/errors/310') ?? '', /훅을 부르는 순서/)
+assert.match(hintFor('Minified React error #301; visit https://react.dev/errors/301') ?? '', /렌더 중에 state/)
+assert.match(hintFor('Minified React error #130; visit https://react.dev/errors/130?args[]=undefined') ?? '', /undefined가 왔다/)
+assert.match(hintFor('Minified React error #321; visit https://react.dev/errors/321') ?? '', /함수 밖에서 훅/)
+assert.equal(hintFor('Minified React error #3100; visit'), null) // 경계: 310에 안 걸려야 한다
+assert.equal(hintFor('완전히 모르는 오류'), null)
+assert.equal(hintFor(''), null)
+
+console.log(`ok — 주입된 훅 ${injectedHookNames.length}개, 오류 문구 힌트 확인`)

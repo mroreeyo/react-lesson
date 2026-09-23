@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { hintFor } from './errorHints.js'
 import ResultPanel from './ResultPanel.jsx'
 import { CodeError, compileToApp, injectedHookNames, loadBabel } from './runner.js'
 
@@ -18,7 +19,11 @@ export default function CodeSandbox({ initialCode, resetCode = initialCode, onCo
   useEffect(() => {
     loadBabel().then(
       () => setReady(true),
-      (err) => setError({ stage: 'compile', message: `Babel 청크를 받지 못했습니다: ${err.message}` }),
+      (err) =>
+        setError({
+          stage: 'compile',
+          message: `변환기를 받지 못했다. 네트워크를 확인하고 새로고침한다. (${err.message})`,
+        }),
     )
   }, [])
 
@@ -86,6 +91,7 @@ export default function CodeSandbox({ initialCode, resetCode = initialCode, onCo
         {error && (
           <div className="panel-error">
             <strong>{error.stage === 'compile' ? '문법 오류' : '실행 오류'}</strong>
+            {hintFor(error.message) && <p className="hint">{hintFor(error.message)}</p>}
             <pre>{error.message}</pre>
           </div>
         )}
