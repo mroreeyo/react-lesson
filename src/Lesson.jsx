@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react'
-import Code from './Code.jsx'
+import Code, { InlineCode } from './Code.jsx'
 import CodeSandbox from './CodeSandbox.jsx'
 import Quiz from './Quiz.jsx'
 import { demoById } from './labs/index.jsx'
@@ -19,16 +19,7 @@ function Paragraphs({ text, onNavigate }) {
  * "레슨 39개"처럼 개수를 말하는 자리는 잇지 않는다. 아직 없는 레슨 번호는 글자로 둔다.
  */
 function LinkedText({ text, onNavigate }) {
-  // `...`로 감싼 곳은 코드 조각이다. 백틱을 글자로 보이면 입문자가 백틱까지 따라 친다.
-  return text.split(/`([^`]+)`/).map((chunk, j) =>
-    j % 2 ? (
-      <code className="inline-code" key={j}>
-        {chunk}
-      </code>
-    ) : (
-      <LinkedPlain key={j} text={chunk} onNavigate={onNavigate} />
-    ),
-  )
+  return <InlineCode text={text} renderText={(t) => <LinkedPlain text={t} onNavigate={onNavigate} />} />
 }
 
 function LinkedPlain({ text, onNavigate }) {
@@ -159,11 +150,22 @@ export default function Lesson({ lesson, done, onComplete, onNavigate, onOpenDem
       <section className="block">
         <h3 className="block-head">지금 방식</h3>
         {lesson.goal && (
-          <p className={lesson.broken ? 'goal goal-broken' : lesson.solutionCode ? 'goal goal-task' : 'goal'}>
+          <div className={lesson.broken ? 'goal goal-broken' : lesson.solutionCode ? 'goal goal-task' : 'goal'}>
             {lesson.broken && <strong>고쳐야 하는 코드 · </strong>}
             {!lesson.broken && lesson.solutionCode && <strong>할 일 · </strong>}
-            <LinkedText text={lesson.goal} onNavigate={onNavigate} />
-          </p>
+            {/* 할 일이 여럿이면 배열로 적고 번호를 붙인다. 한 문단에 몰면 입문자가 어디까지 했는지 놓친다. */}
+            {Array.isArray(lesson.goal) ? (
+              <ol className="goal-steps">
+                {lesson.goal.map((step, i) => (
+                  <li key={i}>
+                    <LinkedText text={step} onNavigate={onNavigate} />
+                  </li>
+                ))}
+              </ol>
+            ) : (
+              <LinkedText text={lesson.goal} onNavigate={onNavigate} />
+            )}
+          </div>
         )}
 
         {lesson.kind === 'checklist' &&

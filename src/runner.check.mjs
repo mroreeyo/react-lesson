@@ -126,6 +126,13 @@ assert.match(hintFor('Cannot read properties of undefined', 'react'), /ref라면
 assert.doesNotMatch(hintFor('Cannot read properties of undefined', 'console'), /ref/)
 assert.equal(hintFor('Too many re-renders', 'console'), null)
 assert.match(hintFor("Identifier 'title' has already been declared. (3:6)", 'console') ?? '', /두 번 선언했다/)
+// 입문자가 가장 흔히 내는 실수: 한글 글자에 따옴표를 빠뜨린다. \w는 한글을 못 잡으므로 따로 본다
+{
+  const { error } = await collect('console.log(장보기)')
+  assert.match(hintFor(error.message, 'console') ?? '', /따옴표로 감싸 `'장보기'`/)
+  const bad = await collect('console.log(')
+  assert.doesNotMatch(bad.error.message, /console\.js/) // 학습자가 본 적 없는 파일 이름은 뗀다
+}
 
 const wait = (ms) => new Promise((r) => setTimeout(r, ms))
 // 코드가 끝난 뒤 도착한 줄(Promise·타이머)에는 '나중'이 붙는다. 순서도 실제와 같다

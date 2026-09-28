@@ -28,12 +28,19 @@ const HINTS = [
   [/Minified React error #301\b/, '렌더 중에 state를 바꾸고 있다. `setXxx(...)` 호출을 이벤트 핸들러나 Effect 안으로 옮긴다. `onClick={fn()}`처럼 괄호를 붙여 호출하고 있지 않은지도 본다.', 'react'],
   [/Minified React error #3(?:00|10)\b/, '훅을 부르는 순서가 렌더마다 달라졌다. 훅을 if·반복문·return 뒤에 두지 않는다.', 'react'],
   [/Minified React error #321\b/, '컴포넌트 함수 밖에서 훅을 불렀다. 훅은 컴포넌트나 `use`로 시작하는 커스텀 훅 안, 맨 위에서만 부른다.', 'react'],
+  // 이름에는 한글도 올 수 있다(\w는 한글을 못 잡는다). 입문자는 따옴표를 빠뜨려 `장보기`를 이름으로 만들기 쉽다.
   [
-    /(\w+) is not defined/,
+    /([\p{L}\p{N}_$]+) is not defined/u,
     (m) => `\`${m[1]}\`이(가) 정의되지 않았다. 철자를 확인하거나 위에서 먼저 선언한다. import는 쓸 수 없다.`,
+    'react',
   ],
   [
-    /Cannot access '(\w+)' before initialization/,
+    /([\p{L}\p{N}_$]+) is not defined/u,
+    (m) =>
+      `\`${m[1]}\`이(가) 정의되지 않았다. 글자라면 따옴표로 감싸 \`'${m[1]}'\`로 쓴다. 이름이라면 철자와 대소문자를 확인하거나 위에서 먼저 만든다.`,
+  ],
+  [
+    /Cannot access '([\p{L}\p{N}_$]+)' before initialization/u,
     (m) => `\`${m[1]}\`을(를) 선언하기 전에 썼다. 선언을 위로 올린다.`,
   ],
   [/is not a function/, '함수가 아닌 것을 호출했다. 이름이 맞는지, 그 값이 함수인지 확인한다.'],
@@ -48,7 +55,7 @@ const HINTS = [
     'const로 만든 이름에 새 값을 넣었다. 바꿔야 하는 값이면 let으로 선언한다.',
   ],
   [
-    /Identifier '(\w+)' has already been declared/,
+    /Identifier '([\p{L}\p{N}_$]+)' has already been declared/u,
     (m) => `\`${m[1]}\`을(를) 두 번 선언했다. 있는 이름에 새 값을 넣을 때는 const·let 없이 \`${m[1]} = 값\`으로 쓴다.`,
   ],
   [

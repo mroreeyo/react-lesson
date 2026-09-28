@@ -48,7 +48,9 @@ export async function runConsole(code, onLine) {
     // 프리셋 없이 문법만 확인한다. JSX는 여기서 문법 오류가 된다.
     compiled = Babel.transform(code, { filename: 'console.js' }).code
   } catch (err) {
-    return { error: { stage: 'compile', message: err.message }, dispose: () => {} }
+    // 학습자는 console.js라는 파일을 본 적이 없다. 파일 이름 머리는 떼고 줄:칸만 남긴다.
+    const message = err.message.replace(/^\/console\.js: /, '')
+    return { error: { stage: 'compile', message }, dispose: () => {} }
   }
 
   let count = 0

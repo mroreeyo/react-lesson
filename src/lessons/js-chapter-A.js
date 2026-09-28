@@ -10,7 +10,10 @@ export default [
     kind: 'practice',
     definition:
       '`console.log(...)`는 괄호 안에 넣은 것을 콘솔에 한 줄로 적는다. 코드는 위에서 아래로 한 줄씩 실행되고, 콘솔은 그 결과를 눈으로 확인하는 창이다.',
-    goal: "`console.log('할 일: 장보기')` 아래 줄에 `console.log('할 일: 설거지')`를 친다. 잠시 뒤 콘솔에 두 줄이 친 순서대로 찍힌다. 이어서 `console.log('할 일: 빨래')`를 치고 그 줄 맨 앞에 `//`를 붙인다. 그 줄은 주석이 되어 찍히지 않는다.",
+    goal: [
+      "`console.log('할 일: 장보기')` 아래 줄에 `console.log('할 일: 설거지')`를 친다. 잠시 뒤 콘솔에 두 줄이 친 순서대로 찍힌다.",
+      "그 아래에 `console.log('할 일: 빨래')`를 치고, 그 줄 맨 앞에 `//`를 붙인다. 그 줄은 주석이 되어 찍히지 않는다.",
+    ],
     starterCode: `// 빗금 두 개(//) 뒤는 주석이다. 실행되지 않는다. 사람이 읽으라고 남기는 메모다.
 console.log('할 일: 장보기')
 `,
@@ -23,7 +26,7 @@ console.log('할 일: 설거지')
       {
         question: '이 콘솔과 브라우저 개발자 도구의 콘솔은 같은가',
         answer:
-          '같은 console.log다. 브라우저에서 F12를 누르면 나오는 개발자 도구에도 콘솔이 있고, 실제 웹 페이지의 코드가 찍은 줄은 그쪽에 나온다. 값을 적는 모양(글자에 따옴표를 언제 붙이는지 등)은 개발자 도구에 맞췄다.\n\n다른 점은 둘이다. 개발자 도구는 묶음 값을 눌러 펼쳐 보게 하고, 이 앱은 처음부터 펼쳐 적는다. 또 이 앱은 코드가 끝난 뒤에 도착한 줄 앞에 "나중"을 붙인다. JS 21에서 이 표시를 쓴다.',
+          '같은 console.log다. 브라우저에서 F12를 누르면 나오는 개발자 도구에도 콘솔이 있고, 실제 웹 페이지의 코드가 찍은 줄은 그쪽에 나온다. 값을 적는 모양(글자에 따옴표를 언제 붙이는지 등)은 개발자 도구에 맞췄다.\n\n다른 점은 둘이다. 개발자 도구는 여러 개를 묶은 것(JS 11·12에서 배운다)을 눌러 펼쳐 보게 하고, 이 앱은 처음부터 펼쳐 적는다. 또 이 앱은 코드가 끝난 뒤에 도착한 줄 앞에 "나중"을 붙인다. JS 21에서 이 표시를 쓴다.',
       },
       {
         question: '작은따옴표와 큰따옴표는 다른가',
@@ -52,8 +55,13 @@ console.log('할 일: 설거지')
     tagline: '3과 \'3\'은 다르다',
     kind: 'practice',
     definition:
-      '값은 코드가 다루는 데이터 한 조각이다. 글자는 문자열, 수는 숫자, 참·거짓은 불리언이고, 비어 있음을 뜻하는 undefined와 null이 있다. `typeof 값`은 그 값의 종류 이름을 글자로 돌려준다.',
-    goal: "콘솔에서 3과 '3'이 똑같이 3으로 보인다. 아래에 `console.log(typeof 3)`과 `console.log(typeof '3')`을 쳐서 둘의 종류를 확인한다. 이어서 끝났는지를 뜻하는 `console.log(false)`와 `console.log(typeof false)`, 아직 정하지 않은 값 `console.log(undefined)`, 일부러 비워 둔 값 `console.log(null)`을 찍는다. 마지막으로 `console.log([3, '3'])`을 친다. 대괄호로 묶으면 글자에 따옴표가 붙어 둘이 구별된다. 대괄호 묶음은 JS 11에서 배운다.",
+      '값은 코드가 다루는 데이터 한 조각이다. 글자는 문자열, 수는 숫자, 참·거짓은 불리언이고, 비어 있음을 뜻하는 undefined와 null이 있다. `typeof 값`은 그 값의 종류 이름을 글자로 돌려준다. 돌려준다는 것은 그 자리가 결과로 바뀐다는 뜻이다. `console.log(typeof 3)`은 `console.log(\'number\')`와 같다.',
+    goal: [
+      "콘솔에서 3과 '3'이 똑같이 3으로 보인다. 아래에 `console.log(typeof 3)`과 `console.log(typeof '3')`을 쳐서 둘의 종류를 확인한다.",
+      "끝났는지를 뜻하는 `console.log(false)`와 `console.log(typeof false)`를 친다.",
+      "아직 정하지 않은 값 `console.log(undefined)`와 일부러 비워 둔 값 `console.log(null)`을 친다.",
+      "`console.log([3, '3'])`을 친다. 대괄호로 묶으면 글자에 따옴표가 붙어 둘이 구별된다. 대괄호 묶음은 JS 11에서 배운다.",
+    ],
     starterCode: `console.log('할 일: 장보기')
 
 // 할 일 하나를 여러 값으로 적는다.
@@ -112,7 +120,12 @@ console.log([3, '3'])  // 묶음 안에서는 글자에 따옴표가 붙는다
     kind: 'practice',
     definition:
       '변수는 값에 붙이는 이름이다. `const 이름 = 값`으로 만든 이름에는 다른 값을 다시 넣을 수 없고, `let 이름 = 값`으로 만든 이름에는 나중에 `이름 = 새 값`으로 다른 값을 넣을 수 있다.',
-    goal: "맨 위에 `const title = '장보기'`와 `let done = false`를 만들고, 아래 console.log 안의 '장보기'와 false를 title과 done으로 바꾼다. 그다음 맨 아래에 `done = true`를 치고 `console.log('끝났나:', done)`을 한 번 더 찍는다. 마지막으로 `title = '설거지'`를 쳐 본다. const라서 오류가 난다. 확인했으면 그 줄을 지운다.",
+    goal: [
+      "맨 위에 `const title = '장보기'`와 `let done = false`를 만든다.",
+      "아래 console.log 안의 '장보기'를 title로, false를 done으로 바꾼다. 콘솔 출력은 바꾸기 전과 같아야 한다.",
+      "맨 아래에 `done = true`를 치고 `console.log('끝났나:', done)`을 한 번 더 찍는다.",
+      "`title = '설거지'`를 쳐 본다. const라서 오류가 난다. 확인했으면 그 줄을 지운다.",
+    ],
     starterCode: `// 괄호 안에 쉼표로 여러 값을 넣으면 한 줄에 공백으로 이어 찍는다.
 // 같은 글자를 두 번 적었다. 할 일 이름이 바뀌면 두 줄을 다 고쳐야 한다.
 console.log('할 일:', '장보기')
@@ -182,7 +195,13 @@ console.log(title) // 설거지 — 위의 '장보기'가 조용히 덮였다
     kind: 'practice',
     definition:
       '연산자는 값을 받아 새 값을 만드는 기호다. `+`는 수를 더하거나 글자를 이어 붙이고, `===`와 `!==`는 같은지·다른지 물어 true나 false를 돌려주고, `!`는 true와 false를 뒤집는다.',
-    goal: "아래에 차례로 친다. 할 일 하나를 더했다고 치고 `count = count + 1`을 친 뒤 count를 찍어 3을 확인한다. `count++`로 한 번 더 늘려 4를 찍는다. `console.log(title + '!')`로 글자를 이어 붙인다. `console.log(count === 4)`와 `console.log(title !== '설거지')`로 같은지·다른지 묻는다. 마지막으로 `console.log(!done)`으로 참·거짓을 뒤집는다.",
+    goal: [
+      "할 일 하나를 더했다고 치고 `count = count + 1`을 친 뒤 `console.log('남은 개수:', count)`로 3을 확인한다.",
+      "`count++`로 한 번 더 늘리고 같은 줄로 4를 찍는다.",
+      "`console.log(title + '!')`로 글자를 이어 붙인다.",
+      "`console.log(count === 4)`와 `console.log(title !== '설거지')`로 같은지·다른지 묻는다.",
+      "`console.log(!done)`으로 참·거짓을 뒤집는다.",
+    ],
     starterCode: `const title = '장보기'
 let count = 2
 let done = false
@@ -243,7 +262,12 @@ console.log(!done)              // 뒤집기
     kind: 'practice',
     definition:
       '문자열 뒤에 점(.)을 찍으면 그 문자열에 딸린 것을 꺼낸다. `length`처럼 괄호 없이 읽는 것은 속성, `trim()`처럼 괄호를 붙여 부르는 것은 메서드다. `trim()`은 앞뒤 공백을 뗀 새 문자열을, `includes(글자)`는 그 글자가 들어 있는지를 돌려준다.',
-    goal: "`console.log(input.length)`로 글자 수를 찍는다. 공백까지 세어 7이 나온다. 이어서 `const title = input.trim()`으로 앞뒤 공백을 뗀 글자를 만들고, `console.log('[' + title + ']')`와 `console.log(title === '장보기')`를 찍는다. `console.log(title.includes('장'))`으로 '장'이 들어 있는지 묻는다. 마지막으로 공백만 친 입력 `const blank = '   '`을 만들고 `console.log(blank.trim() === '')`를 찍는다. 빈 할 일을 막을 때 리액트 레슨이 쓰는 비교다.",
+    goal: [
+      "`console.log(input.length)`로 글자 수를 찍는다. 공백까지 세어 7이 나온다.",
+      "`const title = input.trim()`으로 앞뒤 공백을 뗀 글자를 만들고, `console.log('[' + title + ']')`와 `console.log(title === '장보기')`를 찍는다.",
+      "`console.log(title.includes('장'))`으로 '장'이 들어 있는지 묻는다.",
+      "공백만 친 입력 `const blank = '   '`을 만들고 `console.log(blank.trim() === '')`를 찍는다. 빈 할 일을 막을 때 리액트 레슨이 쓰는 비교다.",
+    ],
     starterCode: `// 사용자가 입력칸에 친 글자라고 치자. 앞뒤에 공백이 섞여 들어왔다.
 const input = '  장보기  '
 

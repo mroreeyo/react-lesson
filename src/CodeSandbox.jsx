@@ -1,5 +1,5 @@
 import { useEffect, useId, useRef, useState } from 'react'
-import Code from './Code.jsx'
+import Code, { InlineCode } from './Code.jsx'
 import CodeEditor from './CodeEditor.jsx'
 import { runConsole } from './consoleRunner.js'
 import { hintFor } from './errorHints.js'
@@ -102,6 +102,19 @@ export default function CodeSandbox({
     }
   }
 
+  const hint = error && hintFor(error.message, mode)
+  const errorBox = error && (
+    <div className="panel-error">
+      <strong>{error.stage === 'compile' ? '문법 오류' : '실행 오류'}</strong>
+      {hint && (
+        <p className="hint">
+          <InlineCode text={hint} />
+        </p>
+      )}
+      <pre>{error.message}</pre>
+    </div>
+  )
+
   return (
     <div className="sandbox">
       <section className="pane">
@@ -113,7 +126,7 @@ export default function CodeSandbox({
         </header>
         <p className="notice">
           {isConsole
-            ? '코드는 위에서 아래로 실행되고, console.log로 찍은 값이 콘솔에 쌓입니다.'
+            ? '코드는 위에서 아래로 실행되고, console.log로 찍은 것이 콘솔에 쌓입니다.'
             : '`App` 컴포넌트를 정의하세요. import는 쓸 수 없고, useState 같은 함수는 바로 쓰면 됩니다.'}{' '}
           Tab은 들여쓰기이고, 키보드로 편집기를 나가려면 Esc 다음 Tab입니다.
         </p>
@@ -163,16 +176,11 @@ export default function CodeSandbox({
             다시 실행
           </button>
         </header>
-        {error && (
-          <div className="panel-error">
-            <strong>{error.stage === 'compile' ? '문법 오류' : '실행 오류'}</strong>
-            {hintFor(error.message, mode) && <p className="hint">{hintFor(error.message, mode)}</p>}
-            <pre>{error.message}</pre>
-          </div>
-        )}
+        {/* 콘솔 모드에서는 오류 전에 찍힌 줄이 먼저다. 오류 상자를 출력 아래에 둔다. */}
+        {!isConsole && errorBox}
         {isConsole ? (
           <div className="console" role="log" aria-label="콘솔 출력">
-            {lines.length === 0 && !error && <p className="panel-hint">아직 출력이 없습니다.</p>}
+            {lines.length === 0 && <p className="panel-hint">{error ? '오류 전에 찍힌 줄이 없습니다.' : '아직 출력이 없습니다.'}</p>}
             {lines.map((line, i) => (
               <div key={i} className={`console-line is-${line.level}`}>
                 {/* 코드가 끝까지 돈 뒤 타이머·Promise에서 온 줄. 무엇이 먼저 찍히는지 보게 한다. */}
@@ -184,6 +192,7 @@ export default function CodeSandbox({
         ) : (
           <ResultPanel App={App} runKey={`${runKey}-${rerun}`} />
         )}
+        {isConsole && errorBox}
       </section>
     </div>
   )

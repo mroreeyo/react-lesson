@@ -1,5 +1,6 @@
 import { Component, Suspense, useEffect, useRef, useState } from 'react'
 import { createRoot } from 'react-dom/client'
+import { InlineCode } from './Code.jsx'
 import { hintFor } from './errorHints.js'
 
 class RenderBoundary extends Component {
@@ -14,7 +15,11 @@ class RenderBoundary extends Component {
       return (
         <div className="panel-error">
           <strong>렌더 중 오류</strong>
-          {hint && <p className="hint">{hint}</p>}
+          {hint && (
+            <p className="hint">
+              <InlineCode text={hint} />
+            </p>
+          )}
           <pre>{message}</pre>
         </div>
       )
@@ -89,7 +94,11 @@ export default function ResultPanel({ App, runKey }) {
       {asyncError && (
         <div className="panel-error">
           <strong>이벤트 처리 중 오류</strong>
-          {hintFor(asyncError) && <p className="hint">{hintFor(asyncError)}</p>}
+          {hintFor(asyncError) && (
+            <p className="hint">
+              <InlineCode text={hintFor(asyncError)} />
+            </p>
+          )}
           <pre>{asyncError}</pre>
         </div>
       )}
