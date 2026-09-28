@@ -278,7 +278,7 @@ console.log(todos.length)
       '구조 분해는 객체나 배열에서 여러 값을 한 줄에 꺼내 이름을 붙이는 문법이다. 객체는 `const { title, done } = todo`처럼 키 이름으로 꺼내고, 배열은 `const [first, second] = list`처럼 순서로 꺼낸다.',
     goal: [
       '`const title = todo.title`과 `const done = todo.done` 두 줄을 `const { title, done } = todo` 한 줄로 바꾼다.',
-      'label의 매개변수 자리에서 바로 꺼낸다. `function label(todo)`를 `function label({ title, done })`로 바꾸고, 안의 `todo.`를 전부 뗀다. 부르는 쪽은 그대로 `label(todo)`다.',
+      'label의 매개변수 자리에서 바로 꺼낸다. `function label(todo)`를 `function label({ title, done })`로 바꾸고, 안의 `todo.`를 전부 뗀다. 부르는 쪽은 그대로 `label(todo)`다. 위에서 이미 title을 만들었는데도 오류가 나지 않는다. 함수 안의 이름은 함수 밖의 이름과 따로이기 때문이다.',
       '배열은 순서로 꺼낸다. `const first`와 `const second` 두 줄을 `const [first, second] = pair` 한 줄로 바꾼다.',
     ],
     starterCode: `const todo = { id: 'a', title: '장보기', done: true }
@@ -304,6 +304,7 @@ const { title, done } = todo
 console.log(title, done)
 
 // 매개변수 자리에서 바로 꺼낸다. 리액트 컴포넌트가 props를 받는 모양이다
+// 여기의 title·done은 함수 안에서만 쓰는 이름이라, 위의 title·done과 겹쳐도 된다
 function label({ title, done }) {
   return done ? title + ' · 끝' : title
 }
@@ -478,7 +479,7 @@ console.log(JSON.stringify({ a: 1, f: () => 1, u: undefined })) // {"a":1}`,
       {
         question: '리액트에서는 어디서 쓰나',
         answer:
-          '레슨 27에서 새로고침해도 목록이 남게 할 때 쓴다. 목록이 바뀔 때마다 stringify해서 브라우저 저장소에 넣고, 처음 그릴 때 parse로 꺼낸다. 꺼낸 글자가 깨졌으면 catch로 받아 빈 목록으로 시작한다. 레슨 32에서는 그 일을 커스텀 훅으로 떼어 낸다.',
+          '레슨 27에서 새로고침해도 목록이 남게 할 때 쓴다. 목록이 바뀔 때마다 stringify해서 브라우저 저장소에 넣고, 처음 그릴 때 parse로 꺼낸다. 꺼낸 글자가 깨졌으면 catch로 받아 처음 목록으로 시작한다. 레슨 32에서는 그 일을 커스텀 훅으로 떼어 낸다.',
       },
     ],
     usedIn: [27, 32],

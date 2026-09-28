@@ -126,6 +126,19 @@ assert.match(hintFor('Cannot read properties of undefined', 'react'), /ref라면
 assert.doesNotMatch(hintFor('Cannot read properties of undefined', 'console'), /ref/)
 assert.equal(hintFor('Too many re-renders', 'console'), null)
 assert.match(hintFor("Identifier 'title' has already been declared. (3:6)", 'console') ?? '', /두 번 선언했다/)
+// J2 레슨에서 나올 실수들. 힌트가 틀린 길로 보내지 않아야 한다
+{
+  const eq = await collect("const done = false\nif (done = true) console.log('끝')")
+  assert.match(hintFor(eq.error.message, 'console'), /`===`/) // let으로 바꾸라고만 하면 틀린 코드가 조용히 돈다
+  const json = await collect("JSON.parse('장보기')")
+  assert.match(hintFor(json.error.message, 'console'), /JSON 모양이 아니다/) // 괄호 힌트로 새지 않는다
+  const empty = await collect("JSON.parse('')")
+  assert.match(hintFor(empty.error.message, 'console'), /JSON 모양이 아니다/)
+  const destructure = await collect('const todos = []\nconst { title } = todos[0]')
+  assert.match(hintFor(destructure.error.message, 'console'), /`todos\[0\]`이\(가\) undefined이라 그 안에서 `title`/)
+  const noCatch = await collect("try {\n  console.log('a')\n}")
+  assert.match(hintFor(noCatch.error.message, 'console'), /catch가 없다/)
+}
 // 입문자가 가장 흔히 내는 실수: 한글 글자에 따옴표를 빠뜨린다. \w는 한글을 못 잡으므로 따로 본다
 {
   const { error } = await collect('console.log(장보기)')

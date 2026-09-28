@@ -10,9 +10,11 @@ export default [
     definition:
       '`if (조건) { ... }`는 조건이 true일 때만 중괄호 안을 실행한다. 이어 붙인 `else { ... }`는 아닐 때 실행할 곳이다. `switch (값)`은 값이 어느 `case`와 같은지에 따라 여러 갈래 중 하나를 고른다.',
     goal: [
-      "두 console.log를 `if (done) {` 와 `} else {` 와 `}` 사이에 하나씩 넣어, done이 true면 '끝' 줄만, 아니면 '아직' 줄만 찍히게 한다.",
+      "'끝' 줄 위에 `if (done) {`를 쓴다. '끝' 줄과 '아직' 줄 사이에 `} else {`를, '아직' 줄 아래에 `}`를 쓴다. done이 false이므로 '아직' 줄만 찍힌다.",
       '맨 위의 `const done = false`를 true로 바꿔 다른 줄이 찍히는지 보고, 다시 false로 돌린다.',
-      "아래에 `const filter = 'left'`를 만들고 `switch (filter) {`를 연다. `case 'all':`이면 '전부 보여준다', `case 'left':`면 '남은 것만 보여준다', `case 'done':`이면 '끝낸 것만 보여준다'를 찍고, 각 case 끝에 `break`를 쓴다. `default:`에는 '모르는 필터'를 찍는다.",
+      "아래에 `const filter = 'left'`를 만들고, 그 아래 줄에 `switch (filter) {`를 쓴다.",
+      "`case 'all':`을 쓰고, 그 아래에 `console.log('전부 보여준다')`와 `break`를 한 줄씩 쓴다. 같은 모양으로 `case 'left':`(남은 것만 보여준다)와 `case 'done':`(끝낸 것만 보여준다)도 쓴다.",
+      "마지막에 `default:`를 쓰고 그 아래에 `console.log('모르는 필터: ' + filter)`를 쓴 뒤, `}`로 switch를 닫는다. '남은 것만 보여준다'가 찍힌다.",
     ],
     starterCode: `const title = '장보기'
 const done = false
@@ -56,6 +58,14 @@ switch (filter) {
         question: 'if의 조건 자리에 true·false가 아닌 값을 넣으면',
         answer:
           "거짓처럼 취급되는 값이 정해져 있다. false, 0, 빈 글자 '', null, undefined다. 나머지는 전부 참처럼 취급된다. 그래서 if (title)은 title이 빈 글자가 아닐 때 실행된다. 이 규칙이 레슨 8에서 개수 0이 화면에 찍히는 함정의 뿌리다. JS 7에서 본다.",
+      },
+      {
+        question: 'if (done = true)는 왜 언제나 실행되나',
+        answer: `=는 비교가 아니라 넣기다. done에 true를 넣고, 그 결과인 true로 조건을 본다. 그래서 늘 참이다. 같은지 물을 때는 ===를 쓴다(JS 4). done이 const면 넣을 수 없어 오류가 나고, let이면 오류 없이 조용히 틀린다.
+
+let done = false
+if (done = true) console.log('늘 찍힌다')   // 넣기
+if (done === true) console.log('같을 때만') // 비교`,
       },
     ],
     usedIn: [17, 22, 28],
@@ -214,7 +224,7 @@ console.log(result)    // undefined`,
       '함수도 값이라서 변수에 담고, 다른 함수에 인자로 넘길 수 있다. `(매개변수) => 값`은 함수를 짧게 쓰는 화살표 함수다. 화살표 뒤가 중괄호 없이 값 하나면 return을 쓰지 않아도 그 값을 돌려준다.',
     goal: [
       "같은 함수를 화살표로 만든다: `const label2 = (title, done) => (done ? title + ' · 끝' : title + ' · 아직')`. 그리고 `console.log(label2('설거지', false))`로 결과가 같은지 본다.",
-      '함수를 부르지 않고 찍어 본다: `console.log(label)`. 괄호를 붙이지 않으면 부르지 않고, 함수 자체가 값으로 쓰인다.',
+      '함수를 부르지 않고 찍어 본다: `console.log(label)`. 괄호를 붙이지 않으면 부르지 않고, 함수 자체가 값으로 쓰인다. 이 콘솔은 함수 label로 적고, 브라우저 개발자 도구는 ƒ label(title, done)처럼 적는다.',
       "함수를 받는 함수를 만든다. `function twice(fn) {`를 쓰고, 그 안에 `fn()`을 두 줄 쓰고, `}`로 닫는다. 그리고 `twice(() => console.log('불렸다'))`를 부른다. 넘긴 함수를 twice가 두 번 부른다.",
     ],
     starterCode: `function label(title, done) {
@@ -327,7 +337,17 @@ console.log('try 밖은 계속 실행된다')
       {
         question: '리액트에서는 어디서 쓰나',
         answer:
-          '레슨 22의 reducer는 모르는 action을 받으면 throw한다. 조용히 넘어가면 오타를 못 찾기 때문이다. 레슨 27은 브라우저 저장소에서 읽은 글자가 깨졌을 때 나는 오류를 catch로 받아, 앱이 멈추지 않고 빈 목록으로 시작하게 한다. 그 글자를 읽는 법은 JS 17에서 배운다.',
+          '레슨 22의 reducer는 모르는 action을 받으면 throw한다. 조용히 넘어가면 오타를 못 찾기 때문이다. 레슨 27은 브라우저 저장소에서 읽은 글자가 깨졌을 때 나는 오류를 catch로 받아, 앱이 멈추지 않고 처음 목록으로 시작하게 한다. 그 글자를 읽는 법은 JS 17에서 배운다.',
+      },
+      {
+        question: 'catch 뒤의 (err)는 꼭 써야 하나',
+        answer: `받은 오류를 쓰지 않으면 괄호째 생략할 수 있다. 레슨 27이 이렇게 쓴다. 무엇이 틀렸는지는 상관없이 처음 목록으로 돌아가면 되기 때문이다.
+
+try {
+  JSON.parse(raw)
+} catch {
+  // 오류를 쓰지 않으므로 (err)가 없다
+}`,
       },
       {
         question: 'throw를 쓰지 않았는데 나는 오류도 catch로 받나',

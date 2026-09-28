@@ -14,6 +14,12 @@ const HINTS = [
   ],
   [/Unterminated string constant/, '따옴표가 닫히지 않았다. 표시된 줄의 따옴표 짝을 확인한다.'],
   [/Unterminated template/, '백틱(`)이 닫히지 않았다.'],
+  // JSON.parse의 오류도 "Unexpected token"으로 시작한다. 코드가 아니라 데이터 문제이므로 괄호 힌트보다 먼저 잡는다.
+  [
+    /is not valid JSON|Unexpected end of JSON input|in JSON at position/,
+    'JSON.parse에 넘긴 글자가 JSON 모양이 아니다. 코드의 괄호가 아니라 읽으려는 글자가 문제다. 깨질 수 있는 글자라면 try/catch로 받는다.',
+  ],
+  [/Missing catch or finally clause/, 'try 뒤에 catch가 없다. `} catch (err) { ... }`를 이어 붙인다.'],
   [
     /Unexpected token/,
     '문법이 어긋난 자리다. 표시된 줄 근처의 괄호·중괄호 짝과 쉼표를 확인한다.',
@@ -52,7 +58,12 @@ const HINTS = [
   [/Cannot read propert(?:y|ies) of (?:undefined|null)/, '비어 있는 값에서 속성을 읽었다. 그 값이 먼저 채워지는지 확인한다.'],
   [
     /Assignment to constant variable|is read-only/,
-    'const로 만든 이름에 새 값을 넣었다. 바꿔야 하는 값이면 let으로 선언한다.',
+    // if (done = true)처럼 비교하려다 =를 하나만 쓴 경우가 많다. let으로 바꾸라고만 하면 틀린 코드가 조용히 돈다.
+    'const로 만든 이름에 새 값을 넣었다. 같은지 물으려던 것이면 `=` 대신 `===`를 쓴다. 정말 바꿔야 하는 값이면 let으로 선언한다.',
+  ],
+  [
+    /Cannot destructure property '([^']+)' of '([^']+)' as it is (undefined|null)/,
+    (m) => `\`${m[2]}\`이(가) ${m[3]}이라 그 안에서 \`${m[1]}\`을(를) 꺼낼 수 없다. 꺼내기 전에 그 값이 채워지는지 확인한다.`,
   ],
   [
     /Identifier '([\p{L}\p{N}_$]+)' has already been declared/u,
