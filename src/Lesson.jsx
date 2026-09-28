@@ -12,6 +12,60 @@ function Paragraphs({ text }) {
     .map((p, i) => <p key={i}>{p}</p>)
 }
 
+/** 글 안의 "레슨 N"을 그 레슨으로 가는 링크로 바꾼다. PRD: 더 파고들면은 가능하면 다른 레슨으로 잇는다. */
+function LinkedText({ text, onNavigate }) {
+  return text.split(/(레슨 \d+)/).map((part, i) => {
+    const m = /^레슨 (\d+)$/.exec(part)
+    const target = m && lessons.find((l) => l.order === Number(m[1]))
+    return target ? (
+      <button key={i} className="inline-link" onClick={() => onNavigate(target.id)}>
+        {part}
+      </button>
+    ) : (
+      part
+    )
+  })
+}
+
+/**
+ * 더 파고들면 답. 빈 줄로 나눈 덩어리 중 코드로 보이는 첫 덩어리부터 끝까지를 코드 한 블록으로 그린다.
+ * 코드 안에도 빈 줄이 있으므로 덩어리마다 따로 판단하면 코드가 쪼개진다.
+ */
+const looksLikeCode = (chunk) => chunk.includes('\n') || /^(let|const|function|class|import|export) /.test(chunk)
+
+function DeeperAnswer({ text, onNavigate }) {
+  const chunks = text.split('\n\n')
+  const codeAt = chunks.findIndex(looksLikeCode)
+  const prose = codeAt === -1 ? chunks : chunks.slice(0, codeAt)
+  return (
+    <>
+      {prose.map((chunk, i) => (
+        <p key={i}>
+          <LinkedText text={chunk} onNavigate={onNavigate} />
+        </p>
+      ))}
+      {codeAt !== -1 && <Code code={chunks.slice(codeAt).join('\n\n')} />}
+    </>
+  )
+}
+
+/** 개념 레슨의 그림. 단계를 화살표로 잇는다. 좁은 화면에서는 세로로 쌓인다. */
+function Figure({ figure }) {
+  return (
+    <figure className="flow">
+      <ol>
+        {figure.steps.map((step, i) => (
+          <li key={i}>
+            <strong>{step.title}</strong>
+            <span>{step.note}</span>
+          </li>
+        ))}
+      </ol>
+      {figure.caption && <figcaption>{figure.caption}</figcaption>}
+    </figure>
+  )
+}
+
 /**
  * 레슨 본문. 블록 순서는 손이 먼저, 배경이 나중이다.
  * JS 되짚기 · 한 줄 정의 · 지금 방식 · 없던 시절 · 왜 나왔나 · 더 파고들면 · 확인 문제.
@@ -96,13 +150,19 @@ export default function Lesson({ lesson, done, onComplete, onNavigate, onOpenDem
             </div>
           ))}
 
-        {lesson.kind === 'concept' &&
-          lesson.readOnly?.map((file) => (
-            <div className="file" key={file.filename}>
-              <p className="filename">{file.filename}</p>
-              <Code code={file.code} />
-            </div>
-          ))}
+        {lesson.kind === 'concept' && lesson.figure && <Figure figure={lesson.figure} />}
+
+        {lesson.kind === 'concept' && (
+          // 파일 두 개면 나란히 둔다(PRD 레슨 4). 넓은 화면에서만, 좁으면 쌓인다.
+          <div className={lesson.readOnly?.length === 2 ? 'files files-pair' : 'files'}>
+            {lesson.readOnly?.map((file) => (
+              <div className="file" key={file.filename}>
+                <p className="filename">{file.filename}</p>
+                <Code code={file.code} />
+              </div>
+            ))}
+          </div>
+        )}
 
         {lesson.kind === 'practice' && (
           <CodeSandbox
@@ -126,7 +186,7 @@ export default function Lesson({ lesson, done, onComplete, onNavigate, onOpenDem
       {demo && (
         <section className="block">
           <h3 className="block-head">실험실</h3>
-          <button className="demo-link" onClick={() => onOpenDemo(demo.id)}>
+          <button id="lesson-demo-link" className="demo-link" onClick={() => onOpenDemo(demo.id)}>
             <span className="demo-link-title">{demo.title} 데모 열기 →</span>
             <span className="demo-link-what">{demo.what}</span>
           </button>
@@ -148,7 +208,7 @@ export default function Lesson({ lesson, done, onComplete, onNavigate, onOpenDem
           {lesson.deeper.map((d, i) => (
             <details className="deeper" key={i}>
               <summary>{d.question}</summary>
-              <p>{d.answer}</p>
+              <DeeperAnswer text={d.answer} onNavigate={onNavigate} />
             </details>
           ))}
         </section>
@@ -173,7 +233,8 @@ export default function Lesson({ lesson, done, onComplete, onNavigate, onOpenDem
         </p>
       )}
 
-      {isLastOfChapter && chapter?.outro && (
+      {/* PRD: 마지막 레슨을 끝내면 마무리 문단이 나온다. 확인 문제를 맞힌 뒤에 보인다. */}
+      {isLastOfChapter && chapter?.outro && done && (
         <section className="chapter-note">
           <h3>챕터 {chapter.id} 마무리</h3>
           <Paragraphs text={chapter.outro} />

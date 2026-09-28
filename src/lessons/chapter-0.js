@@ -90,6 +90,12 @@ const patched = { ...todo, done: true }`,
 3 && '보임'   // '보임'`,
       },
     ],
+    sources: [
+      'https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Array/map',
+      'https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment',
+      'https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Operators/Spread_syntax',
+      'https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Operators/Logical_AND',
+    ],
     quiz: {
       question: '`[...todos, "빨래"]`의 결과는 무엇인가',
       options: [

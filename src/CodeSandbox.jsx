@@ -63,13 +63,19 @@ export default function CodeSandbox({
   }, [code])
 
   const dirty = code !== resetCode
+  // 학습자가 친 코드를 덮어쓰기 전에 묻는다. 스타터 그대로이거나 이미 정답이면 잃을 것이 없다.
+  const replaceWith = (next) => {
+    if (code === resetCode || code === solutionCode || window.confirm('편집기에서 고친 코드가 사라집니다. 계속할까요?')) {
+      setCode(next)
+    }
+  }
 
   return (
     <div className="sandbox">
       <section className="pane">
         <header className="pane-head">
           <h3>편집기</h3>
-          <button className="ghost" onClick={() => setCode(resetCode)} disabled={!dirty}>
+          <button className="ghost" onClick={() => replaceWith(resetCode)} disabled={!dirty}>
             원래 코드로
           </button>
         </header>
@@ -100,7 +106,7 @@ export default function CodeSandbox({
               막히면 펼친다. 맞았는지는 결과 화면과 이 코드를 견주어 스스로 본다.
             </p>
             <Code code={solutionCode} />
-            <button className="ghost" onClick={() => setCode(solutionCode)} disabled={code === solutionCode}>
+            <button className="ghost" onClick={() => replaceWith(solutionCode)} disabled={code === solutionCode}>
               편집기에 넣기
             </button>
           </details>

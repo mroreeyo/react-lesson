@@ -719,6 +719,14 @@ function App() {
     kind: 'concept',
     definition:
       'React Compiler는 빌드할 때 코드를 읽어 memo·useMemo·useCallback을 붙일 자리를 찾아 대신 붙인다. 코드를 고치지 않아도 레슨 33에서 손으로 한 일이 된다.',
+    figure: {
+      steps: [
+        { title: '내가 쓴 코드', note: 'memo·useMemo·useCallback 없이 순수하게 쓴 컴포넌트' },
+        { title: 'React Compiler', note: '빌드할 때 각 값이 무엇에 기대는지 읽는다' },
+        { title: '나오는 코드', note: '기댄 값이 그대로면 지난 결과를 다시 쓰는 기억이 붙는다' },
+      ],
+      caption: '레슨 33에서 손으로 붙인 세 가지를 컴파일러가 대신 붙인다. 순수하지 않은 컴포넌트는 건너뛴다.',
+    },
     // 빌드 도구 얘기라 편집기가 아니다. 이 앱의 편집기는 컴파일러를 켜지 않았다.
     readOnly: [
       {
@@ -805,6 +813,14 @@ const left = useMemo(() => todos.filter((t) => !t.done).length, [todos])
     kind: 'concept',
     definition:
       '서버 컴포넌트는 서버에서만 돌고 결과만 브라우저로 온다. 데이터를 서버에서 바로 읽을 수 있고, 그 컴포넌트의 코드는 브라우저에 내려가지 않는다. state와 Effect는 쓸 수 없다. 그것들은 브라우저에서 도는 클라이언트 컴포넌트의 몫이다.',
+    figure: {
+      steps: [
+        { title: '서버', note: '서버 컴포넌트가 데이터베이스를 바로 읽고 화면 결과를 만든다. 이 코드는 브라우저로 안 간다' },
+        { title: '경계', note: "JSON으로 바꿀 수 있는 값만 넘어간다. 'use client' 표시가 경계다" },
+        { title: '브라우저', note: '클라이언트 컴포넌트만 내려와 state와 이벤트를 맡는다' },
+      ],
+      caption: '데이터 읽기와 무거운 코드는 서버에 남고, 움직이는 부분만 브라우저로 온다.',
+    },
     // 브라우저 단독으로 실행할 수 없다. 서버가 있어야 한다.
     readOnly: [
       {

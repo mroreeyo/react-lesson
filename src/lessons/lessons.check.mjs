@@ -46,7 +46,13 @@ for (const l of lessons) {
   if (l.kind === 'practice') {
     assert.ok(l.starterCode?.includes('function App'), `${at}: starterCode에 App이 없다`)
   }
-  if (l.kind === 'concept') assert.ok(l.readOnly?.length > 0, `${at}: 읽기 전용 코드가 없다`)
+  if (l.kind === 'concept') {
+    assert.ok(l.readOnly?.length > 0, `${at}: 읽기 전용 코드가 없다`)
+    // PRD: 개념 레슨은 읽기 전용 코드와 그림
+    assert.ok(l.figure?.steps?.length >= 2, `${at}: 개념 레슨에 그림(figure)이 없다`)
+  }
+  // PRD 리스크 표: 레슨마다 출처 링크를 단다
+  assert.ok(l.sources?.length > 0, `${at}: 출처 링크가 없다`)
   if (l.kind === 'checklist') assert.ok(l.items?.length > 0, `${at}: 체크리스트 항목이 없다`)
 
   // '왜 나왔나'는 '없던 시절'이 있을 때만

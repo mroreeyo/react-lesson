@@ -43,10 +43,20 @@ export default function App() {
     setFocusedDemo(demoId)
     setTab('labs')
   }
+  // PRD: 읽던 자리에서 데모를 확인하고 돌아온다. 레슨이 다시 그려지므로 픽셀이 아니라 데모 링크로 돌아간다.
+  // 좁은 화면에서는 결과 패널이 600ms 뒤에 채워지며 링크를 밀어내므로, 사용자가 그새 스크롤하지 않았으면 한 번 더 맞춘다.
   const backToLesson = () => {
     setFocusedDemo(null)
     setTab('lessons')
-    window.scrollTo({ top: 0 })
+    const toLink = () => document.getElementById('lesson-demo-link')?.scrollIntoView({ block: 'center' })
+    // requestAnimationFrame은 그려지지 않는 탭에서 멈추므로 setTimeout을 쓴다. 클릭 처리 뒤라 커밋은 끝나 있다.
+    setTimeout(() => {
+      toLink()
+      const settled = window.scrollY
+      setTimeout(() => {
+        if (window.scrollY === settled) toLink()
+      }, 800)
+    }, 0)
   }
 
   return (

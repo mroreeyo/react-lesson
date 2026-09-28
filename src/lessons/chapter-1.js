@@ -93,6 +93,15 @@ class TodoCard extends React.Component {          // 함수 대신 class를 만�
     tagline: '파일을 나누고 이름으로 가져온다',
     kind: 'concept',
     definition: '컴포넌트를 파일마다 하나씩 두고, 쓰는 쪽에서 import로 가져온다. export default는 이름 없이 값 하나를 내보내고 가져오는 쪽이 이름을 붙인다. 이름을 붙여 내보내면(named) 가져올 때 중괄호로 그 이름을 적는다.',
+    figure: {
+      steps: [
+        { title: 'TodoCard.jsx', note: 'export default로 컴포넌트 하나를 내보낸다' },
+        { title: 'import', note: "쓰는 쪽이 import TodoCard from './TodoCard.jsx'로 가져온다" },
+        { title: 'App.jsx', note: '가져온 이름으로 <TodoCard />를 그린다' },
+      ],
+      caption: '파일 하나에 컴포넌트 하나. 이름은 가져오는 쪽이 붙인다.',
+    },
+    sources: ['https://react.dev/learn/importing-and-exporting-components'],
     // 이 샌드박스는 import를 지원하지 않는다. 그래서 파일 두 개를 나란히 읽는다.
     readOnly: [
       {
@@ -298,6 +307,7 @@ function App() {
           '화면에 그릴 수 없다는 오류가 난다. 다만 style 속성처럼 객체를 넘기는 자리는 다르다. 겉의 중괄호가 JS 자리를 열고, 안의 중괄호가 객체다.',
       },
     ],
+    sources: ['https://react.dev/learn/javascript-in-jsx-with-curly-braces'],
     quiz: {
       question: '`<h2>할 일 {total}개</h2>`에서 중괄호가 하는 일은 무엇인가',
       options: [
@@ -462,6 +472,7 @@ function App() {
         answer: '`null`이다. `false`와 `undefined`도 화면에 아무것도 남기지 않는다.',
       },
     ],
+    sources: ['https://react.dev/learn/conditional-rendering'],
     quiz: {
       question: '`{count && <p>남음</p>}`에서 count가 0일 때 화면에 무엇이 나오는가',
       options: ['아무것도 안 나온다', '숫자 0이 나온다', '`<p>남음</p>`이 나온다'],
@@ -653,7 +664,7 @@ function App() {
       {
         question: '그리는 동안 바깥 값을 고치면 무엇이 깨지는가',
         answer:
-          '아래를 편집기에 넣어 보면 된다. 리액트는 같은 화면을 두 번 그려 볼 수 있고, 그때 숫자가 달라진다. 몇 번 그렸는지에 따라 화면이 바뀌면 그 컴포넌트는 더 이상 믿을 수 없다.\n\nlet seen = 0\nfunction App() {\n  seen = seen + 1\n  return <p>{seen}번째</p>\n}',
+          '아래를 편집기에 넣어 본다. 같은 Badge를 props 없이 세 번 그렸는데 화면이 셋 다 다르다. 결과 패널의 "다시 실행"을 누르면 숫자가 또 바뀐다. 몇 번 그렸는지에 따라 화면이 바뀌는 컴포넌트는 믿을 수 없다.\n\nlet seen = 0\n\nfunction Badge() {\n  seen = seen + 1\n  return <p>{seen}번째 카드</p>\n}\n\nfunction App() {\n  return (\n    <>\n      <Badge />\n      <Badge />\n      <Badge />\n    </>\n  )\n}',
       },
       {
         question: '그럼 값은 어디서 고치는가',
