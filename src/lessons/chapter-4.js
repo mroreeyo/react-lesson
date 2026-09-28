@@ -248,6 +248,10 @@ function App() {
     id: 'effect',
     chapter: '4',
     order: 27,
+    jsPrereq: [
+      { text: 'JSON.stringify와 JSON.parse로 목록을 글자로 바꿔 저장하고 되돌린다', js: 'js-json' },
+      { text: '깨진 글자를 읽을 때 나는 오류는 try/catch로 받는다', js: 'js-try-catch' },
+    ],
     title: 'Effect로 동기화하기',
     tagline: '바깥 시스템을 화면 상태에 맞춰 둔다',
     kind: 'practice',
@@ -555,6 +559,9 @@ function App() {
     id: 'effect-lifecycle',
     chapter: '4',
     order: 29,
+    jsPrereq: [
+      { text: 'setInterval로 건 타이머는 clearInterval로 멈출 때까지 계속 돈다', js: 'js-timers' },
+    ],
     title: '반응형 Effect의 생명주기',
     tagline: '시작하고 멈추는 한 덩어리',
     kind: 'practice',

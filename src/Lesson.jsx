@@ -36,6 +36,12 @@ function LinkedPlain({ text, onNavigate }) {
   })
 }
 
+/** 리액트 레슨에서 JS 레슨으로 돌아가는 길. 글 끝에 붙이면 LinkedText가 "JS N"을 링크로 바꾼다. */
+const backToJs = (jsId) => {
+  const js = jsLessons.find((l) => l.id === jsId)
+  return js ? ` 잘 모르겠으면 → JS ${js.order}. ${js.title}` : ''
+}
+
 /**
  * 더 파고들면 답. 빈 줄로 나눈 덩어리 중 코드로 보이는 첫 덩어리부터 끝까지를 코드 한 블록으로 그린다.
  * 코드 안에도 빈 줄이 있으므로 덩어리마다 따로 판단하면 코드가 쪼개진다.
@@ -132,8 +138,12 @@ export default function Lesson({ lesson, done, onComplete, onNavigate, onOpenDem
           <h3 className="block-head">JS 되짚기</h3>
           <ul>
             {lesson.jsPrereq.map((item, i) => (
+              // 항목은 글자 하나이거나 { text, js }다. js가 있으면 그 JS 레슨으로 가는 링크를 붙인다.
               <li key={i}>
-                <LinkedText text={item} onNavigate={onNavigate} />
+                <LinkedText
+                  text={typeof item === 'string' ? item : item.text + backToJs(item.js)}
+                  onNavigate={onNavigate}
+                />
               </li>
             ))}
           </ul>
@@ -173,7 +183,7 @@ export default function Lesson({ lesson, done, onComplete, onNavigate, onOpenDem
             <div className="check-item" key={i}>
               <h4>{item.title}</h4>
               <p>
-                <LinkedText text={item.text} onNavigate={onNavigate} />
+                <LinkedText text={item.text + backToJs(item.js)} onNavigate={onNavigate} />
               </p>
               <Code code={item.code} />
             </div>

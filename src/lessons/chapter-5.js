@@ -3,6 +3,10 @@ export default [
     id: 'memo',
     chapter: '5',
     order: 33,
+    jsPrereq: [
+      { text: '객체·배열·함수는 내용이 같아도 새로 만들면 다른 것이다', js: 'js-reference' },
+      { text: '렌더마다 만든 함수는 그 렌더의 값을 기억한다', js: 'js-closure' },
+    ],
     title: '다시 그리기 줄이기: memo·useMemo·useCallback',
     tagline: '바뀐 게 없으면 건너뛴다',
     kind: 'practice',
@@ -250,6 +254,10 @@ const TodoInput = forwardRef(function TodoInput(props, ref) {  // 두 번째 인
     id: 'action-state',
     chapter: '5',
     order: 35,
+    jsPrereq: [
+      { text: 'Promise는 나중에 올 값이고, reject는 실패를 알린다', js: 'js-promise' },
+      { text: 'await는 async 함수 안에서 Promise의 값을 기다리고, 실패는 try/catch로 받는다', js: 'js-async-await' },
+    ],
     title: 'Action과 useActionState',
     tagline: '제출 중인지 리액트가 안다',
     kind: 'practice',

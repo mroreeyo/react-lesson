@@ -573,7 +573,9 @@ function App() {
     title: 'reducer로 state 로직 추출하기',
     tagline: '무엇이 일어났는지를 보낸다',
     kind: 'practice',
-    jsPrereq: ['switch는 값에 따라 갈래를 고른다. case마다 return하면 break가 필요 없다'],
+    jsPrereq: [
+      { text: 'switch는 값에 따라 갈래를 고른다. case마다 return하면 break가 필요 없다', js: 'js-if-switch' },
+    ],
     definition:
       'useReducer는 state를 바꾸는 방법을 한 함수에 모은다. 컴포넌트는 "무엇이 일어났는지"만 보내고, 그 일이 state를 어떻게 바꾸는지는 reducer가 정한다. 보내는 함수가 dispatch, 보내는 객체가 action이다.',
     goal: 'reducer의 네 `case`를 채운다. added는 스프레드로 새 항목을 붙이고, toggled는 map, deleted는 filter, allDone은 map으로 전부 done을 true로. 각 case는 새 배열을 돌려준다.',

@@ -6,7 +6,10 @@ export default [
     title: '첫 번째 컴포넌트',
     tagline: '화면 한 조각을 함수로 만든다',
     kind: 'practice',
-    jsPrereq: ['함수는 값을 돌려준다', '함수 이름은 이름일 뿐이다. 대문자로 시작해도 JS 문법은 같다'],
+    jsPrereq: [
+      { text: '함수는 값을 돌려준다', js: 'js-functions' },
+      { text: '함수 이름은 이름일 뿐이다. 대문자로 시작해도 JS 문법은 같다', js: 'js-functions' },
+    ],
     definition: '컴포넌트는 화면 한 조각을 돌려주는 함수다. 이름은 대문자로 시작한다. 소문자로 시작하면 리액트가 HTML 태그로 보고 그리려 한다.',
     goal: 'App 안에 손으로 적힌 `<li>` 덩어리를 `TodoCard`라는 컴포넌트로 떼어 낸다. App에서는 `<TodoCard />`로 쓴다.',
     starterCode: `function App() {
@@ -244,8 +247,8 @@ function App() {
     tagline: 'JS 값을 화면에 끼워 넣는다',
     kind: 'practice',
     jsPrereq: [
-      '표현식은 값이 되는 코드다. `1 + 1`, `todos.length`, `a ? b : c`가 표현식이다',
-      '`if`나 `for`는 값이 되지 않는다',
+      { text: '표현식은 값이 되는 코드다. `1 + 1`, `todos.length`, `a ? b : c`가 표현식이다', js: 'js-ternary-and' },
+      { text: '`if`나 `for`는 값이 되지 않는다', js: 'js-ternary-and' },
     ],
     definition: '중괄호 안에는 값이 되는 JS 코드를 적을 수 있다. 그 값이 화면에 들어간다.',
     goal: '위에 선언된 `title`과 `total`을 화면에 넣는다. `<span>장보기</span>`은 `{title}`로, `<h2>할 일</h2>`은 `할 일 {total}개`로.',
@@ -327,7 +330,9 @@ function App() {
     title: 'props로 데이터 전달하기',
     tagline: '카드마다 다른 내용을 넣는다',
     kind: 'practice',
-    jsPrereq: ['구조 분해로 객체에서 필요한 것만 꺼낸다'],
+    jsPrereq: [
+      { text: '구조 분해로 객체에서 필요한 것만 꺼낸다', js: 'js-destructuring' },
+    ],
     definition:
       'props는 부모가 자식에게 건네는 값이다. 자식은 읽기만 한다. 자식이 바꿔도 부모가 다음에 그릴 때 원래 값으로 덮인다.',
     goal: 'TodoCard가 `title`과 `done`을 props로 받게 한다. App에서 세 장을 각각 다른 값으로 그린다: 장보기(끝남), 설거지, 빨래. 위의 `title` 변수는 지운다.',
@@ -488,7 +493,9 @@ function App() {
     title: '리스트 렌더링',
     tagline: '배열을 화면으로 바꾼다',
     kind: 'practice',
-    jsPrereq: ['map은 원본을 두고 새 배열을 돌려준다'],
+    jsPrereq: [
+      { text: 'map은 원본을 두고 새 배열을 돌려준다', js: 'js-map' },
+    ],
     definition:
       '배열을 map으로 돌려 JSX 배열을 만들면 리액트가 순서대로 그린다. 항목마다 key가 필요하다.',
     goal: '손으로 적힌 `<TodoCard>` 세 줄을 `todos.map(...)`으로 바꾼다. 항목마다 `key={todo.id}`를 준다. `<h2>`의 3도 `todos.length`로.',

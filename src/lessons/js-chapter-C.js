@@ -201,7 +201,7 @@ console.log(numbered) // ['0. 장보기', '1. 설거지', '2. 빨래']`,
     tagline: '고르기, 찾기, 그리고 push',
     kind: 'practice',
     definition:
-      '`filter(함수)`는 함수가 true를 돌려준 항목만 모아 새 배열을 만들고, `find(함수)`는 처음으로 true가 된 항목 하나를 돌려준다. 둘 다 원본을 그대로 둔다. 반면 `push(항목)`는 원본 배열 끝에 항목을 붙여 원본 자체를 고친다.',
+      '`filter(함수)`는 함수가 true를 돌려준 항목만 모아 새 배열을 만들고, `find(함수)`는 처음으로 true가 된 항목 하나를 돌려준다. 둘 다 원본을 그대로 둔다. 반면 `push(항목)`는 원본 배열 끝에 항목을 붙여 원본 자체를 고친다. 중간의 항목을 빼는 `splice`도 원본을 고친다.',
     goal: [
       '남은 것만 모은다: `const left = todos.filter((todo) => !todo.done)`, 그리고 `console.log(left.length)`로 개수를 찍는다.',
       "id가 'b'인 할 일을 찾는다: `console.log(todos.find((todo) => todo.id === 'b'))`.",

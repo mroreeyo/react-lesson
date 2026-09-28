@@ -6,7 +6,9 @@ export default [
     title: '이벤트에 응답하기',
     tagline: '클릭에 함수를 건넨다',
     kind: 'practice',
-    jsPrereq: ['함수는 값이다. 변수에 담고, 인자로 넘길 수 있다'],
+    jsPrereq: [
+      { text: '함수는 값이다. 변수에 담고, 인자로 넘길 수 있다', js: 'js-arrow-functions' },
+    ],
     definition:
       'onClick 같은 prop에 함수를 건네면 리액트가 그 일이 생겼을 때 불러 준다. 이렇게 건네는 함수를 핸들러라 부른다. 호출한 결과가 아니라 함수 자체를 건넨다.',
     goal: 'TodoCard가 `onToggle`을 props로 받아 체크박스의 `onChange`에 건네게 한다. App에서 카드마다 `onToggle={() => console.log(\'토글\', todo.title)}`을 넘기고, 추가 버튼에 `onClick={handleAdd}`를 건다(괄호 없이).',
@@ -113,7 +115,9 @@ function App() {
     title: 'state: 컴포넌트의 기억',
     tagline: '컴포넌트가 값을 기억한다',
     kind: 'practice',
-    jsPrereq: ['배열 구조 분해로 두 값을 한 줄에 받는다'],
+    jsPrereq: [
+      { text: '배열 구조 분해로 두 값을 한 줄에 받는다', js: 'js-destructuring' },
+    ],
     definition:
       'useState는 값 하나와 그 값을 바꾸는 함수를 돌려준다. 바꾸는 함수를 부르면 리액트가 그 컴포넌트를 다시 그린다. use로 시작하는 이런 함수를 훅이라 부른다.',
     goal: 'TodoCard 안에 `const [done, setDone] = useState(false)`를 둔다. 체크박스의 `checked`를 `done`으로, `onChange`를 `() => setDone(!done)`으로 잇고, done이면 `<em> · 끝</em>`을 붙인다.',
@@ -303,6 +307,9 @@ const result = App()
     id: 'snapshot',
     chapter: '2',
     order: 14,
+    jsPrereq: [
+      { text: '함수는 만들어질 때 보이던 변수를 기억한다(클로저). 클릭 처리 함수가 보는 state는 그 렌더의 값이다', js: 'js-closure' },
+    ],
     title: '스냅샷으로서의 state',
     tagline: '이번 렌더의 값은 끝까지 그 값이다',
     kind: 'practice',
@@ -444,8 +451,8 @@ const result = App()
     tagline: '고치지 않고 새로 만들어 넘긴다',
     kind: 'practice',
     jsPrereq: [
-      '스프레드는 얕은 복사다. 한 겹만 복사한다',
-      'onChange가 받는 e는 무슨 일이 났는지 담은 객체다. e.target이 그 일이 난 요소, e.target.value가 입력칸의 글자다',
+      { text: '스프레드는 얕은 복사다. 한 겹만 복사한다', js: 'js-spread' },
+      { text: 'onChange가 받는 e는 무슨 일이 났는지 담은 객체다. e.target이 그 일이 난 요소, e.target.value가 입력칸의 글자다', js: 'js-objects' },
     ],
     definition:
       '객체 state는 직접 고치지 않는다. 스프레드로 복사해 바꿀 칸만 덮은 새 객체를 만들어 넘긴다.',
@@ -532,8 +539,9 @@ const result = App()
     tagline: '추가도 토글도 새 배열로',
     kind: 'practice',
     jsPrereq: [
-      'push, splice는 원본을 고친다',
-      'map, filter, 스프레드는 새 배열을 돌려준다',
+      { text: 'push, splice는 원본을 고친다', js: 'js-filter-find' },
+      { text: 'map, filter, 스프레드는 새 배열을 돌려준다', js: 'js-spread' },
+      { text: '같은 배열을 고쳐서 넘기면, 고치기 전과 같은 배열이라 바뀐 것을 알아챌 수 없다', js: 'js-reference' },
     ],
     definition:
       '배열 state도 직접 고치지 않는다. 추가는 스프레드로, 수정은 map으로, 삭제는 filter로 새 배열을 만들어 넘긴다.',

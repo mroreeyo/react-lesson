@@ -45,6 +45,29 @@ for (const l of [...lessons, ...jsLessons]) {
     for (const n of l.usedIn ?? []) {
       assert.ok(lessons.some((r) => r.order === n), `${at}: usedIn의 레슨 ${n}이 없다`)
     }
+  } else {
+    // 트랙 잇기: 리액트의 JS 되짚기와 관문 항목은 전부 실제 JS 레슨으로 이어져야 한다
+    const jsIds = new Set(jsLessons.map((j) => j.id))
+    for (const p of l.jsPrereq ?? []) {
+      assert.ok(typeof p === 'object' && jsIds.has(p.js), `${at}: JS 되짚기 "${p.text ?? p}"가 JS 레슨에 이어지지 않았다`)
+    }
+    for (const it of l.items ?? []) {
+      assert.ok(jsIds.has(it.js), `${at}: 점검 항목 "${it.title}"가 JS 레슨에 이어지지 않았다`)
+    }
+    // JS 트랙이 가르치지 않는 문법을 리액트 실행 코드가 쓰기 시작하면 여기서 잡힌다(보충 문서 '데이터 모델').
+    // 없던 시절·읽기 전용 코드는 실행하지 않고 "안 읽어도 된다"고 안내하므로 대상이 아니다.
+    const running = [l.starterCode, l.solutionCode].filter(Boolean).join('\n')
+    const untaught = {
+      '템플릿 문자열': /`/,
+      '?.': /\?\./,
+      '??': /\?\?/,
+      'for 문': /\bfor \(/,
+      var: /\bvar /,
+      class: /\bclass \w/,
+    }
+    for (const [name, re] of Object.entries(untaught)) {
+      assert.ok(!re.test(running), `${at}: JS 트랙에서 가르치지 않는 ${name}을(를) 쓴다. JS 레슨을 더하거나 코드를 바꾼다`)
+    }
   }
   assert.ok(['practice', 'concept', 'checklist'].includes(l.kind), `${at}: kind가 이상하다`)
 
@@ -105,6 +128,8 @@ for (const l of jsPractice) {
     assert.ok(code, `JS ${l.order} ${l.title}: ${name}가 없다`)
     const out = []
     const { error, dispose } = await runConsole(code, (line) => out.push(line))
+    // 타이머·Promise를 쓰는 레슨은 나중에 오는 줄까지 받는다. 그 안에서 난 오류도 여기서 잡힌다. 레슨의 타이머는 1초 안쪽이다.
+    if (/setTimeout|setInterval|Promise|async /.test(code)) await new Promise((r) => setTimeout(r, 1300))
     dispose()
     assert.equal(error, null, `JS ${l.order} ${l.title}: ${name}가 실행되지 않는다 — ${error?.stage} ${error?.message}`)
     assert.ok(out.length > 0, `JS ${l.order} ${l.title}: ${name}가 아무것도 찍지 않는다`)

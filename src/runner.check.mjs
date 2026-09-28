@@ -136,6 +136,8 @@ assert.match(hintFor("Identifier 'title' has already been declared. (3:6)", 'con
   assert.match(hintFor(empty.error.message, 'console'), /JSON 모양이 아니다/)
   const destructure = await collect('const todos = []\nconst { title } = todos[0]')
   assert.match(hintFor(destructure.error.message, 'console'), /`todos\[0\]`이\(가\) undefined이라 그 안에서 `title`/)
+  const topAwait = await collect('async function f() {}\nawait f()')
+  assert.match(hintFor(topAwait.error.message, 'console'), /async를 붙인 함수 안에서만/)
   const noCatch = await collect("try {\n  console.log('a')\n}")
   assert.match(hintFor(noCatch.error.message, 'console'), /catch가 없다/)
 }

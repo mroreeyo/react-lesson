@@ -19,6 +19,7 @@ const HINTS = [
     /is not valid JSON|Unexpected end of JSON input|in JSON at position/,
     'JSON.parse에 넘긴 글자가 JSON 모양이 아니다. 코드의 괄호가 아니라 읽으려는 글자가 문제다. 깨질 수 있는 글자라면 try/catch로 받는다.',
   ],
+  [/await is only valid in async function/, 'await는 async를 붙인 함수 안에서만 쓸 수 있다. 감싼 함수 앞에 async를 붙인다.'],
   [/Missing catch or finally clause/, 'try 뒤에 catch가 없다. `} catch (err) { ... }`를 이어 붙인다.'],
   [
     /Unexpected token/,

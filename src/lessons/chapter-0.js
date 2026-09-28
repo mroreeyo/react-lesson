@@ -58,36 +58,72 @@ document.querySelector('#add').addEventListener('click', () => {
     id: 'js-checklist',
     chapter: '0',
     order: 2,
-    title: '이 앱에서 쓰는 JS 문법 점검',
-    tagline: 'map, 구조 분해, 스프레드를 한 번씩',
+    title: 'JS 문법 점검: 리액트로 들어가는 관문',
+    tagline: '막히면 JS 기초로 돌아간다',
     kind: 'checklist',
-    definition: '앞으로 나올 레슨이 기대는 JS 문법 세 가지를 짧게 확인한다.',
+    definition:
+      '앞으로 나올 레슨이 기대는 JS 문법을 하나씩 확인하는 관문이다. 코드마다 주석의 결과가 왜 나오는지 설명할 수 있으면 지나간다. 막히는 항목은 옆에 달린 JS 레슨으로 돌아간다. 특히 뒤의 두 항목(참조, 클로저)은 리액트에서 가장 많이 막히는 자리의 뿌리다.',
     items: [
       {
         title: 'map은 새 배열을 돌려준다',
         text: '원본은 그대로 있다. 목록을 화면으로 바꿀 때 이걸 쓴다.',
+        js: 'js-map',
         code: `const todos = ['장보기', '설거지']
-const upper = todos.map((t) => t + '!')
-// todos는 그대로, upper는 새 배열`,
+const marked = todos.map((t) => t + '!')
+// todos는 그대로, marked는 새 배열`,
       },
       {
         title: '구조 분해로 필요한 것만 꺼낸다',
-        text: 'props를 받을 때 계속 나온다.',
+        text: '객체는 키 이름으로, 배열은 순서로 꺼낸다. props와 useState에서 계속 나온다.',
+        js: 'js-destructuring',
         code: `const todo = { title: '장보기', done: false }
-const { title, done } = todo`,
+const { title, done } = todo
+const [first, second] = ['장보기', '설거지']`,
       },
       {
         title: '스프레드는 얕은 복사다',
-        text: '한 겹만 복사한다. 안쪽 객체는 원본과 같은 것을 가리킨다.',
+        text: '새 배열·새 객체를 만든다. 한 겹만 복사하므로 안쪽 객체는 원본과 같은 것을 가리킨다.',
+        js: 'js-spread',
         code: `const next = [...todos, '빨래']
 const patched = { ...todo, done: true }`,
       },
       {
         title: '&&는 왼쪽이 거짓이면 왼쪽 값을 그대로 돌려준다',
         text: 'true나 false로 바꿔 주지 않는다. 레슨 8에서 이 성질이 화면에 그대로 드러난다.',
+        js: 'js-ternary-and',
         code: `0 && '보임'   // 0
 '' && '보임'  // ''
 3 && '보임'   // '보임'`,
+      },
+      {
+        title: '함수는 값이다',
+        text: '괄호를 붙이면 부르고, 붙이지 않으면 함수 자체를 넘긴다. onClick에는 함수 자체를 넘긴다.',
+        js: 'js-arrow-functions',
+        code: `const label = (todo) => todo.title
+console.log(label)                    // 함수 자체
+console.log(label({ title: '장보기' })) // 장보기`,
+      },
+      {
+        title: '배열·객체는 참조로 견준다',
+        text: '같은 배열을 고치면 고치기 전과 여전히 같은 배열이다. 리액트는 그러면 바뀐 줄 모른다.',
+        js: 'js-reference',
+        code: `const a = ['장보기']
+const b = a
+b.push('설거지')
+console.log(a.length)                     // 2
+console.log(a === b)                      // true
+console.log(a === ['장보기', '설거지'])     // false`,
+      },
+      {
+        title: '함수는 만들어질 때의 값을 기억한다',
+        text: '나중에 불러도 만들어질 때 보이던 값을 본다. state가 바로 안 바뀌어 보이는 까닭이다.',
+        js: 'js-closure',
+        code: `function render(count) {
+  return () => console.log(count)
+}
+const first = render(0)
+render(1)
+first() // 0`,
       },
     ],
     sources: [
@@ -95,16 +131,19 @@ const patched = { ...todo, done: true }`,
       'https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment',
       'https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Operators/Spread_syntax',
       'https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Operators/Logical_AND',
+      'https://developer.mozilla.org/ko/docs/Web/JavaScript/Guide/Closures',
     ],
+    // 관문의 문제는 참조를 묻는다. 여기서 틀리면 리액트 챕터 1로 가기 전에 JS 18로 돌아간다.
     quiz: {
-      question: '`[...todos, "빨래"]`의 결과는 무엇인가',
+      question: 'const b = a 다음에 b.push(3)을 하면 a는 어떻게 되는가',
       options: [
-        'todos에 "빨래"가 추가되고 todos가 바뀐다',
-        'todos는 그대로이고, 항목이 하나 더 있는 새 배열이 나온다',
-        'todos의 마지막 항목이 "빨래"로 바뀐다',
+        'a는 그대로다. b는 a의 복사본이다',
+        'a에도 3이 들어 있다. a와 b는 같은 배열이다',
+        '오류가 난다. const로 만든 배열에는 push할 수 없다',
       ],
       answerIndex: 1,
-      explanation: '새 배열이 나온다. 원본을 그대로 두는 것이 리액트에서 중요해진다.',
+      explanation:
+        'const b = a는 복사가 아니라 같은 배열에 이름을 하나 더 붙인다. 헷갈렸다면 챕터 1로 가기 전에 JS 18을 다시 본다.',
     },
   },
 ]
