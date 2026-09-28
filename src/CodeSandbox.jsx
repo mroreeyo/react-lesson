@@ -1,6 +1,7 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import Code from './Code.jsx'
 import CodeEditor from './CodeEditor.jsx'
+import { runConsole } from './consoleRunner.js'
 import { hintFor } from './errorHints.js'
 import ResultPanel from './ResultPanel.jsx'
 import { CodeError, compileToApp, injectedHookNames, loadBabel } from './runner.js'
@@ -8,13 +9,16 @@ import { CodeError, compileToApp, injectedHookNames, loadBabel } from './runner.
 /**
  * 편집기와 결과 패널 한 쌍. 레슨의 '지금 방식' 블록과 플레이그라운드가 같이 쓴다.
  * 코드 상태를 직접 들고 있으므로, 레슨을 넘길 때는 key로 갈아 초기 코드를 되돌린다.
+ * mode 'console'은 JS 기초 트랙용이다. App 없이 코드 전체를 돌리고 결과 자리에 콘솔 출력을 쌓는다.
  */
 export default function CodeSandbox({
   initialCode,
   resetCode = initialCode,
   solutionCode,
   onCodeChange,
+  mode = 'react',
 }) {
+  const isConsole = mode === 'console'
   const editorId = useId()
   const [code, setCode] = useState(initialCode)
   const [App, setApp] = useState(null)
@@ -24,6 +28,9 @@ export default function CodeSandbox({
   const [runKey, setRunKey] = useState(0)
   // 코드를 안 고치고 처음부터 다시 돌릴 때 올린다. 결과 패널의 key에 섞여 App이 새로 마운트된다.
   const [rerun, setRerun] = useState(0)
+  const [lines, setLines] = useState([])
+  // '다시 실행'은 기다리지 않고 바로 돌린다. 편집은 600ms 쉬었다가 돌린다.
+  const runNowRef = useRef(false)
 
   // 편집기가 처음 보일 때 Babel 청크를 미리 받기 시작한다.
   useEffect(() => {
@@ -42,6 +49,7 @@ export default function CodeSandbox({
   }, [code, onCodeChange])
 
   useEffect(() => {
+    if (isConsole) return
     const timer = setTimeout(async () => {
       const runId = ++runIdRef.current
       try {
@@ -60,7 +68,31 @@ export default function CodeSandbox({
       }
     }, 600)
     return () => clearTimeout(timer)
-  }, [code])
+  }, [code, isConsole])
+
+  // 콘솔 모드. 코드가 바뀌거나 다시 실행하면 이전 실행의 타이머를 먼저 정리한다(cleanup의 dispose).
+  // 레슨을 떠날 때도 같은 cleanup이 돌아 타이머가 남지 않는다.
+  useEffect(() => {
+    if (!isConsole) return
+    let cancelled = false
+    let run = null
+    const delay = runNowRef.current ? 0 : 600
+    runNowRef.current = false
+    const timer = setTimeout(async () => {
+      setLines([])
+      const result = await runConsole(code, (line) => {
+        if (!cancelled) setLines((prev) => [...prev, line])
+      })
+      if (cancelled) return result.dispose()
+      run = result
+      setError(result.error)
+    }, delay)
+    return () => {
+      cancelled = true
+      clearTimeout(timer)
+      run?.dispose()
+    }
+  }, [code, rerun, isConsole])
 
   const dirty = code !== resetCode
   // 학습자가 친 코드를 덮어쓰기 전에 묻는다. 스타터 그대로이거나 이미 정답이면 잃을 것이 없다.
@@ -80,7 +112,9 @@ export default function CodeSandbox({
           </button>
         </header>
         <p className="notice">
-          `App` 컴포넌트를 정의하세요. import는 쓸 수 없고, useState 같은 함수는 바로 쓰면 됩니다.
+          {isConsole
+            ? '코드는 위에서 아래로 실행되고, console.log로 찍은 값이 콘솔에 쌓입니다.'
+            : '`App` 컴포넌트를 정의하세요. import는 쓸 수 없고, useState 같은 함수는 바로 쓰면 됩니다.'}{' '}
           Tab은 들여쓰기이고, 키보드로 편집기를 나가려면 Esc 다음 Tab입니다.
         </p>
         <CodeEditor
@@ -94,16 +128,18 @@ export default function CodeSandbox({
         <p className="warn">
           종료 조건 없는 반복문은 이 탭을 멈춥니다. 저장한 코드는 남지만 새로고침해야 합니다.
         </p>
-        <details className="hooks">
-          <summary>바로 쓸 수 있는 함수 {injectedHookNames.length}개</summary>
-          <code>{injectedHookNames.join(', ')}</code>
-        </details>
+        {!isConsole && (
+          <details className="hooks">
+            <summary>바로 쓸 수 있는 함수 {injectedHookNames.length}개</summary>
+            <code>{injectedHookNames.join(', ')}</code>
+          </details>
+        )}
         {solutionCode && (
           // 모를 때 펼친다. 맞는지는 앱이 판단하지 않는다. 결과 화면과 이 코드를 보고 스스로 본다.
           <details className="solution">
             <summary>정답 코드 보기</summary>
             <p className="panel-hint">
-              막히면 펼친다. 맞았는지는 결과 화면과 이 코드를 견주어 스스로 본다.
+              막히면 펼친다. 맞았는지는 {isConsole ? '콘솔 출력' : '결과 화면'}과 이 코드를 견주어 스스로 본다.
             </p>
             <Code code={solutionCode} />
             <button className="ghost" onClick={() => replaceWith(solutionCode)} disabled={code === solutionCode}>
@@ -115,19 +151,39 @@ export default function CodeSandbox({
 
       <section className="pane">
         <header className="pane-head">
-          <h3>결과</h3>
-          <button className="ghost" onClick={() => setRerun((n) => n + 1)} disabled={!App}>
+          <h3>{isConsole ? '콘솔' : '결과'}</h3>
+          <button
+            className="ghost"
+            onClick={() => {
+              runNowRef.current = true
+              setRerun((n) => n + 1)
+            }}
+            disabled={isConsole ? !ready : !App}
+          >
             다시 실행
           </button>
         </header>
         {error && (
           <div className="panel-error">
             <strong>{error.stage === 'compile' ? '문법 오류' : '실행 오류'}</strong>
-            {hintFor(error.message) && <p className="hint">{hintFor(error.message)}</p>}
+            {hintFor(error.message, mode) && <p className="hint">{hintFor(error.message, mode)}</p>}
             <pre>{error.message}</pre>
           </div>
         )}
-        <ResultPanel App={App} runKey={`${runKey}-${rerun}`} />
+        {isConsole ? (
+          <div className="console" role="log" aria-label="콘솔 출력">
+            {lines.length === 0 && !error && <p className="panel-hint">아직 출력이 없습니다.</p>}
+            {lines.map((line, i) => (
+              <div key={i} className={`console-line is-${line.level}`}>
+                {/* 코드가 끝까지 돈 뒤 타이머·Promise에서 온 줄. 무엇이 먼저 찍히는지 보게 한다. */}
+                {line.late && <span className="console-late">나중</span>}
+                <pre>{line.text}</pre>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <ResultPanel App={App} runKey={`${runKey}-${rerun}`} />
+        )}
       </section>
     </div>
   )

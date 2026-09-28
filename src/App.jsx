@@ -3,10 +3,12 @@ import Labs from './Labs.jsx'
 import Lesson from './Lesson.jsx'
 import LessonRail from './LessonRail.jsx'
 import Playground from './Playground.jsx'
-import { chapterOf, lessons } from './lessons/index.js'
+import { chapterOf, chapters, isJsLesson, jsChapters, jsLessons, lessons } from './lessons/index.js'
 import { KEYS, clearProgress, load, save } from './storage.js'
 
+// JS 기초가 첫 탭이자 첫 진입이다. JS를 아는 사람은 JS 1 첫 문단의 링크로 레슨 탭에 간다.
 const TABS = [
+  { id: 'js', label: 'JS 기초' },
   { id: 'lessons', label: '레슨' },
   { id: 'labs', label: '실험실' },
   { id: 'playground', label: '플레이그라운드' },
@@ -14,28 +16,42 @@ const TABS = [
 
 export default function App() {
   const [last] = useState(() => load(KEYS.last, {}))
-  const [tab, setTab] = useState(() => (TABS.some((t) => t.id === last.tab) ? last.tab : 'lessons'))
+  const [tab, setTab] = useState(() => (TABS.some((t) => t.id === last.tab) ? last.tab : 'js'))
   const [lessonId, setLessonId] = useState(() =>
     lessons.some((l) => l.id === last.lessonId) ? last.lessonId : lessons[0]?.id,
+  )
+  const [jsLessonId, setJsLessonId] = useState(() =>
+    jsLessons.some((l) => l.id === last.jsLessonId) ? last.jsLessonId : jsLessons[0]?.id,
   )
   const [progress, setProgress] = useState(() => load(KEYS.progress, []))
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [focusedDemo, setFocusedDemo] = useState(null)
 
   useEffect(() => {
-    save(KEYS.last, { tab, lessonId })
-  }, [tab, lessonId])
+    save(KEYS.last, { tab, lessonId, jsLessonId })
+  }, [tab, lessonId, jsLessonId])
 
   useEffect(() => {
     save(KEYS.progress, progress)
   }, [progress])
 
   const lesson = lessons.find((l) => l.id === lessonId)
-  const pct = lessons.length ? Math.round((progress.length / lessons.length) * 100) : 0
+  const jsLesson = jsLessons.find((l) => l.id === jsLessonId)
+  // 헤더 진행률은 보고 있는 트랙의 것이다. 실험실·플레이그라운드에서는 리액트 트랙을 보인다.
+  const trackLessons = tab === 'js' ? jsLessons : lessons
+  const doneCount = trackLessons.filter((l) => progress.includes(l.id)).length
+  const pct = trackLessons.length ? Math.round((doneCount / trackLessons.length) * 100) : 0
 
   const complete = (id) => setProgress((prev) => (prev.includes(id) ? prev : [...prev, id]))
+  // 링크는 트랙을 넘나든다(JS 레슨 → 리액트 레슨). 레슨이 속한 트랙의 탭으로 옮긴다.
   const goto = (id) => {
-    setLessonId(id)
+    if (isJsLesson(id)) {
+      setJsLessonId(id)
+      setTab('js')
+    } else {
+      setLessonId(id)
+      setTab('lessons')
+    }
     setDrawerOpen(false)
     window.scrollTo({ top: 0 })
   }
@@ -59,6 +75,46 @@ export default function App() {
     }, 0)
   }
 
+  // 두 트랙이 같은 화면 틀을 쓴다. 레일, 모바일 드로어, 레슨 본문.
+  const renderTrack = (trackChapters, current) => (
+    <div className="lessons-layout">
+      <aside className={`rail-slot${drawerOpen ? ' is-open' : ''}`}>
+        <LessonRail
+          key={trackChapters[0].id}
+          chapters={trackChapters}
+          currentId={current?.id}
+          progress={progress}
+          onPick={goto}
+        />
+      </aside>
+
+      <main className="app-body">
+        {current ? (
+          <>
+            <button
+              className="drawer-toggle"
+              aria-expanded={drawerOpen}
+              onClick={() => setDrawerOpen((v) => !v)}
+            >
+              챕터 {current.chapter}. {chapterOf(current.chapter)?.title} · {current.title}
+            </button>
+            {/* 레슨이 바뀌면 안의 state(확인 문제 선택, 펼친 블록)를 전부 새로 시작한다. 레슨 21의 그 key다. */}
+            <Lesson
+              key={current.id}
+              lesson={current}
+              done={progress.includes(current.id)}
+              onComplete={complete}
+              onNavigate={goto}
+              onOpenDemo={openDemo}
+            />
+          </>
+        ) : (
+          <p className="panel-hint">레슨이 없습니다.</p>
+        )}
+      </main>
+    </div>
+  )
+
   return (
     <>
       <header className="app-head">
@@ -78,12 +134,12 @@ export default function App() {
             </button>
           ))}
         </nav>
-        <div className="progress" title={`${progress.length}/${lessons.length} 레슨 완료`}>
+        <div className="progress" title={`${doneCount}/${trackLessons.length} 레슨 완료`}>
           <div className="progress-bar">
             <div className="progress-fill" style={{ width: `${pct}%` }} />
           </div>
           <span className="progress-text">
-            {progress.length}/{lessons.length}
+            {doneCount}/{trackLessons.length}
           </span>
           <button
             className="ghost"
@@ -100,37 +156,8 @@ export default function App() {
         </div>
       </header>
 
-      {tab === 'lessons' ? (
-        <div className="lessons-layout">
-          <aside className={`rail-slot${drawerOpen ? ' is-open' : ''}`}>
-            <LessonRail currentId={lessonId} progress={progress} onPick={goto} />
-          </aside>
-
-          <main className="app-body">
-            {lesson ? (
-              <>
-                <button
-                  className="drawer-toggle"
-                  aria-expanded={drawerOpen}
-                  onClick={() => setDrawerOpen((v) => !v)}
-                >
-                  챕터 {lesson.chapter}. {chapterOf(lesson.chapter)?.title} · {lesson.title}
-                </button>
-                {/* 레슨이 바뀌면 안의 state(확인 문제 선택, 펼친 블록)를 전부 새로 시작한다. 레슨 21의 그 key다. */}
-                <Lesson
-                  key={lesson.id}
-                  lesson={lesson}
-                  done={progress.includes(lesson.id)}
-                  onComplete={complete}
-                  onNavigate={goto}
-                  onOpenDemo={openDemo}
-                />
-              </>
-            ) : (
-              <p className="panel-hint">레슨이 없습니다.</p>
-            )}
-          </main>
-        </div>
+      {tab === 'lessons' || tab === 'js' ? (
+        renderTrack(tab === 'js' ? jsChapters : chapters, tab === 'js' ? jsLesson : lesson)
       ) : tab === 'labs' ? (
         <main className="app-body">
           <Labs

@@ -1134,3 +1134,66 @@ body {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
+
+/* ── JS 기초: 콘솔 출력 ── */
+/* 들여쓴 객체 출력이 줄이 맞도록 편집기와 같은 고정폭이다. */
+.console {
+  margin-top: 0.8rem;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--bg);
+  max-height: 24rem;
+  overflow: auto;
+}
+
+.console .panel-hint {
+  margin: 0;
+  padding: 0.6rem 0.75rem;
+}
+
+.console-line {
+  display: flex;
+  gap: 0.6rem;
+  align-items: baseline;
+  padding: 0.3rem 0.75rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.console-line:last-child {
+  border-bottom: 0;
+}
+
+.console-line pre {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.console-line.is-warn {
+  background: color-mix(in srgb, #d9a400 10%, transparent);
+}
+
+.console-line.is-error {
+  background: var(--error-bg);
+  color: var(--error-text);
+}
+
+.console-late {
+  flex: none;
+  font-size: 0.7rem;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 0 0.3rem;
+}
+
+/* 레슨 글 안의 `코드 조각` */
+.inline-code {
+  font-family: var(--font-mono);
+  font-size: 0.88em;
+  padding: 0.05em 0.3em;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--text) 8%, transparent);
+}

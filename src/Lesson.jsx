@@ -3,20 +3,38 @@ import Code from './Code.jsx'
 import CodeSandbox from './CodeSandbox.jsx'
 import Quiz from './Quiz.jsx'
 import { demoById } from './labs/index.jsx'
-import { chapterOf, lessons, lessonsOf } from './lessons/index.js'
+import { chapterOf, jsLessons, lessons, lessonsOf } from './lessons/index.js'
 import { KEYS, load, save } from './storage.js'
 
-function Paragraphs({ text }) {
-  return text
-    .split('\n\n')
-    .map((p, i) => <p key={i}>{p}</p>)
+function Paragraphs({ text, onNavigate }) {
+  return text.split('\n\n').map((p, i) => (
+    <p key={i}>
+      <LinkedText text={p} onNavigate={onNavigate} />
+    </p>
+  ))
 }
 
-/** 글 안의 "레슨 N"을 그 레슨으로 가는 링크로 바꾼다. PRD: 더 파고들면은 가능하면 다른 레슨으로 잇는다. */
+/**
+ * 글 안의 "레슨 N"(리액트)과 "JS N"(JS 기초)을 그 레슨으로 가는 링크로 바꾼다. PRD: 더 파고들면은 가능하면 다른 레슨으로 잇는다.
+ * "레슨 39개"처럼 개수를 말하는 자리는 잇지 않는다. 아직 없는 레슨 번호는 글자로 둔다.
+ */
 function LinkedText({ text, onNavigate }) {
-  return text.split(/(레슨 \d+)/).map((part, i) => {
-    const m = /^레슨 (\d+)$/.exec(part)
-    const target = m && lessons.find((l) => l.order === Number(m[1]))
+  // `...`로 감싼 곳은 코드 조각이다. 백틱을 글자로 보이면 입문자가 백틱까지 따라 친다.
+  return text.split(/`([^`]+)`/).map((chunk, j) =>
+    j % 2 ? (
+      <code className="inline-code" key={j}>
+        {chunk}
+      </code>
+    ) : (
+      <LinkedPlain key={j} text={chunk} onNavigate={onNavigate} />
+    ),
+  )
+}
+
+function LinkedPlain({ text, onNavigate }) {
+  return text.split(/((?:레슨|JS) \d+)(?![\d개])/).map((part, i) => {
+    const m = /^(레슨|JS) (\d+)$/.exec(part)
+    const target = m && (m[1] === 'JS' ? jsLessons : lessons).find((l) => l.order === Number(m[2]))
     return target ? (
       <button key={i} className="inline-link" onClick={() => onNavigate(target.id)}>
         {part}
@@ -76,9 +94,12 @@ export default function Lesson({ lesson, done, onComplete, onNavigate, onOpenDem
   const siblings = lessonsOf(lesson.chapter)
   const isFirstOfChapter = siblings[0]?.id === lesson.id
   const isLastOfChapter = siblings[siblings.length - 1]?.id === lesson.id
-  const at = lessons.findIndex((l) => l.id === lesson.id)
-  const prev = lessons[at - 1]
-  const next = lessons[at + 1]
+  const isJs = chapter?.track === 'js'
+  // 이전/다음은 트랙 안에서만 움직인다. JS 트랙의 끝에서 리액트로 넘어가는 길은 마지막 챕터의 마무리 문단에 둔다.
+  const track = isJs ? jsLessons : lessons
+  const at = track.findIndex((l) => l.id === lesson.id)
+  const prev = track[at - 1]
+  const next = track[at + 1]
   const demo = lesson.demo ? demoById(lesson.demo) : null
 
   // 레슨별 편집 초안. 이 컴포넌트는 lesson.id로 key가 걸려 레슨마다 새로 읽는다.
@@ -101,7 +122,7 @@ export default function Lesson({ lesson, done, onComplete, onNavigate, onOpenDem
           <h2>
             챕터 {chapter.id}. {chapter.title}
           </h2>
-          <Paragraphs text={chapter.intro} />
+          <Paragraphs text={chapter.intro} onNavigate={onNavigate} />
         </section>
       )}
 
@@ -120,7 +141,9 @@ export default function Lesson({ lesson, done, onComplete, onNavigate, onOpenDem
           <h3 className="block-head">JS 되짚기</h3>
           <ul>
             {lesson.jsPrereq.map((item, i) => (
-              <li key={i}>{item}</li>
+              <li key={i}>
+                <LinkedText text={item} onNavigate={onNavigate} />
+              </li>
             ))}
           </ul>
         </section>
@@ -128,7 +151,9 @@ export default function Lesson({ lesson, done, onComplete, onNavigate, onOpenDem
 
       <section className="block">
         <h3 className="block-head">한 줄 정의</h3>
-        <p className="definition">{lesson.definition}</p>
+        <p className="definition">
+          <LinkedText text={lesson.definition} onNavigate={onNavigate} />
+        </p>
       </section>
 
       <section className="block">
@@ -137,7 +162,7 @@ export default function Lesson({ lesson, done, onComplete, onNavigate, onOpenDem
           <p className={lesson.broken ? 'goal goal-broken' : lesson.solutionCode ? 'goal goal-task' : 'goal'}>
             {lesson.broken && <strong>고쳐야 하는 코드 · </strong>}
             {!lesson.broken && lesson.solutionCode && <strong>할 일 · </strong>}
-            {lesson.goal}
+            <LinkedText text={lesson.goal} onNavigate={onNavigate} />
           </p>
         )}
 
@@ -145,7 +170,9 @@ export default function Lesson({ lesson, done, onComplete, onNavigate, onOpenDem
           lesson.items.map((item, i) => (
             <div className="check-item" key={i}>
               <h4>{item.title}</h4>
-              <p>{item.text}</p>
+              <p>
+                <LinkedText text={item.text} onNavigate={onNavigate} />
+              </p>
               <Code code={item.code} />
             </div>
           ))}
@@ -170,6 +197,7 @@ export default function Lesson({ lesson, done, onComplete, onNavigate, onOpenDem
             resetCode={lesson.starterCode}
             solutionCode={lesson.solutionCode}
             onCodeChange={saveDraft}
+            mode={isJs ? 'console' : 'react'}
           />
         )}
       </section>
@@ -177,7 +205,9 @@ export default function Lesson({ lesson, done, onComplete, onNavigate, onOpenDem
       {lesson.before && (
         <section className="block">
           <h3 className="block-head">없던 시절</h3>
-          <p>{lesson.before.text}</p>
+          <p>
+            <LinkedText text={lesson.before.text} onNavigate={onNavigate} />
+          </p>
           <Code code={lesson.before.code} />
           <p className="panel-hint">이 코드는 실행하지 않는다. 위 예제와 같은 문제를 푸는 짝이다.</p>
         </section>
@@ -197,7 +227,9 @@ export default function Lesson({ lesson, done, onComplete, onNavigate, onOpenDem
         <section className="block">
           <h3 className="block-head">왜 나왔나</h3>
           {lesson.why.map((p, i) => (
-            <p key={i}>{p}</p>
+            <p key={i}>
+              <LinkedText text={p} onNavigate={onNavigate} />
+            </p>
           ))}
         </section>
       )}
@@ -211,6 +243,16 @@ export default function Lesson({ lesson, done, onComplete, onNavigate, onOpenDem
               <DeeperAnswer text={d.answer} onNavigate={onNavigate} />
             </details>
           ))}
+        </section>
+      )}
+
+      {lesson.usedIn?.length > 0 && (
+        <section className="block">
+          <h3 className="block-head">리액트에서 쓰는 곳</h3>
+          <p>
+            이 문법은 다음 리액트 레슨에 나온다:{' '}
+            <LinkedText text={lesson.usedIn.map((n) => `레슨 ${n}`).join(', ')} onNavigate={onNavigate} />
+          </p>
         </section>
       )}
 
@@ -237,7 +279,7 @@ export default function Lesson({ lesson, done, onComplete, onNavigate, onOpenDem
       {isLastOfChapter && chapter?.outro && done && (
         <section className="chapter-note">
           <h3>챕터 {chapter.id} 마무리</h3>
-          <Paragraphs text={chapter.outro} />
+          <Paragraphs text={chapter.outro} onNavigate={onNavigate} />
         </section>
       )}
 

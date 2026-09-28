@@ -4,32 +4,48 @@ import assert from 'node:assert/strict'
 import { readdir } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
+import { runConsole } from '../consoleRunner.js'
 import { compileToApp } from '../runner.js'
 
 const here = dirname(fileURLToPath(import.meta.url))
-const files = (await readdir(here)).filter((f) => /^chapter-\d+\.js$/.test(f)).sort()
+const all = await readdir(here)
+const files = all.filter((f) => /^chapter-\d+\.js$/.test(f)).sort()
+const jsFiles = all.filter((f) => /^js-chapter-[A-D]\.js$/.test(f)).sort()
 assert.ok(files.length > 0, 'chapter-*.js 가 없다')
+assert.ok(jsFiles.length > 0, 'js-chapter-*.js 가 없다')
 
-const lessons = (
-  await Promise.all(files.map((f) => import(pathToFileURL(join(here, f)).href)))
-).flatMap((m) => m.default)
+const importAll = async (names) =>
+  (await Promise.all(names.map((f) => import(pathToFileURL(join(here, f)).href)))).flatMap((m) => m.default)
+const lessons = await importAll(files)
+const jsLessons = await importAll(jsFiles)
 
 // index.js는 import.meta.glob을 쓰므로 node에서 읽을 수 없다. 챕터 id만 여기 적는다.
 const chapterIds = new Set(['0', '1', '2', '3', '4', '5'])
+const jsChapterIds = new Set(['A', 'B', 'C', 'D'])
 
+// id는 두 트랙을 통틀어 겹치면 안 된다. 진행도와 초안이 id로 저장된다.
 const seenIds = new Set()
-const seenOrders = new Set()
+const seenOrders = { react: new Set(), js: new Set() }
 
-for (const l of lessons) {
-  const at = `레슨 ${l.order} ${l.title}`
+for (const l of [...lessons, ...jsLessons]) {
+  const isJs = jsLessons.includes(l)
+  const at = `${isJs ? 'JS' : '레슨'} ${l.order} ${l.title}`
 
   assert.ok(l.id && !seenIds.has(l.id), `${at}: id가 없거나 중복이다`)
   seenIds.add(l.id)
 
-  assert.ok(Number.isInteger(l.order) && !seenOrders.has(l.order), `${at}: order가 없거나 중복이다`)
-  seenOrders.add(l.order)
+  const orders = seenOrders[isJs ? 'js' : 'react']
+  assert.ok(Number.isInteger(l.order) && !orders.has(l.order), `${at}: order가 없거나 중복이다`)
+  orders.add(l.order)
 
-  assert.ok(chapterIds.has(l.chapter), `${at}: 없는 챕터 ${l.chapter}`)
+  assert.ok((isJs ? jsChapterIds : chapterIds).has(l.chapter), `${at}: 없는 챕터 ${l.chapter}`)
+  if (isJs) {
+    assert.ok(l.id.startsWith('js-'), `${at}: JS 레슨 id는 js-로 시작한다`)
+    // JS 레슨 끝의 "리액트에서 쓰는 곳" 링크가 실제 리액트 레슨을 가리켜야 한다
+    for (const n of l.usedIn ?? []) {
+      assert.ok(lessons.some((r) => r.order === n), `${at}: usedIn의 레슨 ${n}이 없다`)
+    }
+  }
   assert.ok(['practice', 'concept', 'checklist'].includes(l.kind), `${at}: kind가 이상하다`)
 
   // 항상 있는 블록
@@ -43,7 +59,7 @@ for (const l of lessons) {
   assert.ok(l.quiz.explanation, `${at}: 해설이 없다`)
 
   // kind별 '지금 방식'
-  if (l.kind === 'practice') {
+  if (l.kind === 'practice' && !isJs) {
     assert.ok(l.starterCode?.includes('function App'), `${at}: starterCode에 App이 없다`)
   }
   if (l.kind === 'concept') {
@@ -82,10 +98,25 @@ for (const l of practice) {
     assert.notEqual(l.solutionCode, l.starterCode, `레슨 ${l.order} ${l.title}: 스타터와 정답이 같다`)
   }
 }
+// JS 레슨은 콘솔 모드로 돌린다. 스타터와 정답 모두 오류 없이 한 줄 이상 찍어야 하고, 둘은 달라야 한다.
+const jsPractice = jsLessons.filter((l) => l.kind === 'practice')
+for (const l of jsPractice) {
+  for (const [name, code] of [['starterCode', l.starterCode], ['solutionCode', l.solutionCode]]) {
+    assert.ok(code, `JS ${l.order} ${l.title}: ${name}가 없다`)
+    const out = []
+    const { error, dispose } = await runConsole(code, (line) => out.push(line))
+    dispose()
+    assert.equal(error, null, `JS ${l.order} ${l.title}: ${name}가 실행되지 않는다 — ${error?.stage} ${error?.message}`)
+    assert.ok(out.length > 0, `JS ${l.order} ${l.title}: ${name}가 아무것도 찍지 않는다`)
+    assert.ok(!out.some((line) => line.level === 'error'), `JS ${l.order} ${l.title}: ${name}가 오류 줄을 찍는다`)
+  }
+  assert.notEqual(l.solutionCode, l.starterCode, `JS ${l.order} ${l.title}: 스타터와 정답이 같다`)
+}
+
 const withSolution = practice.filter((l) => l.solutionCode).length
 // 레슨 1(리액트 소개)만 완성본으로 시작한다. 나머지 실습은 전부 앞 레슨 방식 스타터 + 정답이어야 한다.
 for (const l of practice) if (l.order !== 1) assert.ok(l.solutionCode, `레슨 ${l.order} ${l.title}: solutionCode가 없다`)
 
 console.log(
-  `ok — 레슨 ${lessons.length}개(실습 ${practice.length}개 실행 확인, 정답 코드 ${withSolution}개), 챕터 파일 ${files.length}개`,
+  `ok — 레슨 ${lessons.length}개(실습 ${practice.length}개 실행 확인, 정답 코드 ${withSolution}개), 챕터 파일 ${files.length}개 · JS 레슨 ${jsLessons.length}개(콘솔 실행 확인 ${jsPractice.length}개)`,
 )

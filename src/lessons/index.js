@@ -1,10 +1,12 @@
 // 챕터별 모듈을 자동으로 모은다. 레슨을 추가할 때 이 파일은 건드리지 않고
-// src/lessons/chapter-N.js 에서 lessons 배열만 default export 하면 된다.
-const modules = import.meta.glob('./chapter-*.js', { eager: true })
+// src/lessons/chapter-N.js(리액트) 또는 js-chapter-X.js(JS 기초)에서 lessons 배열만 default export 하면 된다.
+const collect = (modules) =>
+  Object.values(modules)
+    .flatMap((m) => m.default ?? [])
+    .sort((a, b) => a.order - b.order)
 
-export const lessons = Object.values(modules)
-  .flatMap((m) => m.default ?? [])
-  .sort((a, b) => a.order - b.order)
+export const lessons = collect(import.meta.glob('./chapter-*.js', { eager: true }))
+export const jsLessons = collect(import.meta.glob('./js-chapter-*.js', { eager: true }))
 
 // 챕터 상수. 도입 문단의 첫 문장이 목록 접힌 상태의 한 줄 요약으로 쓰인다.
 export const chapters = [
@@ -58,6 +60,39 @@ export const chapters = [
   },
 ]
 
-export const chapterOf = (id) => chapters.find((c) => c.id === id)
-export const lessonsOf = (chapterId) => lessons.filter((l) => l.chapter === chapterId)
-export const lessonIndex = (id) => lessons.findIndex((l) => l.id === id)
+// JS 기초 트랙. 챕터 id가 리액트 쪽(숫자)과 겹치지 않으므로 레슨의 트랙은 소속 챕터로 정해진다.
+export const jsChapters = [
+  {
+    id: 'A',
+    track: 'js',
+    title: '값과 변수',
+    intro:
+      'JS를 처음 보는 사람을 위한 트랙이다. 코드를 치고, 실행하고, 콘솔에 찍힌 결과를 보는 것부터 한다. JS를 이미 안다면 이 트랙을 건너뛰고 레슨 1로 가도 된다.\n\n이 챕터에서는 할 일 하나를 값으로 적는다. 제목은 글자, 남은 개수는 숫자, 끝났는지는 참·거짓이다.',
+    outro:
+      '할 일 하나를 값으로 적고, 이름을 붙이고, 비교하고, 입력에 섞인 공백을 뗐다. 다음 챕터에서는 값에 따라 다른 일을 하게 만들고, 되풀이하는 일을 함수로 묶는다.',
+  },
+  {
+    id: 'B',
+    track: 'js',
+    title: '흐름과 함수',
+    intro: '값에 따라 다른 일을 하게 만들고, 되풀이하는 일을 함수로 묶는다.',
+  },
+  {
+    id: 'C',
+    track: 'js',
+    title: '데이터 묶기',
+    intro: '할 일 여러 개를 배열과 객체로 묶고, 새 배열로 바꾸고, 글자로 저장한다.',
+  },
+  {
+    id: 'D',
+    track: 'js',
+    title: '리액트가 기대는 깊은 곳',
+    intro: '같은 객체인지, 함수가 무엇을 기억하는지, 나중에 오는 값을 어떻게 기다리는지를 리액트 없이 먼저 본다.',
+  },
+]
+
+const allChapters = [...chapters, ...jsChapters]
+const allLessons = [...lessons, ...jsLessons]
+export const chapterOf = (id) => allChapters.find((c) => c.id === id)
+export const lessonsOf = (chapterId) => allLessons.filter((l) => l.chapter === chapterId)
+export const isJsLesson = (id) => jsLessons.some((l) => l.id === id)

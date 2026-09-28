@@ -75,4 +75,93 @@ for (const bad of ['"oops"', 'null', '5', '{}', '{bro', '']) {
 store.set(KEYS.playground, 'function App() {}')
 assert.equal(load(KEYS.playground, 'x'), 'function App() {}')
 
-console.log(`ok — 주입된 훅 ${injectedHookNames.length}개, 오류 문구 힌트, 저장소 방어 확인`)
+// ── 콘솔 모드 (JS 기초 트랙)
+const { formatValue, runConsole } = await import('./consoleRunner.js')
+// 값 표기: 맨 바깥 문자열만 따옴표 없이, 묶음 안에서는 따옴표로 5와 '5'를 가른다
+assert.equal(formatValue('장보기'), '장보기')
+assert.equal(formatValue([5, '5']), "[5, '5']")
+assert.equal(formatValue({ id: 1, title: '장보기', done: false }), "{ id: 1, title: '장보기', done: false }")
+assert.equal(formatValue({ 'my key': 1 }), "{ 'my key': 1 }")
+assert.equal(formatValue([undefined, null]), '[undefined, null]')
+assert.equal(formatValue(function greet() {}), '함수 greet')
+assert.equal(formatValue([]), '[]')
+const loop = { name: 'a' }
+loop.self = loop
+assert.equal(formatValue(loop), "{ name: 'a', self: [순환] }")
+const shared = { a: 1 }
+assert.equal(formatValue([shared, shared]), '[{ a: 1 }, { a: 1 }]') // 두 번 넣은 것은 순환이 아니다
+assert.equal(
+  formatValue([{ id: 1, title: '장보기', done: false }, { id: 2, title: '설거지', done: true }]),
+  "[\n  { id: 1, title: '장보기', done: false },\n  { id: 2, title: '설거지', done: true }\n]",
+)
+
+const collect = async (code) => {
+  const out = []
+  const run = await runConsole(code, (line) => out.push(line))
+  return { out, ...run }
+}
+const texts = (out) => out.map((l) => l.text)
+
+// 여러 인자는 공백으로 잇고, warn·error는 수준이 붙는다
+{
+  const { out, error, dispose } = await collect("console.log('할 일:', 3, [1]); console.warn('w'); console.error('e')")
+  dispose()
+  assert.equal(error, null)
+  assert.deepEqual(texts(out), ['할 일: 3 [1]', 'w', 'e'])
+  assert.deepEqual(out.map((l) => l.level), ['log', 'warn', 'error'])
+}
+// 문법 오류와 실행 오류. 실행 오류 전에 찍힌 줄은 남는다
+{
+  const { error } = await collect('console.log(')
+  assert.equal(error.stage, 'compile')
+  const jsx = await collect('const a = <p />')
+  assert.equal(jsx.error.stage, 'compile') // JS 트랙에서 JSX는 문법 오류다
+  const run = await collect("console.log('앞'); const t = 1; t = 2")
+  assert.equal(run.error.stage, 'run')
+  assert.deepEqual(texts(run.out), ['앞'])
+  assert.match(hintFor(run.error.message, 'console') ?? '', /let으로 선언한다/)
+}
+// 콘솔 모드에서는 리액트 전용 힌트가 나오지 않는다
+assert.match(hintFor('Cannot read properties of undefined', 'react'), /ref라면/)
+assert.doesNotMatch(hintFor('Cannot read properties of undefined', 'console'), /ref/)
+assert.equal(hintFor('Too many re-renders', 'console'), null)
+assert.match(hintFor("Identifier 'title' has already been declared. (3:6)", 'console') ?? '', /두 번 선언했다/)
+
+const wait = (ms) => new Promise((r) => setTimeout(r, ms))
+// 코드가 끝난 뒤 도착한 줄(Promise·타이머)에는 '나중'이 붙는다. 순서도 실제와 같다
+{
+  const { out, dispose } = await collect(
+    "setTimeout(() => console.log('타이머'), 0); Promise.resolve().then(() => console.log('약속')); console.log('먼저')",
+  )
+  await wait(20)
+  dispose()
+  assert.deepEqual(texts(out), ['먼저', '약속', '타이머'])
+  assert.deepEqual(out.map((l) => l.late), [false, true, true])
+}
+// dispose하면 이 실행의 타이머가 전부 멈춘다. 편집할 때 옛 타이머가 남지 않게 하는 장치다
+{
+  const { out, dispose } = await collect("setInterval(() => console.log('틱'), 5); setTimeout(() => console.log('늦게'), 30)")
+  await wait(18)
+  dispose()
+  const seen = out.length
+  assert.ok(seen >= 1, '인터벌이 돌지 않았다')
+  await wait(40)
+  assert.equal(out.length, seen, 'dispose 뒤에도 출력이 늘었다')
+  assert.ok(!texts(out).includes('늦게'))
+}
+// 타이머 안에서 던진 오류는 오류 줄이 된다
+{
+  const { out, dispose } = await collect("setTimeout(() => { throw new Error('펑') }, 0)")
+  await wait(10)
+  dispose()
+  assert.deepEqual(out.map((l) => [l.level, l.text]), [['error', 'Error: 펑']])
+}
+// 500줄을 넘으면 멈추고 한 줄로 알린다
+{
+  const { out, dispose } = await collect('for (let i = 0; i < 2000; i++) console.log(i)')
+  dispose()
+  assert.equal(out.length, 501)
+  assert.match(out.at(-1).text, /너무 많아 멈췄다/)
+}
+
+console.log(`ok — 주입된 훅 ${injectedHookNames.length}개, 오류 문구 힌트, 저장소 방어, 콘솔 모드 확인`)
