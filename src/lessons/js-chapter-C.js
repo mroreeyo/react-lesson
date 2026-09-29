@@ -274,6 +274,8 @@ console.log(todos.length)
     title: '구조 분해: 꺼내서 이름 붙이기',
     tagline: '{ title, done } = todo',
     kind: 'practice',
+    // 고쳐 쓰기만 하는 레슨이라 스타터와 정답의 출력이 같다. "정답과 출력이 같다" 표시를 켜지 않는다.
+    outputUnchanged: true,
     definition:
       '구조 분해는 객체나 배열에서 여러 값을 한 줄에 꺼내 이름을 붙이는 문법이다. 객체는 `const { title, done } = todo`처럼 키 이름으로 꺼내고, 배열은 `const [first, second] = list`처럼 순서로 꺼낸다.',
     goal: [
@@ -484,6 +486,33 @@ console.log(JSON.stringify({ a: 1, f: () => 1, u: undefined })) // {"a":1}`,
           '레슨 27에서 새로고침해도 목록이 남게 할 때 쓴다. 목록이 바뀔 때마다 stringify해서 브라우저 저장소에 넣고, 처음 그릴 때 parse로 꺼낸다. 꺼낸 글자가 깨졌으면 catch로 받아 처음 목록으로 시작한다. 레슨 32에서는 그 일을 커스텀 훅으로 떼어 낸다.',
       },
     ],
+    // 챕터 C 스스로 해보기: 할 일 단계 없이 목표 출력만 준다
+    challenge: {
+      goal: "챕터 C에서 배운 것만으로 쓴다. 아래 todos로 세 줄을 찍는다. 첫째, 끝나지 않은 할 일의 제목만 담은 배열. 둘째, id가 'b'인 할 일을 끝낸 새 목록에서 끝난 할 일의 개수. 셋째, 원본 todos에서 끝난 할 일의 개수. 셋째 줄로 원본이 그대로인지 확인한다.",
+      target: "['설거지', '빨래']\n2\n1",
+      starterCode: `const todos = [
+  { id: 'a', title: '장보기', done: true },
+  { id: 'b', title: '설거지', done: false },
+  { id: 'c', title: '빨래', done: false },
+]
+
+// 여기부터 쓴다
+`,
+      solutionCode: `const todos = [
+  { id: 'a', title: '장보기', done: true },
+  { id: 'b', title: '설거지', done: false },
+  { id: 'c', title: '빨래', done: false },
+]
+
+const left = todos.filter((todo) => !todo.done)
+console.log(left.map((todo) => todo.title))
+
+const next = todos.map((todo) => (todo.id === 'b' ? { ...todo, done: true } : todo))
+console.log(next.filter((todo) => todo.done).length)
+
+console.log(todos.filter((todo) => todo.done).length)
+`,
+    },
     usedIn: [27, 32],
     sources: [
       'https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify',

@@ -40,7 +40,7 @@ export function formatValue(value, nested = false, seen = new Set(), indent = ''
  * 던지지 않는다. 오류는 { error: { stage, message } }로 돌려주고, 오류 전에 찍힌 줄은 그대로 남는다.
  * dispose()는 이 실행이 걸어 둔 타이머를 전부 멈춘다. 다시 실행하기 전에 반드시 부른다.
  */
-export async function runConsole(code, onLine) {
+export async function runConsole(code, onLine, { catchRejections = true } = {}) {
   const Babel = await loadBabel()
 
   let compiled
@@ -113,7 +113,8 @@ export async function runConsole(code, onLine) {
     e.preventDefault()
     emit('error', [e.reason])
   }
-  const hasWindow = typeof window !== 'undefined'
+  // 잡히지 않은 Promise 오류는 창 전체에서 오므로 어느 실행 것인지 가릴 수 없다. 화면의 실행만 받고, 뒤에서 도는 실행(collectOutput)은 받지 않는다.
+  const hasWindow = catchRejections && typeof window !== 'undefined'
   if (hasWindow) window.addEventListener('unhandledrejection', onReject)
 
   const dispose = () => {
@@ -134,3 +135,20 @@ export async function runConsole(code, onLine) {
   late = true
   return { error, dispose }
 }
+
+/**
+ * 코드를 끝까지 돌려 출력 전체를 모은다. 타이머·Promise를 쓰면 나중에 오는 줄까지 기다린다(레슨의 타이머는 1초 안쪽).
+ * 정답 출력과 학습자 출력을 견줄 때, 그리고 레슨 점검에서 쓴다.
+ * 뒤에서 돌리는 실행이라 창의 잡히지 않은 Promise 오류를 받지 않는다. 받으면 화면의 다른 실행이 낸 오류가 섞인다.
+ */
+export async function collectOutput(code, waitMs = 1300) {
+  const lines = []
+  const { error, dispose } = await runConsole(code, (line) => lines.push(line), { catchRejections: false })
+  if (/setTimeout|setInterval|Promise|async /.test(code)) await new Promise((r) => setTimeout(r, waitMs))
+  dispose()
+  return { lines, error }
+}
+
+/** 두 출력이 같은가. 줄의 글자와 수준(log·warn·error)을 본다. '나중' 표시는 보지 않는다. */
+export const sameOutput = (a, b) =>
+  a.length === b.length && a.every((line, i) => line.text === b[i].text && line.level === b[i].level)

@@ -147,7 +147,7 @@ next()
       {
         question: '타이머 안에서 옛 값을 보는 것도 같은 일인가',
         answer:
-          '같은 일이다. 타이머에 넘긴 함수는 만들어질 때의 값을 기억한 채 나중에 불린다. 그 사이 값이 바뀌었어도 옛 값을 본다. 레슨 30의 구독 함수도 만들어질 때의 문구를 기억한다. 그래서 문구가 바뀔 때마다 구독을 다시 열어야 했고, useEffectEvent로 떼어 내면 다시 열지 않고도 최신 문구를 읽는다. 타이머는 JS 21에서 배운다.',
+          '같은 일이다. 타이머에 넘긴 함수는 만들어질 때의 값을 기억한 채 나중에 불린다. 그 사이 값이 바뀌었어도 옛 값을 본다. 레슨 30의 구독 함수도 만들어질 때의 문구를 기억한다. 그래서 문구가 바뀔 때마다 구독을 다시 열어야 했고, useEffectEvent로 떼어 내면 다시 열지 않고도 최신 문구를 읽는다. 타이머는 JS 22에서 배운다.',
       },
     ],
     usedIn: [14, 15, 27, 30, 33],
@@ -163,9 +163,93 @@ next()
     },
   },
   {
-    id: 'js-modules',
+    id: 'js-closure-practice',
     chapter: 'D',
     order: 20,
+    title: '클로저 연습: 기억한 값과 지금 값',
+    tagline: '세 번 더했는데 1이다',
+    kind: 'practice',
+    definition:
+      '함수가 기억한 값으로 계산하면, 그 뒤에 바뀐 것을 모른다. 지금 값이 필요하면 기억한 값을 쓰지 말고, 지금 값을 인자로 받는 함수를 넘긴다. 이 레슨은 JS 19의 render를 조금 키워 그 차이를 손으로 본다.',
+    goal: [
+      "왜 1인지 본다. render가 돌려주는 화살표 함수 안, 첫 setCount 위에 `console.log('기억한 count:', count)`를 쓴다. 세 줄 모두 0을 기억한 채 0 + 1을 넣고 있다.",
+      '세 줄을 모두 `setCount((c) => c + 1)`로 바꾼다. setCount가 지금 값을 c로 넘겨 주므로 3이 찍힌다.',
+      "다시 그리면 새 값을 기억한다. 맨 아래에 `const click2 = render()`와 `click2()`를 쓰고, `console.log('다시 그린 뒤:', current)`를 찍는다. 이번에 기억한 count는 3이고, 6이 찍힌다.",
+    ],
+    starterCode: `// 값을 담아 두는 작은 장치. current가 진짜 값이다. 리액트 레슨 14·15의 장치를 흉내 냈다.
+let current = 0
+function setCount(next) {
+  // 함수를 받으면 지금 값을 넘겨 새 값을 받고, 아니면 받은 값을 그대로 넣는다
+  current = typeof next === 'function' ? next(current) : next
+}
+
+// 한 번 그릴 때 count는 그때의 current다. 돌려주는 함수는 그 count를 기억한다(JS 19).
+function render() {
+  const count = current
+  return () => {
+    setCount(count + 1)
+    setCount(count + 1)
+    setCount(count + 1)
+  }
+}
+
+const click = render()
+click()
+console.log('세 번 더했는데:', current)
+`,
+    solutionCode: `// 값을 담아 두는 작은 장치. current가 진짜 값이다. 리액트 레슨 14·15의 장치를 흉내 냈다.
+let current = 0
+function setCount(next) {
+  // 함수를 받으면 지금 값을 넘겨 새 값을 받고, 아니면 받은 값을 그대로 넣는다
+  current = typeof next === 'function' ? next(current) : next
+}
+
+// 한 번 그릴 때 count는 그때의 current다. 돌려주는 함수는 그 count를 기억한다(JS 19).
+function render() {
+  const count = current
+  return () => {
+    console.log('기억한 count:', count)
+    // 기억한 count 대신, 지금 값을 c로 받아 1을 더한다
+    setCount((c) => c + 1)
+    setCount((c) => c + 1)
+    setCount((c) => c + 1)
+  }
+}
+
+const click = render()
+click()
+console.log('세 번 더했는데:', current)
+
+// 다시 그리면 그때의 current를 새로 기억한다
+const click2 = render()
+click2()
+console.log('다시 그린 뒤:', current)
+`,
+    deeper: [
+      {
+        question: '리액트에서는 무엇이 이 장치인가',
+        answer:
+          'useState가 돌려주는 두 값이 이 레슨의 count와 setCount다. 레슨 14는 setCount를 부른 뒤에도 count가 그대로인 까닭을 보고, 레슨 15의 스타터는 setCount(count + 1)을 세 번 불러도 1만 오른다. 레슨 15의 정답은 setCount((n) => n + 1)로 3을 만든다. 이 레슨의 두 단계와 같은 일이다.',
+      },
+      {
+        question: '그럼 언제나 함수로 넘겨야 하나',
+        answer:
+          '앞의 값에서 새 값을 계산할 때만이다. 새 값이 앞의 값과 상관없으면(입력칸에 친 글자처럼) 그 값을 그대로 넘긴다.',
+      },
+    ],
+    usedIn: [14, 15],
+    sources: ['https://ko.react.dev/learn/queueing-a-series-of-state-updates'],
+    quiz: {
+      question: 'count가 0을 기억한 함수 안에서 setCount(count + 1)을 세 번 부르면 current는 얼마인가',
+      options: ['1', '3', '0'],
+      answerIndex: 0,
+      explanation: '세 번 모두 기억한 0에 1을 더한 1을 넣는다. 지금 값에서 더하려면 setCount((c) => c + 1)처럼 함수를 넘긴다.',
+    },
+  },
+  {
+    id: 'js-modules',
+    chapter: 'D',
+    order: 21,
     title: '모듈: import와 export',
     tagline: '파일끼리 주고받기',
     kind: 'concept',
@@ -241,7 +325,7 @@ console.log(countLeft(todos))
   {
     id: 'js-timers',
     chapter: 'D',
-    order: 21,
+    order: 22,
     title: '타이머: setTimeout과 setInterval',
     tagline: '지금이 아니라 나중에',
     kind: 'practice',
@@ -325,7 +409,7 @@ setTimeout(() => feed.close(), 1000) // 1초 뒤에 닫는다
   {
     id: 'js-promise',
     chapter: 'D',
-    order: 22,
+    order: 23,
     title: 'Promise: 나중에 오는 값',
     tagline: '값 대신 약속을 돌려준다',
     kind: 'practice',
@@ -412,7 +496,7 @@ fetchTodos((todos) => {
   {
     id: 'js-async-await',
     chapter: 'D',
-    order: 23,
+    order: 24,
     title: 'async와 await',
     tagline: '기다리는 코드를 위에서 아래로',
     kind: 'practice',
@@ -515,6 +599,154 @@ count().then((n) => console.log(n))     // 3`,
       options: ['페이지 전체', '그 async 함수의 다음 줄', '다른 모든 타이머'],
       answerIndex: 1,
       explanation: '그 함수 안에서만 기다린다. 함수 밖의 코드와 다른 타이머는 계속 돈다.',
+    },
+  },
+  {
+    id: 'js-async-practice',
+    chapter: 'D',
+    order: 25,
+    title: '비동기 연습: 차례로 저장하기',
+    tagline: '기다리고, 실패를 받고, 끝을 알린다',
+    kind: 'practice',
+    definition:
+      'await를 차례로 쓰면 앞의 일이 끝나야 다음 일이 시작된다. 실패는 try/catch로 받고, 성공이든 실패든 "끝났다"는 표시는 try/catch 뒤에 둔다. 리액트 레슨 35가 할 일을 저장할 때 하는 일이 이것이다.',
+    goal: [
+      'add 앞에 async를 붙인다. 그리고 `fakeSave(title)` 줄과 `saved.push(title)` 줄을 `const result = await fakeSave(title)`와 `saved.push(result)`로 바꾼다. 이제 저장이 끝난 뒤에 목록에 넣는다.',
+      "부르는 쪽을 async 함수로 감싼다. `async function main() {`를 열고 그 안에 `await add('장보기')`, `await add('설거지!')`, `await add('빨래')`를 한 줄씩 쓴다. 원래 있던 `add('장보기')` 줄은 지우고, 마지막 console.log 줄을 main 안 맨 아래로 옮긴 뒤 `}`로 닫는다. 그 아래에 `main()`을 쓴다. '설거지!'에서 오류가 나고, 빨래는 저장되지 않는다.",
+      "add 안의 두 줄(await 줄과 push 줄)을 `try {`와 `}` 사이로 옮긴다. 이어서 `catch (err) {`를 열고 `console.log('실패:', title, err.message)`를 쓴 뒤 `}`로 닫는다. `saving = false`는 try/catch 아래에 그대로 둔다. 성공해도 실패해도 그 줄을 지나므로, 끝에 '저장 중: false'가 찍힌다.",
+    ],
+    starterCode: `// 0.3초 뒤에 저장되는 가짜 서버. 느낌표가 있으면 실패한다. 리액트 레슨 35와 같은 모양이다.
+function fakeSave(title) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if (title.includes('!')) reject(new Error('느낌표는 저장할 수 없다'))
+      else resolve(title)
+    }, 300)
+  })
+}
+
+const saved = []
+let saving = false // 저장하는 중인가
+
+// 기다리지 않는다. 저장이 끝나기도 전에 목록에 넣고, 저장 중 표시를 내린다.
+function add(title) {
+  saving = true
+  console.log('저장 시작:', title)
+  fakeSave(title)
+  saved.push(title)
+  saving = false
+}
+
+add('장보기')
+console.log('저장된 것:', saved, '저장 중:', saving)
+`,
+    solutionCode: `// 0.3초 뒤에 저장되는 가짜 서버. 느낌표가 있으면 실패한다. 리액트 레슨 35와 같은 모양이다.
+function fakeSave(title) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if (title.includes('!')) reject(new Error('느낌표는 저장할 수 없다'))
+      else resolve(title)
+    }, 300)
+  })
+}
+
+const saved = []
+let saving = false // 저장하는 중인가
+
+async function add(title) {
+  saving = true
+  console.log('저장 시작:', title)
+  try {
+    const result = await fakeSave(title) // 저장이 끝날 때까지 이 함수만 기다린다
+    saved.push(result)
+  } catch (err) {
+    console.log('실패:', title, err.message)
+  }
+  saving = false // 성공해도 실패해도 여기로 온다
+}
+
+async function main() {
+  await add('장보기') // 앞의 저장이 끝나야 다음으로 간다
+  await add('설거지!')
+  await add('빨래')
+  console.log('저장된 것:', saved, '저장 중:', saving)
+}
+
+main()
+`,
+    deeper: [
+      {
+        question: 'await 없이 셋을 한꺼번에 부르면',
+        answer:
+          '셋이 동시에 시작하고, 먼저 끝난 것이 saving을 false로 내린다. 나머지는 아직 저장하는 중인데도 "저장 중 아님"이 된다. 여러 일이 겹치면 이런 표시 하나로는 모자란다. 리액트 레슨 35의 useActionState는 이 표시를 대신 관리해 준다.',
+      },
+      {
+        question: '저장 중 표시는 어디에 쓰나',
+        answer:
+          '화면에서 버튼을 잠그거나 "저장 중…"을 보여 줄 때 쓴다. 버튼을 두 번 눌러 두 번 저장되는 일을 막는다. 레슨 35와 36이 이 표시로 버튼과 목록을 바꾼다.',
+      },
+    ],
+    usedIn: [35, 36],
+    sources: [
+      'https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Statements/async_function',
+      'https://ko.react.dev/reference/react/useActionState',
+    ],
+    quiz: {
+      question: "await add('설거지!')가 실패했지만 add 안의 catch가 받았다. 다음 줄 await add('빨래')는 어떻게 되는가",
+      options: ['실행되지 않는다', '실행된다. 오류는 add 안에서 이미 받았다', '설거지!를 다시 저장한다'],
+      answerIndex: 1,
+      explanation: 'add가 오류를 스스로 받았으므로 main에는 오류가 오지 않는다. main은 다음 줄로 간다.',
+    },
+    // 챕터 D 스스로 해보기: 할 일 단계 없이 목표 출력만 준다
+    challenge: {
+      goal: "챕터 D에서 배운 것만으로 쓴다. 0.2초 뒤 목록을 주는 fetchTodos가 있다. async 함수 load(fail)을 만든다. 부르면 먼저 '불러오는 중'을 찍고, 목록을 받으면 그 개수와 '다 불러왔다'를 찍고, 실패하면 '실패:'와 오류 메시지를 찍는다. 아래 main이 그대로 돌아 아래 다섯 줄이 찍히게 한다.",
+      target: '불러오는 중\n2\n다 불러왔다\n불러오는 중\n실패: 서버가 응답하지 않는다',
+      starterCode: `function fetchTodos(fail) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if (fail) reject(new Error('서버가 응답하지 않는다'))
+      else resolve(['장보기', '설거지'])
+    }, 200)
+  })
+}
+
+// 여기에 load 함수를 만든다
+
+
+// 아래는 그대로 둔다. 첫째는 성공하고, 둘째는 실패한다.
+async function main() {
+  await load(false)
+  await load(true)
+}
+main()
+`,
+      solutionCode: `function fetchTodos(fail) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if (fail) reject(new Error('서버가 응답하지 않는다'))
+      else resolve(['장보기', '설거지'])
+    }, 200)
+  })
+}
+
+async function load(fail) {
+  console.log('불러오는 중')
+  try {
+    const todos = await fetchTodos(fail)
+    console.log(todos.length)
+    console.log('다 불러왔다')
+  } catch (err) {
+    console.log('실패:', err.message)
+  }
+}
+
+// 아래는 그대로 둔다. 첫째는 성공하고, 둘째는 실패한다.
+async function main() {
+  await load(false)
+  await load(true)
+}
+main()
+`,
     },
   },
 ]

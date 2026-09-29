@@ -1,7 +1,7 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import Code, { InlineCode } from './Code.jsx'
 import CodeEditor from './CodeEditor.jsx'
-import { runConsole } from './consoleRunner.js'
+import { collectOutput, runConsole, sameOutput } from './consoleRunner.js'
 import { hintFor } from './errorHints.js'
 import ResultPanel from './ResultPanel.jsx'
 import { CodeError, compileToApp, injectedHookNames, loadBabel } from './runner.js'
@@ -17,6 +17,8 @@ export default function CodeSandbox({
   solutionCode,
   onCodeChange,
   mode = 'react',
+  label = '예제 코드 편집기',
+  outputUnchanged = false,
 }) {
   const isConsole = mode === 'console'
   const editorId = useId()
@@ -53,6 +55,20 @@ export default function CodeSandbox({
   useEffect(() => {
     onCodeChange?.(code)
   }, [code, onCodeChange])
+
+  // 콘솔 모드: 정답 코드를 뒤에서 한 번 돌려 출력을 받아 둔다. 학습자 출력이 이것과 같아지면 알려 준다.
+  // 코드를 채점하지 않고 출력만 견준다. 고쳐 쓰기만 해서 출력이 처음과 같은 레슨(outputUnchanged)은 알리지 않는다.
+  const [expected, setExpected] = useState(null)
+  useEffect(() => {
+    if (!isConsole || !solutionCode) return
+    let alive = true
+    collectOutput(solutionCode).then((sol) => {
+      if (alive && !sol.error) setExpected({ lines: sol.lines })
+    })
+    return () => {
+      alive = false
+    }
+  }, [isConsole, solutionCode])
 
   useEffect(() => {
     if (isConsole) return
@@ -108,6 +124,9 @@ export default function CodeSandbox({
     }
   }
 
+  const matched =
+    expected && !outputUnchanged && !error && lines.length > 0 && sameOutput(lines, expected.lines)
+
   const hint = error && hintFor(error.message, mode)
   const errorBox = error && (
     <div className="panel-error">
@@ -138,7 +157,7 @@ export default function CodeSandbox({
         </p>
         <CodeEditor
           id={editorId}
-          label="예제 코드 편집기"
+          label={label}
           value={code}
           disabled={!ready}
           onChange={setCode}
@@ -158,9 +177,19 @@ export default function CodeSandbox({
           <details className="solution">
             <summary>정답 코드 보기</summary>
             <p className="panel-hint">
-              막히면 펼친다. 맞았는지는 {isConsole ? '콘솔 출력' : '결과 화면'}과 이 코드를 견주어 스스로 본다.
+              {!isConsole
+                ? '막히면 펼친다. 맞았는지는 결과 화면과 이 코드를 견주어 스스로 본다.'
+                : outputUnchanged
+                  ? '막히면 펼친다. 이 레슨은 고쳐 쓰기만 하므로 출력이 처음과 같다. 코드를 이 정답과 견주어 본다.'
+                  : '막히면 펼친다. 콘솔 출력이 정답의 출력과 같아지면 콘솔 아래에 표시가 뜬다.'}
             </p>
             <Code code={solutionCode} />
+            {isConsole && expected && (
+              <>
+                <p className="panel-hint">정답을 실행하면 콘솔에 이렇게 찍힌다.</p>
+                <pre className="expected-output">{expected.lines.map((line) => line.text).join('\n')}</pre>
+              </>
+            )}
             <button className="ghost" onClick={() => replaceWith(solutionCode)} disabled={code === solutionCode}>
               편집기에 넣기
             </button>
@@ -200,6 +229,11 @@ export default function CodeSandbox({
           <ResultPanel App={App} runKey={`${runKey}-${rerun}`} />
         )}
         {isConsole && errorBox}
+        {matched && (
+          <p className="match" role="status">
+            ✓ 정답 코드와 출력이 같다.
+          </p>
+        )}
       </section>
     </div>
   )

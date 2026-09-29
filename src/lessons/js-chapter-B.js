@@ -361,6 +361,32 @@ try {
 }`,
       },
     ],
+    // 챕터 B 스스로 해보기: 할 일 단계 없이 목표 출력만 준다
+    challenge: {
+      goal: "챕터 B에서 배운 것만으로 쓴다. 제목과 끝났는지를 받아 문장을 돌려주는 함수 summary를 만든다. 끝났으면 '제목 · 끝', 아니면 '제목 · 아직'을 돌려주고, 제목이 공백뿐이면 '제목이 비었다'라는 오류를 던진다. 아래 세 줄의 호출은 그대로 두고, 셋째 줄이 던지는 오류를 try/catch로 받아 아래 세 줄이 찍히게 한다.",
+      target: '장보기 · 끝\n설거지 · 아직\n못 만들었다: 제목이 비었다',
+      starterCode: `// 여기에 summary 함수를 만든다
+
+
+// 아래 세 줄은 그대로 둔다. 셋째 줄은 오류를 던진다.
+console.log(summary('장보기', true))
+console.log(summary('설거지', false))
+console.log(summary('  ', false))
+`,
+      solutionCode: `function summary(title, done) {
+  if (title.trim() === '') throw new Error('제목이 비었다')
+  return done ? title + ' · 끝' : title + ' · 아직'
+}
+
+try {
+  console.log(summary('장보기', true))
+  console.log(summary('설거지', false))
+  console.log(summary('  ', false))
+} catch (err) {
+  console.log('못 만들었다:', err.message)
+}
+`,
+    },
     usedIn: [22, 27, 35],
     sources: [
       'https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Statements/throw',

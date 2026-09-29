@@ -4,7 +4,7 @@ import assert from 'node:assert/strict'
 import { readdir } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
-import { runConsole } from '../consoleRunner.js'
+import { collectOutput, sameOutput } from '../consoleRunner.js'
 import { compileToApp } from '../runner.js'
 
 const here = dirname(fileURLToPath(import.meta.url))
@@ -123,19 +123,33 @@ for (const l of practice) {
 }
 // JS 레슨은 콘솔 모드로 돌린다. 스타터와 정답 모두 오류 없이 한 줄 이상 찍어야 하고, 둘은 달라야 한다.
 const jsPractice = jsLessons.filter((l) => l.kind === 'practice')
+// 출력이 그대로인 레슨(구조 분해처럼 고쳐 쓰기만 하는 레슨)은 "정답과 출력이 같다" 표시를 켜지 않는다. 앱과 같은 판정을 여기서 센다.
+const sameAsStarter = []
 for (const l of jsPractice) {
+  const outputs = {}
   for (const [name, code] of [['starterCode', l.starterCode], ['solutionCode', l.solutionCode]]) {
     assert.ok(code, `JS ${l.order} ${l.title}: ${name}가 없다`)
-    const out = []
-    const { error, dispose } = await runConsole(code, (line) => out.push(line))
-    // 타이머·Promise를 쓰는 레슨은 나중에 오는 줄까지 받는다. 그 안에서 난 오류도 여기서 잡힌다. 레슨의 타이머는 1초 안쪽이다.
-    if (/setTimeout|setInterval|Promise|async /.test(code)) await new Promise((r) => setTimeout(r, 1300))
-    dispose()
+    // 타이머·Promise를 쓰는 레슨은 나중에 오는 줄까지 받는다. 그 안에서 난 오류도 여기서 잡힌다.
+    const { lines, error } = await collectOutput(code)
     assert.equal(error, null, `JS ${l.order} ${l.title}: ${name}가 실행되지 않는다 — ${error?.stage} ${error?.message}`)
-    assert.ok(out.length > 0, `JS ${l.order} ${l.title}: ${name}가 아무것도 찍지 않는다`)
-    assert.ok(!out.some((line) => line.level === 'error'), `JS ${l.order} ${l.title}: ${name}가 오류 줄을 찍는다`)
+    assert.ok(lines.length > 0, `JS ${l.order} ${l.title}: ${name}가 아무것도 찍지 않는다`)
+    assert.ok(!lines.some((line) => line.level === 'error'), `JS ${l.order} ${l.title}: ${name}가 오류 줄을 찍는다`)
+    outputs[name] = lines
   }
   assert.notEqual(l.solutionCode, l.starterCode, `JS ${l.order} ${l.title}: 스타터와 정답이 같다`)
+  // 앱은 outputUnchanged를 보고 표시를 끈다. 실제 출력과 어긋나면 표시가 처음부터 켜지거나, 영영 안 켜진다.
+  const unchanged = sameOutput(outputs.starterCode, outputs.solutionCode)
+  assert.equal(!!l.outputUnchanged, unchanged, `JS ${l.order} ${l.title}: outputUnchanged가 실제 출력과 맞지 않는다`)
+  if (unchanged) sameAsStarter.push(l.order)
+
+  // 챕터 끝의 "스스로 해보기": 목표로 보여 주는 출력(target)이 정답 코드의 실제 출력과 같아야 한다
+  if (l.challenge) {
+    const c = l.challenge
+    assert.ok(c.goal && c.target && c.starterCode && c.solutionCode, `JS ${l.order}: 스스로 해보기에 빠진 칸이 있다`)
+    const { lines, error } = await collectOutput(c.solutionCode)
+    assert.equal(error, null, `JS ${l.order} 스스로 해보기: 정답이 실행되지 않는다 — ${error?.message}`)
+    assert.equal(lines.map((line) => line.text).join('\n'), c.target, `JS ${l.order} 스스로 해보기: target이 정답 출력과 다르다`)
+  }
 }
 
 // 용어 첫 등장(보충 문서 '쓰기 원칙'): JS 트랙 본문은 용어를 그것을 푸는 레슨보다 앞에서 쓰지 않는다.
@@ -145,15 +159,15 @@ const TERMS = [
   ['연산자', /연산자/, 4], ['속성', /속성/, 5], ['메서드', /메서드/, 5], ['표현식', /표현식/, 7],
   ['함수', /함수/, 8], ['매개변수', /매개변수/, 8], ['인자', /인자/, 8], ['배열', /배열/, 11],
   ['객체', /객체/, 12], ['구조 분해', /구조 분해/, 15], ['스프레드', /스프레드/, 16], ['JSON', /JSON/, 17],
-  ['참조', /참조/, 18], ['클로저', /클로저/, 19], ['모듈', /모듈/, 20], ['타이머', /타이머/, 21],
-  ['콜백', /콜백/, 22], ['Promise', /Promise/, 22], ['await', /\bawait\b/, 23],
+  ['참조', /참조/, 18], ['클로저', /클로저/, 19], ['모듈', /모듈/, 21], ['타이머', /타이머/, 22],
+  ['콜백', /콜백/, 23], ['Promise', /Promise/, 23], ['await', /\bawait\b/, 24],
 ]
 // 리액트 용어는 JS 트랙 본문에 설명 없이 나오지 않는다. 리액트로 잇고 싶으면 "리액트 레슨 N"으로 가리킨다.
 const REACT_TERMS = [/state/, /렌더/, /컴포넌트/, /props/, /Effect/, /훅/, /JSX/]
 const comments = (code) => (code ?? '').split('\n').map((line) => line.split('//')[1] ?? '').join('\n')
 for (const l of jsLessons) {
   const body = [l.title, l.tagline, l.definition, ...[].concat(l.goal ?? []), comments(l.starterCode), comments(l.solutionCode),
-    l.quiz.question, ...l.quiz.options, l.quiz.explanation].join('\n')
+    l.quiz.question, ...l.quiz.options, l.quiz.explanation, l.challenge?.goal ?? ''].join('\n')
   for (const [name, re, at] of TERMS) {
     assert.ok(!(l.order < at && re.test(body)), `JS ${l.order} ${l.title}: '${name}'을(를) JS ${at}에서 풀기 전에 쓴다`)
   }
@@ -176,5 +190,5 @@ const withSolution = practice.filter((l) => l.solutionCode).length
 for (const l of practice) if (l.order !== 1) assert.ok(l.solutionCode, `레슨 ${l.order} ${l.title}: solutionCode가 없다`)
 
 console.log(
-  `ok — 레슨 ${lessons.length}개(실습 ${practice.length}개 실행 확인, 정답 코드 ${withSolution}개), 챕터 파일 ${files.length}개 · JS 레슨 ${jsLessons.length}개(콘솔 실행 확인 ${jsPractice.length}개) · 정답 자리 ${shownAt.join('/')}`,
+  `ok — 레슨 ${lessons.length}개(실습 ${practice.length}개 실행 확인, 정답 코드 ${withSolution}개), 챕터 파일 ${files.length}개 · JS 레슨 ${jsLessons.length}개(콘솔 실행 확인 ${jsPractice.length}개, 출력이 그대로인 레슨 ${sameAsStarter.join(',') || '없음'}) · 정답 자리 ${shownAt.join('/')}`,
 )

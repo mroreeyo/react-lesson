@@ -26,7 +26,7 @@ console.log('할 일: 설거지')
       {
         question: '이 콘솔과 브라우저 개발자 도구의 콘솔은 같은가',
         answer:
-          '같은 console.log다. 브라우저에서 F12를 누르면 나오는 개발자 도구에도 콘솔이 있고, 실제 웹 페이지의 코드가 찍은 줄은 그쪽에 나온다. 출력을 적는 모양(글자에 따옴표를 언제 붙이는지 등)은 개발자 도구에 맞췄다.\n\n다른 점은 둘이다. 개발자 도구는 여러 개를 묶은 것(JS 11·12에서 배운다)을 눌러 펼쳐 보게 하고, 이 앱은 처음부터 펼쳐 적는다. 또 이 앱은 코드가 끝난 뒤에 도착한 줄 앞에 "나중"을 붙인다. JS 21에서 이 표시를 쓴다.',
+          '같은 console.log다. 브라우저에서 F12를 누르면 나오는 개발자 도구에도 콘솔이 있고, 실제 웹 페이지의 코드가 찍은 줄은 그쪽에 나온다. 출력을 적는 모양(글자에 따옴표를 언제 붙이는지 등)은 개발자 도구에 맞췄다.\n\n다른 점은 둘이다. 개발자 도구는 여러 개를 묶은 것(JS 11·12에서 배운다)을 눌러 펼쳐 보게 하고, 이 앱은 처음부터 펼쳐 적는다. 또 이 앱은 코드가 끝난 뒤에 도착한 줄 앞에 "나중"을 붙인다. JS 22에서 이 표시를 쓴다.',
       },
       {
         question: '작은따옴표와 큰따옴표는 다른가',
@@ -308,6 +308,23 @@ console.log(blank.trim() === '')
           '레슨 17의 추가 버튼은 이 줄로 시작한다. 입력이 공백뿐이면 거기서 멈추고 아무것도 더하지 않는다. if와 return은 JS 6과 JS 8에서 배운다.\n\n// 입력이 공백뿐이면 여기서 멈춘다\nif (draft.trim() === \'\') return',
       },
     ],
+    // 챕터 A 스스로 해보기: 할 일 단계 없이 목표 출력만 준다
+    challenge: {
+      goal: "챕터 A에서 배운 것만으로 쓴다. 입력 `'  설거지  '`에서 앞뒤 공백을 뗀 제목을 이름에 담고, 아래 네 줄이 찍히게 한다. 차례로 제목, 제목의 글자 수, 제목에 '설'이 들어 있는지, 제목이 빈 글자인지다.",
+      target: '설거지\n3\ntrue\nfalse',
+      starterCode: `const input = '  설거지  '
+
+// 여기부터 쓴다
+`,
+      solutionCode: `const input = '  설거지  '
+
+const title = input.trim()
+console.log(title)
+console.log(title.length)
+console.log(title.includes('설'))
+console.log(title === '')
+`,
+    },
     usedIn: [17, 18, 35],
     sources: [
       'https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/String/trim',

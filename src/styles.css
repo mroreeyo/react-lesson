@@ -1222,3 +1222,27 @@ body {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
+
+/* 콘솔 출력이 정답과 같을 때 */
+.match {
+  margin: 0.6rem 0 0;
+  padding: 0.45rem 0.75rem;
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  color: var(--accent);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+/* 정답 코드 아래의 "정답을 실행하면 이렇게 찍힌다" */
+.expected-output {
+  margin: 0.3rem 0 0.6rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--bg);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+}

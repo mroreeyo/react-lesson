@@ -64,6 +64,21 @@ function DeeperAnswer({ text, onNavigate }) {
   )
 }
 
+/** 편집기 초안 하나. key마다 저장소의 drafts에 두고, 초기 코드와 같아지면 지운다. */
+function useDraft(key, starter) {
+  const [initial] = useState(() => load(KEYS.drafts, {})[key] ?? starter)
+  const saveDraft = useCallback(
+    (code) => {
+      const drafts = load(KEYS.drafts, {})
+      if (code === starter) delete drafts[key]
+      else drafts[key] = code
+      save(KEYS.drafts, drafts)
+    },
+    [key, starter],
+  )
+  return [initial, saveDraft]
+}
+
 /** 개념 레슨의 그림. 단계를 화살표로 잇는다. 좁은 화면에서는 세로로 쌓인다. */
 function Figure({ figure }) {
   return (
@@ -101,16 +116,9 @@ export default function Lesson({ lesson, done, onComplete, onNavigate, onOpenDem
 
   // 레슨별 편집 초안. 이 컴포넌트는 lesson.id로 key가 걸려 레슨마다 새로 읽는다.
   // 초기 코드는 고정이고 앞 레슨의 수정을 물려받지 않지만, 이 레슨에서 고친 것은 남는다.
-  const [initialCode] = useState(() => load(KEYS.drafts, {})[lesson.id] ?? lesson.starterCode)
-  const saveDraft = useCallback(
-    (code) => {
-      const drafts = load(KEYS.drafts, {})
-      if (code === lesson.starterCode) delete drafts[lesson.id]
-      else drafts[lesson.id] = code
-      save(KEYS.drafts, drafts)
-    },
-    [lesson.id, lesson.starterCode],
-  )
+  const [initialCode, saveDraft] = useDraft(lesson.id, lesson.starterCode)
+  // 챕터 끝 '스스로 해보기'의 초안은 따로 둔다. 훅은 조건 없이 부르고, 문제가 없는 레슨에서는 쓰지 않는다.
+  const [challengeCode, saveChallenge] = useDraft(`${lesson.id}:challenge`, lesson.challenge?.starterCode ?? '')
 
   return (
     <article className="tab-body lesson">
@@ -210,6 +218,7 @@ export default function Lesson({ lesson, done, onComplete, onNavigate, onOpenDem
             resetCode={lesson.starterCode}
             solutionCode={lesson.solutionCode}
             onCodeChange={saveDraft}
+            outputUnchanged={lesson.outputUnchanged}
             mode={isJs ? 'console' : 'react'}
           />
         )}
@@ -266,6 +275,27 @@ export default function Lesson({ lesson, done, onComplete, onNavigate, onOpenDem
             이 문법은 다음 리액트 레슨에 나온다:{' '}
             <LinkedText text={lesson.usedIn.map((n) => `레슨 ${n}`).join(', ')} onNavigate={onNavigate} />
           </p>
+        </section>
+      )}
+
+      {lesson.challenge && (
+        // 챕터 끝 문제. 할 일 단계 없이 목표 출력만 주고, 콘솔 출력이 정답과 같아지면 편집기 쪽에서 알려 준다.
+        <section className="block">
+          <h3 className="block-head">챕터 {chapter.id} 스스로 해보기</h3>
+          <p className="goal goal-task">
+            <strong>목표 · </strong>
+            <LinkedText text={lesson.challenge.goal} onNavigate={onNavigate} />
+          </p>
+          <p className="panel-hint">이렇게 찍히면 된다.</p>
+          <pre className="expected-output">{lesson.challenge.target}</pre>
+          <CodeSandbox
+            initialCode={challengeCode}
+            resetCode={lesson.challenge.starterCode}
+            solutionCode={lesson.challenge.solutionCode}
+            onCodeChange={saveChallenge}
+            mode="console"
+            label="스스로 해보기 편집기"
+          />
         </section>
       )}
 
