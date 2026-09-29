@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { quizOrder } from './quizOrder.js'
 
 /** 3지선다 1문제. 정답이면 레슨을 완료로 표시하고, 오답은 다시 고를 수 있다. */
 export default function Quiz({ quiz, done, onCorrect, onNext, nextLabel }) {
@@ -10,7 +11,8 @@ export default function Quiz({ quiz, done, onCorrect, onNext, nextLabel }) {
       <h3 className="block-head">확인 문제</h3>
       <p className="quiz-q">{quiz.question}</p>
       <ul className="quiz-options">
-        {quiz.options.map((option, i) => {
+        {quizOrder(quiz.question, quiz.options.length).map((i) => {
+          const option = quiz.options[i]
           const chosen = picked === i
           return (
             <li key={i}>

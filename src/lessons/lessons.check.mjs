@@ -160,10 +160,21 @@ for (const l of jsLessons) {
   for (const re of REACT_TERMS) assert.ok(!re.test(body), `JS ${l.order} ${l.title}: 리액트 용어 ${re}를 설명 없이 쓴다`)
 }
 
+// 확인 문제의 정답이 화면에서 한 자리에 몰리지 않아야 한다. 몰리면 읽지 않고 자리로 맞힌다.
+const { quizOrder } = await import('../quizOrder.js')
+const shownAt = [0, 0, 0]
+for (const l of [...lessons, ...jsLessons]) {
+  const order = quizOrder(l.quiz.question, 3)
+  assert.deepEqual([...order].sort(), [0, 1, 2], `${l.title}: 보기 순서가 순열이 아니다`)
+  shownAt[order.indexOf(l.quiz.answerIndex)]++
+}
+const quizTotal = lessons.length + jsLessons.length
+for (const n of shownAt) assert.ok(n >= quizTotal * 0.2, `정답이 보이는 자리가 한쪽으로 몰렸다: ${shownAt}`)
+
 const withSolution = practice.filter((l) => l.solutionCode).length
 // 레슨 1(리액트 소개)만 완성본으로 시작한다. 나머지 실습은 전부 앞 레슨 방식 스타터 + 정답이어야 한다.
 for (const l of practice) if (l.order !== 1) assert.ok(l.solutionCode, `레슨 ${l.order} ${l.title}: solutionCode가 없다`)
 
 console.log(
-  `ok — 레슨 ${lessons.length}개(실습 ${practice.length}개 실행 확인, 정답 코드 ${withSolution}개), 챕터 파일 ${files.length}개 · JS 레슨 ${jsLessons.length}개(콘솔 실행 확인 ${jsPractice.length}개)`,
+  `ok — 레슨 ${lessons.length}개(실습 ${practice.length}개 실행 확인, 정답 코드 ${withSolution}개), 챕터 파일 ${files.length}개 · JS 레슨 ${jsLessons.length}개(콘솔 실행 확인 ${jsPractice.length}개) · 정답 자리 ${shownAt.join('/')}`,
 )
