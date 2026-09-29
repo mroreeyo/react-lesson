@@ -54,6 +54,8 @@ export default function App() {
     }
     setDrawerOpen(false)
     window.scrollTo({ top: 0 })
+    // 새 레슨이 그려진 뒤 제목에 포커스를 둔다. backToLesson과 같은 이유로 setTimeout이다.
+    setTimeout(() => document.getElementById('lesson-title')?.focus({ preventScroll: true }), 0)
   }
   const openDemo = (demoId) => {
     setFocusedDemo(demoId)

@@ -138,6 +138,28 @@ for (const l of jsPractice) {
   assert.notEqual(l.solutionCode, l.starterCode, `JS ${l.order} ${l.title}: 스타터와 정답이 같다`)
 }
 
+// 용어 첫 등장(보충 문서 '쓰기 원칙'): JS 트랙 본문은 용어를 그것을 푸는 레슨보다 앞에서 쓰지 않는다.
+// 본문 = 학습자가 반드시 읽는 곳(정의·할 일·코드 주석·확인 문제). 더 파고들면·없던 시절은 "JS N에서 본다"로 앞을 가리킬 수 있어 대상이 아니다.
+const TERMS = [
+  ['값', /(^|[^가-힣])값/, 2], ['문자열', /문자열/, 2], ['불리언', /불리언/, 2], ['변수', /변수/, 3],
+  ['연산자', /연산자/, 4], ['속성', /속성/, 5], ['메서드', /메서드/, 5], ['표현식', /표현식/, 7],
+  ['함수', /함수/, 8], ['매개변수', /매개변수/, 8], ['인자', /인자/, 8], ['배열', /배열/, 11],
+  ['객체', /객체/, 12], ['구조 분해', /구조 분해/, 15], ['스프레드', /스프레드/, 16], ['JSON', /JSON/, 17],
+  ['참조', /참조/, 18], ['클로저', /클로저/, 19], ['모듈', /모듈/, 20], ['타이머', /타이머/, 21],
+  ['콜백', /콜백/, 22], ['Promise', /Promise/, 22], ['await', /\bawait\b/, 23],
+]
+// 리액트 용어는 JS 트랙 본문에 설명 없이 나오지 않는다. 리액트로 잇고 싶으면 "리액트 레슨 N"으로 가리킨다.
+const REACT_TERMS = [/state/, /렌더/, /컴포넌트/, /props/, /Effect/, /훅/, /JSX/]
+const comments = (code) => (code ?? '').split('\n').map((line) => line.split('//')[1] ?? '').join('\n')
+for (const l of jsLessons) {
+  const body = [l.title, l.tagline, l.definition, ...[].concat(l.goal ?? []), comments(l.starterCode), comments(l.solutionCode),
+    l.quiz.question, ...l.quiz.options, l.quiz.explanation].join('\n')
+  for (const [name, re, at] of TERMS) {
+    assert.ok(!(l.order < at && re.test(body)), `JS ${l.order} ${l.title}: '${name}'을(를) JS ${at}에서 풀기 전에 쓴다`)
+  }
+  for (const re of REACT_TERMS) assert.ok(!re.test(body), `JS ${l.order} ${l.title}: 리액트 용어 ${re}를 설명 없이 쓴다`)
+}
+
 const withSolution = practice.filter((l) => l.solutionCode).length
 // 레슨 1(리액트 소개)만 완성본으로 시작한다. 나머지 실습은 전부 앞 레슨 방식 스타터 + 정답이어야 한다.
 for (const l of practice) if (l.order !== 1) assert.ok(l.solutionCode, `레슨 ${l.order} ${l.title}: solutionCode가 없다`)

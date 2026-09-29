@@ -127,7 +127,8 @@ export default function Lesson({ lesson, done, onComplete, onNavigate, onOpenDem
         <p className="crumb">
           챕터 {lesson.chapter}. {chapter?.title}
         </p>
-        <h2>
+        {/* 레슨을 옮기면 App이 여기로 포커스를 보낸다. 누른 버튼이 사라져도 키보드 위치가 맨 위로 튀지 않는다. */}
+        <h2 id="lesson-title" tabIndex={-1}>
           {lesson.order}. {lesson.title}
         </h2>
         {lesson.tagline && <p className="tagline">{lesson.tagline}</p>}

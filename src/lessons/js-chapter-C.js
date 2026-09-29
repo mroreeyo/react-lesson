@@ -129,7 +129,7 @@ console.log(todo[key])     // 변수에 든 키로 꺼낸다`,
     definition:
       '`배열.map(함수)`는 배열의 항목마다 함수를 불러, 함수가 돌려준 값들로 새 배열을 만든다. 원본 배열은 그대로 둔다.',
     goal: [
-      '`titles`를 `todos.map((todo) => todo.title)`로 바꾼다. 결과는 같고, 할 일이 늘어도 고칠 곳이 없다.',
+      '`const titles =` 오른쪽의 `[todos[0].title, todos[1].title, todos[2].title]`을 지우고, 그 자리에 `todos.map((todo) => todo.title)`을 쓴다. 결과는 같고, 할 일이 늘어도 고칠 곳이 없다.',
       "끝난 것에 표시를 붙인 목록을 만든다: `const labels = todos.map((todo) => (todo.done ? todo.title + ' · 끝' : todo.title))`, 그리고 `console.log(labels)`.",
       '`console.log(todos)`를 찍어 원본이 그대로인지 본다.',
     ],
@@ -159,7 +159,7 @@ console.log(labels)
 console.log(todos) // 원본은 그대로다
 `,
     before: {
-      text: 'map을 쓰기 전에는 for 문으로 번호를 하나씩 올리며, 빈 배열에 push로 하나씩 넣었다. 지금도 오래된 코드에서 자주 보인다.',
+      text: 'map을 쓰기 전에는 for 문으로 번호를 하나씩 올리며, 빈 배열에 push로 하나씩 넣었다. for 문은 이 트랙에서 다루지 않고, push는 JS 14에서 본다. 지금도 오래된 코드에서 자주 보인다.',
       code: `const titles = []
 for (let i = 0; i < todos.length; i++) {
   titles.push(todos[i].title)
@@ -278,7 +278,7 @@ console.log(todos.length)
       '구조 분해는 객체나 배열에서 여러 값을 한 줄에 꺼내 이름을 붙이는 문법이다. 객체는 `const { title, done } = todo`처럼 키 이름으로 꺼내고, 배열은 `const [first, second] = list`처럼 순서로 꺼낸다.',
     goal: [
       '`const title = todo.title`과 `const done = todo.done` 두 줄을 `const { title, done } = todo` 한 줄로 바꾼다.',
-      'label의 매개변수 자리에서 바로 꺼낸다. `function label(todo)`를 `function label({ title, done })`로 바꾸고, 안의 `todo.`를 전부 뗀다. 부르는 쪽은 그대로 `label(todo)`다. 위에서 이미 title을 만들었는데도 오류가 나지 않는다. 함수 안의 이름은 함수 밖의 이름과 따로이기 때문이다.',
+      'label의 매개변수 자리에서 바로 꺼낸다. `function label(todo)`를 `function label({ title, done })`로 바꾸고, 안의 `todo.`를 전부 뗀다. 부르는 쪽은 그대로 `label(todo)`다. 위에서 이미 title을 만들었는데도 오류가 나지 않는다. 매개변수는 함수를 부를 때마다 함수 안에 새로 생기는 이름이라, 함수 안에서는 바깥의 같은 이름을 가리고 매개변수가 쓰인다.',
       '배열은 순서로 꺼낸다. `const first`와 `const second` 두 줄을 `const [first, second] = pair` 한 줄로 바꾼다.',
     ],
     starterCode: `const todo = { id: 'a', title: '장보기', done: true }
@@ -303,14 +303,14 @@ console.log(first, second)
 const { title, done } = todo
 console.log(title, done)
 
-// 매개변수 자리에서 바로 꺼낸다. 리액트 컴포넌트가 props를 받는 모양이다
-// 여기의 title·done은 함수 안에서만 쓰는 이름이라, 위의 title·done과 겹쳐도 된다
+// 매개변수 자리에서 바로 꺼낸다. 리액트 레슨 7에서 이 모양을 다시 만난다
+// 매개변수 title·done은 함수 안에 새로 생긴다. 함수 안에서는 위의 title·done을 가리고 이것이 쓰인다
 function label({ title, done }) {
   return done ? title + ' · 끝' : title
 }
 console.log(label(todo))
 
-// 배열은 순서로 꺼낸다. useState가 돌려주는 두 값을 받는 모양이다
+// 배열은 순서로 꺼낸다. 리액트 레슨 1과 12에서 이 모양을 다시 만난다
 const pair = ['장보기', '설거지']
 const [first, second] = pair
 console.log(first, second)
@@ -349,7 +349,7 @@ console.log(memo) // undefined`,
     tagline: '원본은 두고 새것을 만든다',
     kind: 'practice',
     definition:
-      '스프레드(`...`)는 배열이나 객체의 내용을 그 자리에 펼친다. `[...todos, 새 항목]`은 끝에 하나를 더한 새 배열이고, `{ ...todo, done: true }`는 done만 바꾼 새 객체다. 원본은 그대로다. 단, 복사는 맨 바깥 한 겹만 한다.',
+      '스프레드(`...`)는 배열이나 객체의 내용을 그 자리에 펼친다. `[...todos, 새 항목]`은 끝에 하나를 더한 새 배열이고, `{ ...todo, done: true }`는 done만 바꾼 새 객체다. 원본은 그대로다. 단, 복사는 맨 바깥 한 겹만 한다. 그 뜻은 아래 "더 파고들면"의 얕은 복사에서 본다.',
     goal: [
       "push 줄을 지우고 `const added = [...todos, { id: 'c', title: '빨래', done: false }]`로 새 배열을 만든다. 아래 console.log를 `console.log(todos.length, added.length)`로 바꿔, 원본은 2 그대로인지 본다.",
       '둘째 할 일을 끝낸 새 객체를 만든다: `const doneB = { ...todos[1], done: true }`, 그리고 `console.log(todos[1].done, doneB.done)`.',
@@ -442,6 +442,7 @@ console.log({ done: true, ...todos[1] }) // done: false, 원본 값이 덮었다
 ]
 
 // 브라우저 저장소에는 글자만 넣을 수 있다. 지금 todos는 글자가 아니다.
+// 배열은 객체의 한 종류라서 typeof로 물으면 array가 아니라 object가 나온다.
 console.log(typeof todos)
 `,
     solutionCode: `const todos = [
@@ -450,6 +451,7 @@ console.log(typeof todos)
 ]
 
 // 브라우저 저장소에는 글자만 넣을 수 있다. 지금 todos는 글자가 아니다.
+// 배열은 객체의 한 종류라서 typeof로 물으면 array가 아니라 object가 나온다.
 console.log(typeof todos)
 
 // 배열·객체를 글자로

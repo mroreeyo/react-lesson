@@ -11,9 +11,9 @@ export default [
       '`if (조건) { ... }`는 조건이 true일 때만 중괄호 안을 실행한다. 이어 붙인 `else { ... }`는 아닐 때 실행할 곳이다. `switch (값)`은 값이 어느 `case`와 같은지에 따라 여러 갈래 중 하나를 고른다.',
     goal: [
       "'끝' 줄 위에 `if (done) {`를 쓴다. '끝' 줄과 '아직' 줄 사이에 `} else {`를, '아직' 줄 아래에 `}`를 쓴다. done이 false이므로 '아직' 줄만 찍힌다.",
-      '맨 위의 `const done = false`를 true로 바꿔 다른 줄이 찍히는지 보고, 다시 false로 돌린다.',
+      '`const done = false`의 false를 true로 바꿔 다른 줄이 찍히는지 보고, 다시 false로 돌린다.',
       "아래에 `const filter = 'left'`를 만들고, 그 아래 줄에 `switch (filter) {`를 쓴다.",
-      "`case 'all':`을 쓰고, 그 아래에 `console.log('전부 보여준다')`와 `break`를 한 줄씩 쓴다. 같은 모양으로 `case 'left':`(남은 것만 보여준다)와 `case 'done':`(끝낸 것만 보여준다)도 쓴다.",
+      "`case 'all':`을 쓰고, 그 아래에 `console.log('전부 보여준다')`와 `break`를 한 줄씩 쓴다. break는 여기서 switch를 빠져나가라는 뜻이다. 같은 모양으로 `case 'left':`(남은 것만 보여준다)와 `case 'done':`(끝낸 것만 보여준다)도 쓴다.",
       "마지막에 `default:`를 쓰고 그 아래에 `console.log('모르는 필터: ' + filter)`를 쓴 뒤, `}`로 switch를 닫는다. '남은 것만 보여준다'가 찍힌다.",
     ],
     starterCode: `const title = '장보기'
@@ -159,7 +159,7 @@ console.log(0 > 0 && '있다') // false`,
       "맨 위에 함수를 만든다. `function label(title, done) {`를 쓰고, 다음 줄에 `return done ? title + ' · 끝' : title + ' · 아직'`, 그 다음 줄에 `}`를 쓴다.",
       '두 console.log 안의 삼항을 `label(title1, done1)`과 `label(title2, done2)`로 바꾼다. 찍히는 것은 같다.',
       "`console.log(label('빨래', false))`로 이름 없이 값을 바로 넘겨 본다.",
-      "빈 제목을 막는다. 함수의 첫 줄에 `if (title.trim() === '') return '(제목 없음)'`을 넣고, 아래에서 `console.log(label('  ', false))`를 찍는다. 실행할 줄이 하나면 if의 중괄호를 생략해도 된다.",
+      "빈 제목을 막는다. 함수 안, `return done ? ...` 줄 바로 위에 `if (title.trim() === '') return '(제목 없음)'`을 넣고, 아래에서 `console.log(label('  ', false))`를 찍는다. 실행할 줄이 하나면 if의 중괄호를 생략해도 된다.",
     ],
     starterCode: `// 할 일마다 같은 삼항을 되풀이하고 있다.
 const title1 = '장보기'
@@ -225,7 +225,7 @@ console.log(result)    // undefined`,
     goal: [
       "같은 함수를 화살표로 만든다: `const label2 = (title, done) => (done ? title + ' · 끝' : title + ' · 아직')`. 그리고 `console.log(label2('설거지', false))`로 결과가 같은지 본다.",
       '함수를 부르지 않고 찍어 본다: `console.log(label)`. 괄호를 붙이지 않으면 부르지 않고, 함수 자체가 값으로 쓰인다. 이 콘솔은 함수 label로 적고, 브라우저 개발자 도구는 ƒ label(title, done)처럼 적는다.',
-      "함수를 받는 함수를 만든다. `function twice(fn) {`를 쓰고, 그 안에 `fn()`을 두 줄 쓰고, `}`로 닫는다. 그리고 `twice(() => console.log('불렸다'))`를 부른다. 넘긴 함수를 twice가 두 번 부른다.",
+      "함수를 받는 함수를 만든다. `function twice(fn) {`를 쓰고, 그 안에 `fn()`을 두 줄 쓰고, `}`로 닫는다. 그리고 `twice(() => console.log('불렸다'))`를 부른다. 넘긴 함수를 twice가 두 번 부른다. 매개변수가 없는 화살표 함수는 빈 괄호 `()`로 시작하고, 화살표 뒤에 console.log처럼 할 일 하나를 둘 수도 있다.",
     ],
     starterCode: `function label(title, done) {
   return done ? title + ' · 끝' : title + ' · 아직'
@@ -304,7 +304,7 @@ const c = (n) => { return n + 1 } // a와 같다`,
     tagline: '멈추게 하고, 받아 낸다',
     kind: 'practice',
     definition:
-      "`throw new Error('메시지')`는 오류를 던져 그 자리에서 실행을 멈춘다. `try { ... } catch (err) { ... }`는 try 안에서 던진 오류를 받아 catch로 넘긴다. 받은 err 뒤에 `.message`를 붙이면(문자열의 `.length`처럼) 던질 때 쓴 메시지를 꺼낸다.",
+      "`new Error('메시지')`는 메시지를 담은 오류 하나를 만든다. `throw`는 그 오류를 던져 그 자리에서 실행을 멈춘다. `try { ... } catch (err) { ... }`는 try 안에서 던진 오류를 받아 catch로 넘긴다. 받은 err 뒤에 `.message`를 붙이면(문자열의 `.length`처럼) 던질 때 쓴 메시지를 꺼낸다.",
     goal: [
       "`return '(제목 없음)'`을 `throw new Error('제목이 비었다')`로 바꾼다. 실행 오류가 나고, 오류가 난 줄 다음은 실행되지 않는다.",
       "두 console.log를 `try {`와 `}` 사이로 옮긴다. 바로 뒤에 `catch (err) {`를 열고 `console.log('못 만들었다:', err.message)`를 쓴 뒤 `}`로 닫는다. 오류 상자 대신 콘솔에 한 줄이 찍힌다.",

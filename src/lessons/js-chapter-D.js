@@ -97,10 +97,11 @@ todos = ['설거지']   // 오류: 이름이 다른 배열을 가리키게 한�
     definition:
       '함수는 만들어진 자리에서 보이던 변수를 기억한다. 이것을 클로저라 한다. 나중에 불러도 그 변수를 그대로 읽는다. 함수를 부를 때마다 매개변수와 안에서 만든 이름은 새로 생기므로, 부를 때마다 만든 함수는 그때의 값을 따로따로 기억한다.',
     goal: [
-      "render 안의 console.log 아래에 `return () => console.log('클릭 때 본 count:', count)`를 쓴다. 한 번 그릴 때마다 클릭 처리 함수를 하나 만들어 돌려준다.",
+      "render 안의 console.log 아래에 `return () => console.log('나중에 본 count:', count)`를 쓴다. 한 번 그릴 때마다, 나중에 부를 함수를 하나 만들어 돌려준다.",
       '돌려받은 함수를 담는다. `render(0)`을 `const first = render(0)`으로, `render(1)`을 `const second = render(1)`로 바꾼다.',
       '맨 아래에서 `first()`와 `second()`를 부른다. first는 1을 그린 뒤에 불렀는데도 0을 찍는다. 만들어질 때의 count를 기억하기 때문이다.',
-      "기억하는 것은 값이 아니라 변수다. `function makeCounter() {`를 열고, 첫 줄에 `let n = 0`, 다음 줄에 `return () => {`를 쓴다. 그 안에 `n++`와 `console.log('n:', n)`을 쓰고 `}`를 두 번 써서 닫는다. 그리고 `const next = makeCounter()` 아래에서 `next()`를 세 번 부른다. 1, 2, 3이 찍힌다.",
+      "기억하는 것은 값이 아니라 변수다. 맨 아래에 `function makeCounter() {`를 열고, 첫 줄에 `let n = 0`, 다음 줄에 `return () => {`를 쓴다. 화살표 뒤에서 여러 줄을 실행하려면 이렇게 중괄호로 감싼다(JS 9의 더 파고들면). 그 안에 `n++`와 `console.log('n:', n)`을 쓰고, `}`를 두 번 써서 화살표 함수와 makeCounter를 차례로 닫는다.",
+      '그 아래에 `const next = makeCounter()`를 쓰고, 이어서 `next()`를 세 줄 쓴다. 1, 2, 3이 찍힌다.',
     ],
     starterCode: `// 화면을 한 번 그릴 때마다 이 함수가 불린다고 하자. count는 그때의 값이다.
 function render(count) {
@@ -114,7 +115,7 @@ render(1)
 function render(count) {
   console.log('그린다:', count)
   // 이 함수는 만들어진 자리의 count를 기억한다
-  return () => console.log('클릭 때 본 count:', count)
+  return () => console.log('나중에 본 count:', count)
 }
 
 const first = render(0)
@@ -331,8 +332,8 @@ setTimeout(() => feed.close(), 1000) // 1초 뒤에 닫는다
     definition:
       'Promise는 나중에 올 값을 담는 상자다. `new Promise((resolve, reject) => { ... })`로 만들고, 값이 준비되면 `resolve(값)`을, 실패하면 `reject(오류)`를 부른다. 받는 쪽은 `.then(함수)`로 값을 받고 `.catch(함수)`로 오류를 받는다.',
     goal: [
-      'fetchTodos의 setTimeout 줄을 `return new Promise((resolve, reject) => {`와 `})` 사이로 옮긴다. 매개변수 이름 onDone은 fail로 바꾼다.',
-      "setTimeout에 넘긴 화살표 뒤를 중괄호로 열고, `onDone(...)` 대신 두 줄을 쓴다: `if (fail) reject(new Error('서버가 응답하지 않는다'))`와 `else resolve(['장보기', '설거지'])`. 실행할 줄이 하나면 else도 중괄호 없이 쓸 수 있다.",
+      'fetchTodos 안의 setTimeout 줄 위에 `return new Promise((resolve, reject) => {`를, 아래에 `})`를 쓴다. setTimeout 줄이 그 사이에 들어간다. 콘솔 출력은 아직 전과 같다.',
+      "매개변수 이름 onDone을 fail로 바꾼다. 그리고 setTimeout 줄의 `onDone([...])` 부분을 `{`와 `}`로 바꾸고, 그 중괄호 안에 두 줄을 쓴다: `if (fail) reject(new Error('서버가 응답하지 않는다'))`와 `else resolve(['장보기', '설거지'])`. 닫는 `}` 뒤에는 원래 있던 `, 500)`이 그대로 이어진다. 실행할 줄이 하나면 else도 중괄호 없이 쓸 수 있다. 다음 단계에서 부르는 줄을 고치기 전까지는 콘솔에 오류 줄이 보일 수 있다.",
       "부르는 줄을 `fetchTodos(false).then((todos) => console.log('받음:', todos))`로 바꾼다.",
       "실패하는 요청도 보낸다: `fetchTodos(true)` 뒤에 `.then(...)`을 똑같이 붙이고, 그 뒤에 `.catch((err) => console.log('실패:', err.message))`를 붙인다.",
       "맨 아래에 `console.log('기다리는 동안 다른 일을 한다')`를 찍는다. 이 줄이 결과보다 먼저 찍힌다.",
@@ -420,7 +421,7 @@ fetchTodos((todos) => {
     goal: [
       "같은 일을 async 함수로 쓴다. `async function load(fail) {`를 열고, 안에 `const todos = await fetchTodos(fail)`, `console.log('받음:', todos)`, `console.log('개수:', todos.length)`를 한 줄씩 쓰고 `}`로 닫는다.",
       '`fetchTodos(false)`부터 `.catch(...)`까지 then으로 이은 부분을 지우고, 그 자리에서 `load(false)`를 부른다. 결과는 같다.',
-      "실패를 받는다. load 안의 세 줄을 `try {`와 `}` 사이로 옮기고, 이어서 `catch (err) {` 안에 `console.log('실패:', err.message)`를 쓴다. 그리고 `load(true)`도 부른다.",
+      "실패를 받는다. load 안의 세 줄을 `try {`와 `}` 사이로 옮기고, 이어서 `catch (err) {`를 열고 `console.log('실패:', err.message)`를 쓴 뒤 `}`로 닫는다. 그리고 `load(false)` 아래에 `load(true)`도 부른다.",
       "맨 아래에 `console.log('기다리는 동안 다른 일을 한다')`를 찍는다. await는 load 안만 멈추므로 이 줄이 먼저 찍힌다.",
     ],
     starterCode: `function fetchTodos(fail) {
@@ -500,7 +501,7 @@ fetchTodos(false)
 async function count() {
   return 3
 }
-console.log(count())                    // Promise {}
+console.log(count())                    // 3이 아니라 Promise가 찍힌다
 count().then((n) => console.log(n))     // 3`,
       },
     ],

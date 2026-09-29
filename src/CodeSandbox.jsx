@@ -31,6 +31,12 @@ export default function CodeSandbox({
   const [lines, setLines] = useState([])
   // '다시 실행'은 기다리지 않고 바로 돌린다. 편집은 600ms 쉬었다가 돌린다.
   const runNowRef = useRef(false)
+  // 콘솔은 높이가 정해져 있다. 새 줄이 오면 맨 아래로 따라가, '나중'에 온 줄이 가려지지 않게 한다.
+  const consoleRef = useRef(null)
+  useEffect(() => {
+    const el = consoleRef.current
+    if (el) el.scrollTop = el.scrollHeight
+  }, [lines])
 
   // 편집기가 처음 보일 때 Babel 청크를 미리 받기 시작한다.
   useEffect(() => {
@@ -179,7 +185,8 @@ export default function CodeSandbox({
         {/* 콘솔 모드에서는 오류 전에 찍힌 줄이 먼저다. 오류 상자를 출력 아래에 둔다. */}
         {!isConsole && errorBox}
         {isConsole ? (
-          <div className="console" role="log" aria-label="콘솔 출력">
+          // 스크롤되는 영역이라 키보드로도 닿게 tabIndex를 준다
+          <div className="console" role="log" aria-label="콘솔 출력" tabIndex={0} ref={consoleRef}>
             {lines.length === 0 && <p className="panel-hint">{error ? '오류 전에 찍힌 줄이 없습니다.' : '아직 출력이 없습니다.'}</p>}
             {lines.map((line, i) => (
               <div key={i} className={`console-line is-${line.level}`}>

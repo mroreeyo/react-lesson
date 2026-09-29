@@ -1207,3 +1207,18 @@ body {
   border-radius: 4px;
   background: color-mix(in srgb, var(--text) 8%, transparent);
 }
+
+/* 레슨을 옮길 때 포커스를 받는 제목. 마우스로 옮겼을 때는 테두리를 그리지 않는다. */
+#lesson-title:focus {
+  outline: none;
+}
+
+#lesson-title:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+
+.console:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
