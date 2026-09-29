@@ -99,9 +99,9 @@ function App() {
     quiz: {
       question: '`onClick={handleAdd()}`는 `onClick={handleAdd}`와 무엇이 다른가',
       options: [
-        '똑같이 동작한다',
+        '똑같이 동작한다. 괄호가 있든 없든 클릭할 때 불린다',
         '그릴 때 바로 호출되고, 그 반환값이 onClick에 들어간다',
-        '클릭할 때마다 두 번 호출된다',
+        '클릭할 때마다 handleAdd가 두 번씩 호출되어 할 일이 둘 생긴다',
       ],
       answerIndex: 1,
       explanation:
@@ -226,9 +226,9 @@ class TodoCard extends React.Component {          // 기억하는 컴포넌트�
     quiz: {
       question: '`setDone(true)`를 부르면 무엇이 일어나는가',
       options: [
-        'done 변수가 그 자리에서 바로 true가 된다',
-        '리액트가 이 컴포넌트를 다시 그리고, 새로 그린 쪽에서 done이 true다',
-        '화면의 체크박스만 바뀌고 done은 그대로다',
+        'done 변수가 그 자리에서 바로 true가 되고 화면도 바뀐다',
+        '리액트가 다시 그리고, 새로 그린 쪽에서 done이 true다',
+        '화면의 체크박스만 바뀌고, 컴포넌트는 다시 그리지 않는다',
       ],
       answerIndex: 1,
       explanation:
@@ -294,9 +294,9 @@ const result = App()
     quiz: {
       question: '리액트에서 "렌더"는 무엇을 뜻하는가',
       options: [
-        '화면에 픽셀을 그리는 것',
+        '계산이 끝난 화면을 모니터에 픽셀로 칠하는 것',
         '컴포넌트 함수를 불러 무엇을 그릴지 계산하는 것',
-        'DOM 요소를 새로 만드는 것',
+        '브라우저에 DOM 요소를 새로 만들어 붙이는 것',
       ],
       answerIndex: 1,
       explanation:
@@ -522,9 +522,9 @@ const result = App()
     quiz: {
       question: '`{ ...draft, title: "장보기" }`가 하는 일은 무엇인가',
       options: [
-        'draft의 title 칸을 "장보기"로 고친다',
-        'draft를 한 겹 복사한 새 객체를 만들고, 그 복사본의 title만 "장보기"로 둔다',
-        'draft와 title을 합친 배열을 만든다',
+        'draft 객체의 title 칸을 "장보기"로 고치고 그 draft를 돌려준다',
+        '한 겹 복사한 새 객체를 만들고, 그 복사본의 title만 "장보기"로 둔다',
+        'draft는 그대로 두고, title 칸 하나만 가진 새 객체를 만든다',
       ],
       answerIndex: 1,
       explanation:
@@ -677,9 +677,9 @@ function App() {
     quiz: {
       question: '`todos.push(newTodo)` 다음에 `setTodos(todos)`를 부르면 어떻게 되는가',
       options: [
-        '항목이 추가되고 화면도 바뀐다',
+        '항목이 추가되고, 화면도 새 항목을 보여 준다',
         '배열에는 추가되지만 화면은 그대로다',
-        '리액트가 오류를 낸다',
+        '같은 배열을 넘겼다며 리액트가 오류를 낸다',
       ],
       answerIndex: 1,
       explanation:

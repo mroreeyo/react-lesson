@@ -132,9 +132,9 @@ function App() {
     quiz: {
       question: 'memo로 감싼 자식에게 매 렌더 새로 만든 함수를 props로 주면 어떻게 되는가',
       options: [
-        'memo 덕분에 그리지 않는다',
+        '함수 props는 memo가 비교에서 빼 주므로 자식을 다시 그리지 않는다',
         '함수가 매번 다른 값이라 memo가 통과시키지 못하고 매번 그린다',
-        '리액트가 함수 내용을 비교해 같으면 건너뛴다',
+        '리액트가 두 함수의 코드 내용을 글자로 견주어, 같으면 건너뛴다',
       ],
       answerIndex: 1,
       explanation:
@@ -420,9 +420,9 @@ function App() {
     quiz: {
       question: '`useActionState`가 돌려주는 세 번째 값 `isPending`은 무엇인가',
       options: [
-        '마지막 제출이 실패했는지',
+        '마지막 제출이 실패했는지 알려 준다',
         'action이 아직 끝나지 않았는지',
-        '폼이 비어 있는지',
+        '폼에 채워지지 않은 칸이 남아 있는지',
       ],
       answerIndex: 1,
       explanation:
@@ -574,9 +574,9 @@ function App() {
     quiz: {
       question: 'action이 실패했을 때 useOptimistic으로 얹은 항목은 어떻게 되는가',
       options: [
-        '실패 표시가 붙은 채 남는다',
+        '실패 표시가 붙은 채로 목록에 계속 남는다',
         '저절로 사라지고 진짜 state가 보인다',
-        'filter로 직접 빼야 한다',
+        'filter로 직접 찾아서 빼 주어야 사라진다',
       ],
       answerIndex: 1,
       explanation:
@@ -709,9 +709,9 @@ function App() {
     quiz: {
       question: '`use(promise)`를 부른 컴포넌트는 Promise가 끝날 때까지 어떻게 되는가',
       options: [
-        'undefined로 한 번 그려지고 끝나면 다시 그려진다',
+        'undefined로 한 번 그려지고, 끝나면 값으로 다시 그려진다',
         '가장 가까운 Suspense의 fallback이 대신 그려진다',
-        '오류가 난다',
+        'Promise가 끝날 때까지 페이지 전체가 멈추고 아무것도 못 누른다',
       ],
       answerIndex: 1,
       explanation:
@@ -803,9 +803,9 @@ const left = useMemo(() => todos.filter((t) => !t.done).length, [todos])
     quiz: {
       question: 'React Compiler가 코드를 최적화할 수 있으려면 컴포넌트가 무엇을 지켜야 하는가',
       options: [
-        'class로 쓰여 있어야 한다',
-        '레슨 10의 순수성 규칙 — 같은 입력이면 같은 출력, 렌더 중 바깥을 고치지 않는다',
-        'useMemo를 미리 붙여 두어야 한다',
+        'class 컴포넌트로 쓰여 있어야 컴파일러가 메서드마다 기억을 붙인다',
+        '레슨 10의 순수성: 같은 입력이면 같은 출력, 렌더 중 바깥을 고치지 않기',
+        '느린 계산마다 useMemo를 미리 붙여 두어야 컴파일러가 알아본다',
       ],
       answerIndex: 1,
       explanation:
@@ -898,7 +898,11 @@ export default function TodoList({ todos }) {
     sources: ['https://react.dev/reference/rsc/server-components'],
     quiz: {
       question: '서버 컴포넌트 안에서 쓸 수 없는 것은 무엇인가',
-      options: ['async/await', 'useState와 useEffect', '다른 컴포넌트를 그리는 것'],
+      options: [
+        'async/await로 데이터를 기다리는 것',
+        'useState와 useEffect',
+        '다른 컴포넌트를 불러와 그리는 것',
+      ],
       answerIndex: 1,
       explanation:
         '서버 컴포넌트는 한 번 돌고 결과만 보낸다. 기억하거나 화면 뒤에 무언가 하는 일은 브라우저에서 도는 클라이언트 컴포넌트가 한다.',

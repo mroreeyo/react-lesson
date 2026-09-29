@@ -546,9 +546,9 @@ function App() {
     quiz: {
       question: 'props로 계산할 수 있는 값을 Effect로 state에 넣으면 무엇이 생기는가',
       options: [
-        '값이 정확해진다',
+        '계산 결과가 state에 저장되어 다음 렌더부터 더 빨라진다',
         '렌더가 한 번 더 돌고, 중간에 예전 값이 보이는 순간이 생긴다',
-        '리액트가 오류를 낸다',
+        'Effect 안에서 state를 바꿨다며 리액트가 오류를 낸다',
       ],
       answerIndex: 1,
       explanation:
@@ -682,9 +682,9 @@ function App() {
     quiz: {
       question: '의존성에 있는 값이 바뀌면 리액트는 무엇을 하는가',
       options: [
-        'Effect를 한 번 더 돌린다',
-        'cleanup을 먼저 돌려 이전 것을 멈추고, 그다음 Effect를 다시 돌린다',
-        '컴포넌트를 다시 만든다',
+        '이전 구독은 그대로 두고, 새 값으로 Effect를 한 번 더 돌린다',
+        'cleanup으로 이전 것을 멈추고, 그다음 Effect를 다시 돌린다',
+        '컴포넌트를 없앴다가 처음부터 새로 만들어 다시 그린다',
       ],
       answerIndex: 1,
       explanation:
@@ -823,8 +823,8 @@ function App() {
       question: 'useEffectEvent로 뗀 함수의 특징은 무엇인가',
       options: [
         '의존성에 넣지 않아도 되고, 불릴 때 최신 값을 읽는다',
-        '매 렌더마다 새로 만들어진다',
-        'Effect 밖에서도 아무 데서나 부를 수 있다',
+        '매 렌더마다 새로 만들어지므로 의존성에 꼭 넣어야 한다',
+        'Effect 밖에서도 이벤트 핸들러처럼 아무 데서나 부를 수 있다',
       ],
       answerIndex: 0,
       explanation:
@@ -972,9 +972,9 @@ function App() {
     quiz: {
       question: '렌더 중에 만든 객체를 의존성에 넣으면 왜 매번 다시 도는가',
       options: [
-        '리액트가 객체를 깊게 비교하기 때문이다',
+        '리액트가 객체를 깊게 비교하는데, 객체 안의 칸 순서가 렌더마다 바뀌기 때문이다',
         '내용이 같아도 렌더마다 다른 객체이고, 리액트는 얕게 비교하기 때문이다',
-        '객체는 의존성에 넣을 수 없기 때문이다',
+        '객체는 의존성 배열에 넣을 수 없어서 리액트가 매번 없는 것으로 보기 때문이다',
       ],
       answerIndex: 1,
       explanation:

@@ -268,9 +268,9 @@ function App() {
     quiz: {
       question: '`todos`가 있는데 `leftCount`를 따로 state에 두면 무엇이 문제인가',
       options: [
-        '메모리를 두 배로 쓴다',
+        '같은 정보를 두 번 저장하므로 메모리를 두 배로 쓰게 된다',
         '같은 사실이 두 곳에 있어서, 한쪽만 고치면 화면이 어긋난다',
-        '리액트가 경고를 낸다',
+        'state가 하나 늘 때마다 리액트가 화면을 한 번 더 그려 느려진다',
       ],
       answerIndex: 1,
       explanation:
@@ -436,9 +436,9 @@ function App() {
     quiz: {
       question: '형제 컴포넌트 둘이 같은 값을 봐야 할 때 어디에 두는가',
       options: [
-        '둘 중 먼저 그려지는 쪽에 둔다',
+        '둘 중 먼저 그려지는 쪽에 두고, 다른 쪽이 거기서 읽어 간다',
         '둘의 가장 가까운 공통 부모에 두고 props로 내린다',
-        '전역 변수에 둔다',
+        '어디서나 읽을 수 있게 컴포넌트 밖의 전역 변수에 둔다',
       ],
       answerIndex: 1,
       explanation:
@@ -557,9 +557,9 @@ function App() {
     quiz: {
       question: '같은 자리의 컴포넌트에 `key`를 다른 값으로 주면 무엇이 일어나는가',
       options: [
-        '아무 일도 없다. key는 목록에서만 쓴다',
+        '아무 일도 없다. key는 map으로 만든 목록 안에서만 쓰인다',
         '리액트가 다른 컴포넌트로 보고 state를 버리고 새로 만든다',
-        '렌더가 빨라진다',
+        'state는 그대로 두고, key가 바뀌었다고 한 번 더 그린다',
       ],
       answerIndex: 1,
       explanation:
@@ -754,8 +754,8 @@ function App() {
       question: 'reducer 함수가 하는 일은 무엇인가',
       options: [
         '현재 state와 action을 받아 다음 state를 돌려준다',
-        'state를 직접 고치고 화면을 다시 그린다',
-        'action을 서버로 보낸다',
+        'state를 직접 고친 뒤, 화면을 다시 그리라고 리액트에 알린다',
+        'action을 받아 서버로 보내고, 응답을 state에 넣는다',
       ],
       answerIndex: 0,
       explanation:
@@ -954,9 +954,9 @@ function TodoRow({ todo, dispatch }) {
     quiz: {
       question: 'Context 값이 바뀔 때 다시 그려지는 것은 무엇인가',
       options: [
-        'Provider 아래 모든 컴포넌트',
+        'Provider 아래에 있는 모든 컴포넌트가 다시 그려진다',
         '`useContext`로 그 값을 읽는 컴포넌트',
-        'Provider 자신만',
+        'Provider를 둔 컴포넌트 하나만 다시 그려진다',
       ],
       answerIndex: 1,
       explanation:
@@ -1219,9 +1219,9 @@ function App() {
     quiz: {
       question: 'state와 dispatch를 Context 두 개로 나누는 이유는 무엇인가',
       options: [
-        '리액트가 Context 하나에 값 하나만 허용하기 때문이다',
-        'dispatch만 쓰는 컴포넌트가 state가 바뀔 때 함께 다시 그려지지 않게 하려고',
-        '코드가 짧아지기 때문이다',
+        '리액트가 Context 하나에 값 하나만 담도록 허용하기 때문이다',
+        'dispatch만 쓰는 곳이 state가 바뀔 때 같이 다시 그려지지 않게',
+        'dispatch는 함수라서 Context에 객체와 함께 담을 수 없어서',
       ],
       answerIndex: 1,
       explanation:

@@ -88,7 +88,7 @@ if (done === true) console.log('같을 때만') // 비교`,
     tagline: '값이 되는 조건',
     kind: 'practice',
     definition:
-      '표현식은 값이 되는 코드다. `조건 ? A : B`는 조건이 true면 A, 아니면 B가 되는 표현식이고, `조건 && A`는 조건이 true일 때 A가 된다. if는 값이 되지 않는 문이라서 값을 넣을 자리에 쓸 수 없다.',
+      '표현식(expression)은 값이 되는 코드다. `조건 ? A : B`는 조건이 true면 A, 아니면 B가 되는 표현식이고, `조건 && A`는 조건이 true일 때 A가 된다. if는 값이 되지 않는 문(statement)이라서 값을 넣을 자리에 쓸 수 없다.',
     goal: [
       "`let label`부터 if/else 끝까지를 지우고 한 줄로 쓴다: `const label = done ? title + ' · 끝' : title + ' · 아직'`. 찍히는 것은 같다.",
       "`const left = 0`을 만들고 `console.log(left === 0 ? '다 끝났다' : '남은 것 ' + left + '개')`를 찍는다. left를 2로 바꿔 보고 0으로 돌린다.",
@@ -154,7 +154,7 @@ console.log(0 > 0 && '있다') // false`,
     tagline: '되풀이하는 일을 이름 하나로',
     kind: 'practice',
     definition:
-      '함수는 이름 붙인 코드 묶음이다. `function 이름(매개변수) { ... }`로 만들고 `이름(인자)`로 부른다. 이것을 호출이라 한다. 부를 때 넘긴 값(인자)이 매개변수 이름으로 들어가고, `return 값`은 그 값을 부른 자리로 돌려주며 함수를 거기서 끝낸다.',
+      '함수(function)는 이름 붙인 코드 묶음이다. `function 이름(매개변수) { ... }`로 만들고 `이름(인자)`로 부른다. 부르는 것을 호출(call)이라 한다. 부를 때 넘긴 값을 인자(argument)라 하고, 인자는 매개변수(parameter) 이름으로 들어간다. `return 값`은 그 값을 부른 자리로 돌려주며(반환) 함수를 거기서 끝낸다.',
     goal: [
       "맨 위에 함수를 만든다. `function label(title, done) {`를 쓰고, 다음 줄에 `return done ? title + ' · 끝' : title + ' · 아직'`, 그 다음 줄에 `}`를 쓴다.",
       '두 console.log 안의 삼항을 `label(title1, done1)`과 `label(title2, done2)`로 바꾼다. 찍히는 것은 같다.',
@@ -221,7 +221,7 @@ console.log(result)    // undefined`,
     tagline: '함수를 담고, 넘긴다',
     kind: 'practice',
     definition:
-      '함수도 값이라서 변수에 담고, 다른 함수에 인자로 넘길 수 있다. `(매개변수) => 값`은 함수를 짧게 쓰는 화살표 함수다. 화살표 뒤가 중괄호 없이 값 하나면 return을 쓰지 않아도 그 값을 돌려준다.',
+      '함수도 값이라서 변수에 담고, 다른 함수에 인자로 넘길 수 있다. `(매개변수) => 값`은 함수를 짧게 쓰는 화살표 함수(arrow function)다. 화살표 뒤가 중괄호 없이 값 하나면 return을 쓰지 않아도 그 값을 돌려준다.',
     goal: [
       "같은 함수를 화살표로 만든다: `const label2 = (title, done) => (done ? title + ' · 끝' : title + ' · 아직')`. 그리고 `console.log(label2('설거지', false))`로 결과가 같은지 본다.",
       '함수를 부르지 않고 찍어 본다: `console.log(label)`. 괄호를 붙이지 않으면 부르지 않고, 함수 자체가 값으로 쓰인다. 이 콘솔은 함수 label로 적고, 브라우저 개발자 도구는 ƒ label(title, done)처럼 적는다.',

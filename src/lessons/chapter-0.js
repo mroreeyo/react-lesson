@@ -46,9 +46,9 @@ document.querySelector('#add').addEventListener('click', () => {
     quiz: {
       question: '리액트에서 화면에 적힌 숫자를 바꾸려면 무엇을 고치는가',
       options: [
-        '화면의 해당 요소를 찾아 textContent를 넣는다',
+        '화면의 해당 요소를 찾아 textContent에 새 숫자를 직접 넣는다',
         '기억해 둔 값을 바꾸고, 화면을 고치는 일은 리액트에 맡긴다',
-        '화면과 변수를 각각 한 번씩 고친다',
+        '변수를 바꾼 뒤, 화면이 따라오도록 새로고침 함수를 부른다',
       ],
       answerIndex: 1,
       explanation: '데이터 한 군데만 고친다. 화면을 맞추는 일이 리액트가 가져간 몫이다.',

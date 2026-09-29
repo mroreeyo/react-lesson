@@ -9,7 +9,7 @@ export default [
     tagline: '[값, 값, 값]',
     kind: 'practice',
     definition:
-      '배열은 값을 순서대로 담은 목록이다. `[값, 값, 값]`으로 만들고, `배열[번호]`로 하나를 꺼낸다. 번호는 0부터 센다. `length` 속성은 항목의 개수다.',
+      '배열(array)은 값을 순서대로 담은 목록이다. `[값, 값, 값]`으로 만들고, `배열[번호]`로 하나를 꺼낸다. 번호는 0부터 센다. `length` 속성은 항목의 개수다.',
     goal: [
       "셋을 한 목록으로 묶는다: `const todos = ['장보기', '설거지', '빨래']`. 위의 `const todo1`부터 세 줄은 지우고, 그 이름을 쓰던 console.log 줄도 지운다.",
       '`console.log(todos)`로 목록 전체를, `console.log(todos[0])`과 `console.log(todos[2])`로 첫째와 셋째를 찍는다. 첫째가 0번이다.',
@@ -64,7 +64,7 @@ console.log(todos[5]) // 없는 번호: undefined
     tagline: '{ 키: 값 }',
     kind: 'practice',
     definition:
-      '객체는 값마다 이름표(키)를 붙여 묶은 것이다. `{ 키: 값, 키: 값 }`으로 만들고 `객체.키`로 꺼낸다. 키와 값 한 쌍을 속성이라 한다. JS 5에서 본 문자열의 `length`도 속성이었다.',
+      '객체(object)는 값마다 이름표를 붙여 묶은 것이다. 이 이름표를 키(key)라 한다. `{ 키: 값, 키: 값 }`으로 만들고 `객체.키`로 꺼낸다. 키와 값 한 쌍을 속성이라 한다. JS 5에서 본 문자열의 `length`도 속성이었다.',
     goal: [
       "셋을 한 객체로 묶는다: `const todo = { id: 'a', title: '장보기', done: true }`. 위의 세 줄과 그 아래 console.log는 지운다.",
       '`console.log(todo)`와 `console.log(todo.title)`을 찍는다.',
@@ -277,7 +277,7 @@ console.log(todos.length)
     // 고쳐 쓰기만 하는 레슨이라 스타터와 정답의 출력이 같다. "정답과 출력이 같다" 표시를 켜지 않는다.
     outputUnchanged: true,
     definition:
-      '구조 분해는 객체나 배열에서 여러 값을 한 줄에 꺼내 이름을 붙이는 문법이다. 객체는 `const { title, done } = todo`처럼 키 이름으로 꺼내고, 배열은 `const [first, second] = list`처럼 순서로 꺼낸다.',
+      '구조 분해(destructuring)는 객체나 배열에서 여러 값을 한 줄에 꺼내 이름을 붙이는 문법이다. 객체는 `const { title, done } = todo`처럼 키 이름으로 꺼내고, 배열은 `const [first, second] = list`처럼 순서로 꺼낸다.',
     goal: [
       '`const title = todo.title`과 `const done = todo.done` 두 줄을 `const { title, done } = todo` 한 줄로 바꾼다.',
       'label의 매개변수 자리에서 바로 꺼낸다. `function label(todo)`를 `function label({ title, done })`로 바꾸고, 안의 `todo.`를 전부 뗀다. 부르는 쪽은 그대로 `label(todo)`다. 위에서 이미 title을 만들었는데도 오류가 나지 않는다. 매개변수는 함수를 부를 때마다 함수 안에 새로 생기는 이름이라, 함수 안에서는 바깥의 같은 이름을 가리고 매개변수가 쓰인다.',
@@ -351,7 +351,7 @@ console.log(memo) // undefined`,
     tagline: '원본은 두고 새것을 만든다',
     kind: 'practice',
     definition:
-      '스프레드(`...`)는 배열이나 객체의 내용을 그 자리에 펼친다. `[...todos, 새 항목]`은 끝에 하나를 더한 새 배열이고, `{ ...todo, done: true }`는 done만 바꾼 새 객체다. 원본은 그대로다. 단, 복사는 맨 바깥 한 겹만 한다. 그 뜻은 아래 "더 파고들면"의 얕은 복사에서 본다.',
+      '스프레드(spread, `...`)는 배열이나 객체의 내용을 그 자리에 펼친다. `[...todos, 새 항목]`은 끝에 하나를 더한 새 배열이고, `{ ...todo, done: true }`는 done만 바꾼 새 객체다. 원본은 그대로다. 단, 복사는 맨 바깥 한 겹만 한다. 그 뜻은 아래 "더 파고들면"의 얕은 복사(shallow copy)에서 본다.',
     goal: [
       "push 줄을 지우고 `const added = [...todos, { id: 'c', title: '빨래', done: false }]`로 새 배열을 만든다. 아래 console.log를 `console.log(todos.length, added.length)`로 바꿔, 원본은 2 그대로인지 본다.",
       '둘째 할 일을 끝낸 새 객체를 만든다: `const doneB = { ...todos[1], done: true }`, 그리고 `console.log(todos[1].done, doneB.done)`.',

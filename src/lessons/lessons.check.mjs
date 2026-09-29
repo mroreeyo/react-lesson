@@ -163,7 +163,8 @@ const TERMS = [
   ['콜백', /콜백/, 23], ['Promise', /Promise/, 23], ['await', /\bawait\b/, 24],
 ]
 // 리액트 용어는 JS 트랙 본문에 설명 없이 나오지 않는다. 리액트로 잇고 싶으면 "리액트 레슨 N"으로 가리킨다.
-const REACT_TERMS = [/state/, /렌더/, /컴포넌트/, /props/, /Effect/, /훅/, /JSX/]
+// state는 단어로만 본다. "statement(문)" 병기에 걸리지 않게 한다.
+const REACT_TERMS = [/\bstate\b/, /렌더/, /컴포넌트/, /props/, /Effect/, /훅/, /JSX/]
 const comments = (code) => (code ?? '').split('\n').map((line) => line.split('//')[1] ?? '').join('\n')
 for (const l of jsLessons) {
   const body = [l.title, l.tagline, l.definition, ...[].concat(l.goal ?? []), comments(l.starterCode), comments(l.solutionCode),
@@ -185,10 +186,37 @@ for (const l of [...lessons, ...jsLessons]) {
 const quizTotal = lessons.length + jsLessons.length
 for (const n of shownAt) assert.ok(n >= quizTotal * 0.2, `정답이 보이는 자리가 한쪽으로 몰렸다: ${shownAt}`)
 
+// 길이 단서: 정답만 유독 길거나(자세하거나) 유독 짧으면 읽지 않고 맞힌다. 보기 셋이면 우연히 그럴 확률이 1/3쯤이다.
+const onlyOne = (pick) =>
+  [...lessons, ...jsLessons].filter((l) => {
+    const len = l.quiz.options.map((o) => o.length)
+    const edge = pick(...len)
+    return len[l.quiz.answerIndex] === edge && len.filter((x) => x === edge).length === 1
+  }).length
+const longest = onlyOne(Math.max)
+const shortest = onlyOne(Math.min)
+assert.ok(longest <= quizTotal * 0.35, `정답이 유일하게 가장 긴 보기인 문제가 ${longest}/${quizTotal}개다. 오답도 정답만큼 구체적으로 쓴다`)
+assert.ok(shortest <= quizTotal * 0.35, `정답이 유일하게 가장 짧은 보기인 문제가 ${shortest}/${quizTotal}개다`)
+
+// 영어 병기: 용어가 처음 풀리는 JS 레슨에 한 번, "한국어(영어" 모양으로 둔다. 에러 메시지와 검색은 영어로 만난다.
+const GLOSS = [
+  ['주석', 'comment', 1], ['값', 'value', 2], ['문자열', 'string', 2], ['숫자', 'number', 2], ['불리언', 'boolean', 2],
+  ['변수', 'variable', 3], ['연산자', 'operator', 4], ['속성', 'property', 5], ['메서드', 'method', 5],
+  ['표현식', 'expression', 7], ['문', 'statement', 7], ['함수', 'function', 8], ['호출', 'call', 8],
+  ['인자', 'argument', 8], ['매개변수', 'parameter', 8], ['화살표 함수', 'arrow function', 9], ['배열', 'array', 11],
+  ['객체', 'object', 12], ['키', 'key', 12], ['구조 분해', 'destructuring', 15], ['스프레드', 'spread', 16],
+  ['얕은 복사', 'shallow copy', 16], ['참조', 'reference', 18], ['클로저', 'closure', 19], ['모듈', 'module', 21],
+  ['콜백', 'callback', 23],
+]
+for (const [ko, en, at] of GLOSS) {
+  const l = jsLessons.find((j) => j.order === at)
+  assert.ok(JSON.stringify(l).includes(`${ko}(${en}`), `JS ${at}: '${ko}(${en})' 병기가 없다`)
+}
+
 const withSolution = practice.filter((l) => l.solutionCode).length
 // 레슨 1(리액트 소개)만 완성본으로 시작한다. 나머지 실습은 전부 앞 레슨 방식 스타터 + 정답이어야 한다.
 for (const l of practice) if (l.order !== 1) assert.ok(l.solutionCode, `레슨 ${l.order} ${l.title}: solutionCode가 없다`)
 
 console.log(
-  `ok — 레슨 ${lessons.length}개(실습 ${practice.length}개 실행 확인, 정답 코드 ${withSolution}개), 챕터 파일 ${files.length}개 · JS 레슨 ${jsLessons.length}개(콘솔 실행 확인 ${jsPractice.length}개, 출력이 그대로인 레슨 ${sameAsStarter.join(',') || '없음'}) · 정답 자리 ${shownAt.join('/')}`,
+  `ok — 레슨 ${lessons.length}개(실습 ${practice.length}개 실행 확인, 정답 코드 ${withSolution}개), 챕터 파일 ${files.length}개 · JS 레슨 ${jsLessons.length}개(콘솔 실행 확인 ${jsPractice.length}개, 출력이 그대로인 레슨 ${sameAsStarter.join(',') || '없음'}) · 정답 자리 ${shownAt.join('/')} · 길이 단서 긴 ${longest}·짧은 ${shortest} · 영어 병기 ${GLOSS.length}개`,
 )

@@ -12,7 +12,7 @@ export default [
       '`console.log(...)`는 괄호 안에 넣은 것을 콘솔에 한 줄로 적는다. 코드는 위에서 아래로 한 줄씩 실행되고, 콘솔은 그 결과를 눈으로 확인하는 창이다.',
     goal: [
       "`console.log('할 일: 장보기')` 아래 줄에 `console.log('할 일: 설거지')`를 친다. 잠시 뒤 콘솔에 두 줄이 친 순서대로 찍힌다.",
-      "그 아래에 `console.log('할 일: 빨래')`를 치고, 그 줄 맨 앞에 `//`를 붙인다. 그 줄은 주석이 되어 찍히지 않는다.",
+      "그 아래에 `console.log('할 일: 빨래')`를 치고, 그 줄 맨 앞에 `//`를 붙인다. 그 줄은 주석(comment)이 되어 찍히지 않는다.",
     ],
     starterCode: `// 빗금 두 개(//) 뒤는 주석이다. 실행되지 않는다. 사람이 읽으라고 남기는 메모다.
 console.log('할 일: 장보기')
@@ -55,7 +55,7 @@ console.log('할 일: 설거지')
     tagline: '3과 \'3\'은 다르다',
     kind: 'practice',
     definition:
-      '값은 코드가 다루는 데이터 한 조각이다. 글자는 문자열, 수는 숫자, 참·거짓은 불리언이고, 비어 있음을 뜻하는 undefined와 null이 있다. `typeof 값`은 그 값의 종류 이름을 글자로 돌려준다. 돌려준다는 것은 그 자리가 결과로 바뀐다는 뜻이다. `console.log(typeof 3)`은 `console.log(\'number\')`와 같다.',
+      '값(value)은 코드가 다루는 데이터 한 조각이다. 글자는 문자열(string), 수는 숫자(number), 참·거짓은 불리언(boolean)이고, 비어 있음을 뜻하는 undefined와 null이 있다. `typeof 값`은 그 값의 종류 이름을 글자로 돌려준다. 돌려준다는 것은 그 자리가 결과로 바뀐다는 뜻이다. `console.log(typeof 3)`은 `console.log(\'number\')`와 같다.',
     goal: [
       "콘솔에서 3과 '3'이 똑같이 3으로 보인다. 아래에 `console.log(typeof 3)`과 `console.log(typeof '3')`을 쳐서 둘의 종류를 확인한다.",
       "끝났는지를 뜻하는 `console.log(false)`와 `console.log(typeof false)`를 친다.",
@@ -119,7 +119,7 @@ console.log([3, '3'])  // 묶음 안에서는 글자에 따옴표가 붙는다
     tagline: '값에 이름을 붙인다',
     kind: 'practice',
     definition:
-      '변수는 값에 붙이는 이름이다. `const 이름 = 값`으로 만든 이름에는 다른 값을 다시 넣을 수 없고, `let 이름 = 값`으로 만든 이름에는 나중에 `이름 = 새 값`으로 다른 값을 넣을 수 있다.',
+      '변수(variable)는 값에 붙이는 이름이다. `const 이름 = 값`으로 만든 이름에는 다른 값을 다시 넣을 수 없고, `let 이름 = 값`으로 만든 이름에는 나중에 `이름 = 새 값`으로 다른 값을 넣을 수 있다.',
     goal: [
       "맨 위에 `const title = '장보기'`와 `let done = false`를 만든다.",
       "아래 console.log 안의 '장보기'를 title로, false를 done으로 바꾼다. 콘솔 출력은 바꾸기 전과 같아야 한다.",
@@ -194,7 +194,7 @@ console.log(title) // 설거지 — 위의 '장보기'가 조용히 덮였다
     tagline: '+, ++, ===, !==, !',
     kind: 'practice',
     definition:
-      '연산자는 값을 받아 새 값을 만드는 기호다. `+`는 수를 더하거나 글자를 이어 붙이고, `===`와 `!==`는 같은지·다른지 물어 true나 false를 돌려주고, `!`는 true와 false를 뒤집는다.',
+      '연산자(operator)는 값을 받아 새 값을 만드는 기호다. `+`는 수를 더하거나 글자를 이어 붙이고, `===`와 `!==`는 같은지·다른지 물어 true나 false를 돌려주고, `!`는 true와 false를 뒤집는다.',
     goal: [
       "맨 아래에, 할 일 하나를 더했다고 치고 `count = count + 1`을 친 뒤 `console.log('남은 개수:', count)`로 3을 확인한다.",
       "`count++`로 한 번 더 늘리고 같은 줄로 4를 찍는다.",
@@ -266,7 +266,7 @@ console.log(!done)              // 뒤집기
     tagline: 'length, trim, includes',
     kind: 'practice',
     definition:
-      '문자열 뒤에 점(.)을 찍으면 그 문자열에 딸린 것을 꺼낸다. `length`처럼 괄호 없이 읽는 것은 속성, `trim()`처럼 괄호를 붙여 부르는 것은 메서드다. `trim()`은 앞뒤 공백을 뗀 새 문자열을, `includes(글자)`는 그 글자가 들어 있는지를 돌려준다.',
+      '문자열 뒤에 점(.)을 찍으면 그 문자열에 딸린 것을 꺼낸다. `length`처럼 괄호 없이 읽는 것은 속성(property), `trim()`처럼 괄호를 붙여 부르는 것은 메서드(method)다. `trim()`은 앞뒤 공백을 뗀 새 문자열을, `includes(글자)`는 그 글자가 들어 있는지를 돌려준다.',
     goal: [
       "`console.log(input.length)`로 글자 수를 찍는다. 공백까지 세어 7이 나온다.",
       "`const title = input.trim()`으로 앞뒤 공백을 뗀 글자를 만들고, `console.log('[' + title + ']')`와 `console.log(title === '장보기')`를 찍는다.",
