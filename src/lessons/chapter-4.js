@@ -97,12 +97,12 @@ function App() {
       {
         question: '번호를 reducer 안에서 만들면 안 되는가',
         answer:
-          'reducer는 같은 입력에 같은 결과를 돌려줘야 한다. 안에서 번호를 올리면 부를 때마다 결과가 달라진다. 번호는 핸들러에서 만들어 action에 실어 보내고, reducer는 받은 것을 쓴다.',
+          'reducer는 같은 입력에 같은 결과를 돌려줘야 한다. 챕터 3의 reducer는 안에서 nextId++를 했는데, 이 규칙을 어긴 것이다. 안에서 번호를 올리면 부를 때마다 결과가 달라진다. 번호는 핸들러에서 만들어 action에 실어 보내고, reducer는 받은 것을 쓴다.',
       },
       {
         question: '렌더 중에 ref를 읽거나 쓰면 안 되는 이유는 무엇인가',
         answer:
-          '레슨 10의 순수성이 깨진다. 같은 props로 그렸는데 화면이 달라진다. 읽고 쓰는 곳은 이벤트 핸들러나 Effect 안이다.',
+          '레슨 10의 순수성이 깨진다. 같은 props로 그렸는데 화면이 달라진다. 읽고 쓰는 곳은 이벤트 핸들러나 Effect(레슨 27) 안이다.',
       },
       {
         question: 'ref에 담기 좋은 것은 무엇인가',
@@ -131,7 +131,7 @@ function App() {
     tagline: '리액트가 만든 요소를 직접 만진다',
     kind: 'practice',
     definition:
-      '`ref`를 태그에 주면 리액트가 커밋할 때 그 DOM 요소(브라우저가 실제로 들고 있는 요소)를 `ref.current`에 넣어 준다. 그리는 동안에는 아직 비어 있으니(null) 핸들러나 Effect에서 읽는다. 포커스나 스크롤처럼 JSX로 표현할 수 없는 일을 할 때 쓴다.',
+      '`ref`를 태그에 주면 리액트가 커밋할 때 그 DOM 요소(브라우저가 실제로 들고 있는 요소)를 `ref.current`에 넣어 준다. 첫 렌더 중에는 아직 비어 있고(null) 렌더 중에 읽는 것도 규칙에 어긋나므로, 핸들러나 Effect(레슨 27)에서 읽는다. 포커스나 스크롤처럼 JSX로 표현할 수 없는 일을 할 때 쓴다.',
     goal: '`const inputRef = useRef(null)`을 만들어 `<input ref={inputRef} …>`에 준다. add의 끝에서 `inputRef.current.focus()`를 부르고, `입력칸으로` 버튼을 하나 더 만들어 같은 일을 시킨다.',
     starterCode: `function todosReducer(todos, action) {
   switch (action.type) {
@@ -272,7 +272,7 @@ function todosReducer(todos, action) {
   }
 }
 
-// 저장소에서 처음 값을 읽는다. 읽기는 되는데, 아직 아무도 쓰지 않는다.
+// 저장소에서 처음 값을 읽는다. 읽기는 되는데, 저장소에 저장하는 코드는 아직 없다.
 function load(key) {
   try {
     const raw = localStorage.getItem(key)
@@ -399,7 +399,7 @@ class ChatRoom extends React.Component {
     },
     why: [
       '연결을 여는 코드와 닫는 코드가 서로 멀리 떨어져 있었다. 한 곳만 고치고 나머지를 빠뜨리기 쉬웠고, componentDidUpdate에서 "뭐가 바뀌었는지" 비교하는 코드를 손으로 적어야 했다.',
-      'useEffect는 시점별로 나누지 않고 한 가지 일로 묶는다. 이 컴포넌트가 화면에 있는 동안 바깥 시스템을 지금 상태에 맞춰 두는 일이다. 여는 코드와 닫는 코드가 한 함수 안에 붙어 있어서, 값이 바뀌면 이전 것이 먼저 닫힌다.',
+      'useEffect는 시점별로 나누지 않고 한 가지 일로 묶는다. 이 컴포넌트가 화면에 있는 동안 바깥 시스템을 지금 상태에 맞춰 두는 일이다. Effect가 돌려주는 함수에 닫는 코드를 적으면(레슨 29) 여는 코드와 닫는 코드가 한자리에 붙는다. 값이 바뀌면 리액트가 이전 것을 먼저 닫고 새로 연다.',
     ],
     deeper: [
       {
@@ -529,12 +529,12 @@ function App() {
       {
         question: '왜 한 박자 늦는가',
         answer:
-          'todos가 바뀌면 먼저 화면이 그려지고, 그 다음에 Effect가 돌아 setLeft를 부르고, 그래서 또 한 번 그려진다. 중간에 예전 숫자가 보이는 프레임이 생긴다. 계산으로 두면 렌더가 한 번이다.',
+          'todos가 바뀌면 먼저 화면이 그려지고, 그 다음에 Effect가 돌아 setLeft를 부르고, 그래서 또 한 번 그려진다. 예전 숫자로 한 번 그리는 쓸데없는 렌더가 생기고, 경우에 따라 그 화면이 잠깐 보인다. 계산으로 두면 렌더가 한 번이다.',
       },
       {
         question: 'Effect를 쓰지 않아야 하는 다른 경우는 무엇인가',
         answer:
-          '사용자의 클릭에 반응하는 일은 이벤트 핸들러에 둔다. props가 바뀔 때 state를 초기화하는 일은 key로 한다(레슨 21). 데이터를 미리 계산해 두는 일은 렌더 중에 계산하거나 useMemo로 한다.',
+          '사용자의 클릭에 반응하는 일은 이벤트 핸들러에 둔다. props가 바뀔 때 state를 초기화하는 일은 key로 한다(레슨 21). 다른 값으로 계산할 수 있는 값은 렌더 중에 계산하고, 계산이 비싸면 useMemo(레슨 33)를 쓴다.',
       },
       {
         question: '그럼 Effect는 언제 쓰는가',
@@ -547,7 +547,7 @@ function App() {
       question: 'props로 계산할 수 있는 값을 Effect로 state에 넣으면 무엇이 생기는가',
       options: [
         '계산 결과가 state에 저장되어 다음 렌더부터 더 빨라진다',
-        '렌더가 한 번 더 돌고, 중간에 예전 값이 보이는 순간이 생긴다',
+        '렌더가 한 번 더 돌고, 중간에 예전 값이 보일 수 있다',
         'Effect 안에서 state를 바꿨다며 리액트가 오류를 낸다',
       ],
       answerIndex: 1,
@@ -566,7 +566,7 @@ function App() {
     tagline: '시작하고 멈추는 한 덩어리',
     kind: 'practice',
     definition:
-      'Effect는 화면에 붙고 떼어지는 시점(마운트·언마운트)이 아니라 "맞추기 시작"과 "맞추기 멈춤"으로 생각한다. 의존성이 바뀌면 리액트가 먼저 멈추고 다시 시작한다.',
+      'Effect는 화면에 붙고 떼어지는 시점(마운트·언마운트)이 아니라 "맞추기 시작"과 "맞추기 멈춤"으로 생각한다. 의존성이 바뀌면 리액트가 먼저 멈추고 다시 시작한다. Effect가 돌려주는 함수를 cleanup이라 하고, 리액트는 멈출 때 이 함수를 부른다.',
     goal: '바깥에서 오는 신호를 계속 받는 것을 구독이라 한다. 지금은 필터를 바꿔도 이전 구독이 안 닫혀 갱신이 겹친다. Effect 끝에 `return () => feed.close(push)`를 넣어, 필터를 바꾸면 닫힘 → 열림이 짝으로 찍히게 한다.',
     starterCode: `// 리액트 바깥에 있는 것을 흉내 낸 가짜 구독
 function createFeed(filter) {
@@ -665,7 +665,7 @@ function App() {
       {
         question: 'cleanup을 안 적으면 무엇이 남는가',
         answer:
-          '필터를 세 번 바꾸면 구독이 세 개 살아 있다. 위 코드의 setInterval이 셋 다 돌면서 기록이 뒤섞인다. 화면에서 사라진 컴포넌트가 계속 일하는 상태다.',
+          '필터를 세 번 바꾸면 처음 것까지 구독 네 개가 살아 있다. 위 코드의 setInterval이 넷 다 돌면서 기록이 뒤섞인다. 이미 끝났어야 할 구독이 계속 일하는 상태다.',
       },
       {
         question: '의존성에서 filter를 빼면 무엇이 깨지는가',
@@ -700,7 +700,7 @@ function App() {
     kind: 'practice',
     definition:
       'Effect 안의 코드 중 일부는 "값이 바뀌면 다시 해야 하는 일"이고, 일부는 "그때그때 최신 값을 읽기만 하는 일"이다. 뒤쪽은 useEffectEvent로 떼어 내면 의존성에서 빠진다.',
-    goal: '지금은 문구를 한 글자 칠 때마다 구독이 다시 열린다. `onEvent`를 `useEffectEvent(...)`로 감싸고, 의존성 배열에서 `prefix`를 뺀다. 문구를 바꿔도 열림이 안 찍히고, 새 문구는 붙는지 본다.',
+    goal: '지금은 문구를 한 글자 칠 때마다 구독이 다시 열린다. `onEvent`를 `useEffectEvent(...)`로 감싸고, `feed.open(onEvent)`를 `feed.open((line) => onEvent(line))`로 바꾼다. useEffectEvent로 만든 함수는 그대로 넘기지 않고 Effect 안에서 부르기만 한다. 그리고 의존성 배열에서 `prefix`를 뺀다. 문구를 바꿔도 열림이 안 찍히고, 새 문구는 붙는지 본다.',
     starterCode: `function createFeed(filter) {
   let timer = null
   return {
@@ -776,7 +776,8 @@ function App() {
 
   useEffect(() => {
     const feed = createFeed(filter)
-    feed.open(onEvent)
+    // useEffectEvent로 만든 함수는 그대로 넘기지 않고, Effect 안에서 부르기만 한다
+    feed.open((line) => onEvent(line))
     return () => feed.close()
   }, [filter]) // prefix는 여기 없다
 
@@ -875,7 +876,7 @@ function App() {
         <button onClick={() => setLog([])}>기록 비우기</button>
       </div>
       <p>
-        열린 횟수 {log.length}
+        기록 {log.length}줄
         {log.length >= LIMIT && ' (제동장치가 막았다. 원래는 안 멈춘다)'}
       </p>
       <ol>
@@ -934,7 +935,7 @@ function App() {
         <button onClick={() => setLog([])}>기록 비우기</button>
       </div>
       <p>
-        열린 횟수 {log.length}
+        기록 {log.length}줄
         {log.length >= LIMIT && ' (제동장치가 막았다. 원래는 안 멈춘다)'}
       </p>
       <ol>
@@ -960,7 +961,7 @@ function App() {
       {
         question: '의존성 배열에서 빼기만 하면 안 되는가',
         answer:
-          '경고는 사라지고 버그는 남는다. 배열은 "무엇을 읽는지"를 적는 곳이지 "언제 돌릴지"를 고르는 곳이 아니다. 줄이려면 읽는 것을 줄여야 한다.',
+          '편집기의 의존성 검사 경고는 사라지지만 버그는 남는다. 배열은 "무엇을 읽는지"를 적는 곳이지 "언제 돌릴지"를 고르는 곳이 아니다. 줄이려면 읽는 것을 줄여야 한다.',
       },
       {
         question: '함수가 의존성에 걸릴 때는 어떻게 하는가',
@@ -1221,7 +1222,7 @@ export default withWindowWidth(withTheme(withRouter(TodoList)))
       {
         question: '왜 이름이 `use`로 시작해야 하는가',
         answer:
-          '리액트가 훅 규칙을 검사할 수 있게 하는 약속이다. `use`로 시작하지 않는 함수 안에서 훅을 부르면 규칙을 어긴 것을 잡아내지 못한다.',
+          '검사 도구와 읽는 사람이 "이 함수 안에 훅이 있다"를 알아보게 하는 약속이다. 그래야 이 함수를 if 안에서 부르는 실수를 잡아낼 수 있다. `use`로 시작하지 않는 함수 안에서 훅을 부르면 검사 도구가 규칙 위반으로 본다.',
       },
       {
         question: '무엇을 커스텀 훅으로 뺄지 어떻게 정하는가',

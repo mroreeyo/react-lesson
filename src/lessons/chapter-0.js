@@ -37,7 +37,7 @@ document.querySelector('#add').addEventListener('click', () => {
     ],
     deeper: [
       {
-        question: 'DOM을 직접 고치지 않게 된 대신, 무엇을 리액트에 맡기게 되었나',
+        question: '화면의 요소를 직접 찾아 고치지 않게 된 대신, 무엇을 리액트에 맡기게 되었나',
         answer:
           '언제 다시 그릴지를 리액트가 정한다. 그래서 "내가 방금 바꿨는데 왜 화면이 그대로인가" 같은 질문이 생기고, 앞으로 레슨에서 하나씩 그 답을 본다.',
       },

@@ -45,7 +45,7 @@ function App() {
       code: `// 안 읽어도 된다. 줄마다 무엇인지만 적어 둔다.
 class TodoCard extends React.Component {          // 함수 대신 class를 만들었다
   constructor(props) {                            // 처음 만들어질 때 한 번 도는 자리
-    super(props)                                  // 부모 class에 props를 넘기는 정해진 줄
+    super(props)                                  // 물려받은 React.Component에 props를 넘기는 정해진 줄
     this.handleClick = this.handleClick.bind(this) // 클릭 때 this가 사라지지 않게 묶는 줄
   }
 
@@ -60,14 +60,14 @@ class TodoCard extends React.Component {          // 함수 대신 class를 만�
 `,
     },
     why: [
-      '메서드 안에서 this가 무엇인지 매번 챙겨야 했다. 챙기는 줄(bind)을 빠뜨리면 클릭할 때 오류가 났고, 그 오류 메시지는 화면 그리기와 상관없는 내용이라 원인을 찾기 어려웠다.',
+      'class 안의 함수(메서드)는 this라는 이름으로 자기 컴포넌트를 찾는데, 클릭으로 불릴 때는 this가 비어 버렸다. 그래서 bind로 미리 묶어 두는 줄을 적어야 했다. 그 줄(bind)을 빠뜨리면 클릭할 때 오류가 났고, 그 오류 메시지는 화면 그리기와 상관없는 내용이라 원인을 찾기 어려웠다.',
       '배워야 할 것이 화면 만들기가 아니라 class 규칙이었다. 함수 컴포넌트에서는 그 규칙을 몰라도 된다. 값을 돌려주는 함수 하나면 된다.',
     ],
     deeper: [
       {
         question: 'class 컴포넌트는 금지된 것인가',
         answer:
-          '아니다. 지금도 동작하고, 오류 경계는 아직 class로만 만들 수 있다. 다만 새로 쓸 이유가 거의 없다.',
+          '아니다. 지금도 동작하고, 자식이 그리다 낸 오류를 받아 대신 보여 줄 화면을 그리는 컴포넌트(오류 경계)는 아직 class로만 만들 수 있다. 다만 새로 쓸 이유가 거의 없다.',
       },
       {
         question: '소문자로 시작하면 무엇이 달라지는가',
@@ -149,7 +149,7 @@ export default function App() {
       ],
       answerIndex: 1,
       explanation:
-        'default export는 이름 없이 값 하나를 내보낸다. 가져오는 쪽이 이름을 붙인다. 중괄호는 named export를 가져올 때 쓴다.',
+        'default export는 파일의 대표 값 하나를 default라는 자리로 내보낸다. 함수에 붙은 이름은 따라가지 않으므로 가져오는 쪽이 이름을 붙인다. 중괄호는 named export를 가져올 때 쓴다.',
     },
   },
   {
@@ -160,7 +160,7 @@ export default function App() {
     tagline: '함수 안에 태그를 그대로 적는다',
     kind: 'practice',
     definition:
-      'JSX는 JS 안에 태그를 적는 문법이다. 태그는 하나로 감싸고, 모두 닫는다. class는 JS의 예약어라서 className으로 쓴다.',
+      'JSX는 JS 안에 태그를 적는 문법이다. 돌려줄 태그는 바깥 태그 하나로 감싸고, `<input />`처럼 짝이 없는 태그도 모두 닫는다. class는 JS의 예약어라서 className으로 쓴다.',
     goal: 'App이 `<section>` 하나를 돌려주게 하고, 그 안에 `<h2>할 일</h2>`과 `<ul>`을 나란히 넣는다. TodoCard의 `<li>`에 className="todo"를 준다.',
     starterCode: `function TodoCard() {
   return (
@@ -219,12 +219,12 @@ function App() {
       {
         question: 'JSX는 무엇으로 바뀌는가',
         answer:
-          'React.createElement 호출로 바뀐다. 이 앱의 편집기도 그 변환을 브라우저에서 하고 있다. 그래서 JSX가 문법을 어기면 실행하기 전에 문법 오류로 잡힌다.',
+          '이 앱의 편집기에서는 React.createElement 호출로 바뀐다. 편집기가 그 변환을 브라우저에서 하고 있다. 요즘 빌드 도구는 react/jsx-runtime의 jsx 함수 호출로 바꾸지만 하는 일은 같다. 그래서 JSX가 문법을 어기면 실행하기 전에 문법 오류로 잡힌다.',
       },
       {
         question: '왜 태그를 하나로 감싸야 하는가',
         answer:
-          '함수는 값 하나만 돌려준다. 나란한 태그 둘은 값 둘이다. 감쌀 태그가 마땅치 않으면 빈 태그 한 쌍으로 묶는다.',
+          '함수는 값 하나만 돌려준다. 나란한 태그 둘은 값 둘이다. 감쌀 태그가 마땅치 않으면 `<>`와 `</>`처럼 이름 없는 빈 태그 한 쌍(Fragment)으로 묶는다. 이 태그는 실제 화면에 요소를 남기지 않는다.',
       },
     ],
     sources: ['https://react.dev/learn/writing-markup-with-jsx'],
@@ -251,7 +251,7 @@ function App() {
       { text: '`if`나 `for`는 값이 되지 않는다', js: 'js-ternary-and' },
     ],
     definition: '중괄호 안에는 값이 되는 JS 코드를 적을 수 있다. 그 값이 화면에 들어간다.',
-    goal: '위에 선언된 `title`과 `total`을 화면에 넣는다. `<span>장보기</span>`은 `{title}`로, `<h2>할 일</h2>`은 `할 일 {total}개`로.',
+    goal: '위에 선언된 `title`과 `total`을 화면에 넣는다. `<span>` 안의 장보기를 `{title}`로, `<h2>` 안의 글자를 `할 일 {total}개`로 바꾼다.',
     starterCode: `const title = '장보기'
 const total = 3
 
@@ -280,7 +280,7 @@ const total = 3
 
 function TodoCard() {
   return (
-    <li>
+    <li className="todo">
       <input type="checkbox" />
       <span>{title}</span>
     </li>
@@ -307,7 +307,7 @@ function App() {
       {
         question: '중괄호에 객체를 넣으면 어떻게 되는가',
         answer:
-          '화면에 그릴 수 없다는 오류가 난다. 다만 style 속성처럼 객체를 넘기는 자리는 다르다. 겉의 중괄호가 JS 자리를 열고, 안의 중괄호가 객체다.',
+          '화면에 그릴 수 없다는 오류가 난다. 다만 `style={{ color: "gray" }}`처럼 객체를 받는 속성은 다르다. 겉의 중괄호가 JS 자리를 열고, 안의 중괄호가 객체다.',
       },
     ],
     sources: ['https://react.dev/learn/javascript-in-jsx-with-curly-braces'],
@@ -334,8 +334,8 @@ function App() {
       { text: '구조 분해로 객체에서 필요한 것만 꺼낸다', js: 'js-destructuring' },
     ],
     definition:
-      'props는 부모가 자식에게 건네는 값이다. 자식은 읽기만 한다. 자식이 바꿔도 부모가 다시 그릴 때 원래 값으로 돌아간다.',
-    goal: 'TodoCard가 `title`과 `done`을 props로 받게 한다. App에서 세 장을 각각 다른 값으로 그린다: 장보기(끝남), 설거지, 빨래. 위의 `title` 변수는 지운다.',
+      'props는 부모(다른 컴포넌트를 그리는 쪽)가 자식(그려지는 쪽)에게 건네는 값이다. 자식은 읽기만 하고 고치지 않는다.',
+    goal: 'TodoCard가 `title`과 `done`을 props로 받게 한다. App에서 세 장을 각각 다른 값으로 그린다: 장보기(끝남), 설거지, 빨래. 체크박스에는 `checked={done} readOnly`를 준다. readOnly는 아직 클릭을 처리하지 않는다는 표시이고, 빼면 콘솔에 경고가 뜬다. 위의 `title` 변수는 지운다.',
     starterCode: `const title = '장보기'
 
 function TodoCard() {
@@ -384,7 +384,7 @@ function App() {
       {
         question: '자식이 받은 props를 고치면 어떻게 되는가',
         answer:
-          'props는 고치지 않기로 정해 두고 쓴다. 자식이 바꿔도 부모가 가진 값은 그대로이고, 부모가 다시 그릴 때 원래 값으로 돌아간다. 바꿔야 하는 값이라면 state로 둔다.',
+          'props는 고치지 않기로 정해 두고 쓴다. 받은 값이 객체라면 부모가 가진 것과 같은 객체라서(JS 18), 그 속을 고치면 부모의 값까지 바뀌어 화면과 데이터가 어긋난다. 리액트를 개발 모드로 돌리면 props 객체를 직접 고치는 줄에서 오류를 내기도 한다. 바꿔야 하는 값이라면 state로 둔다.',
       },
       {
         question: '`done={false}`와 `done="false"`는 무엇이 다른가',
@@ -394,15 +394,15 @@ function App() {
     ],
     sources: ['https://react.dev/learn/passing-props-to-a-component'],
     quiz: {
-      question: 'props를 자식 쪽에서 바꾸면 무엇이 일어나는가',
+      question: '구조 분해로 받은 `title`에 자식이 새 값을 넣으면 무엇이 일어나는가',
       options: [
         '부모가 가진 값도 함께 바뀌고, 형제 컴포넌트에도 퍼진다',
-        '부모의 값은 그대로이고, 다음 렌더에서 원래 값으로 덮인다',
+        '자식 함수 안의 변수만 바뀌고, 다시 그릴 때 부모가 준 값이 또 들어온다',
         '리액트가 읽기 전용 값을 고쳤다며 오류를 내고 렌더를 멈춘다',
       ],
       answerIndex: 1,
       explanation:
-        'props는 부모가 매 렌더에 다시 건네는 값이다. 자식이 손댄 흔적은 다음 렌더에서 사라진다.',
+        '구조 분해로 받은 title은 자식 함수 안의 변수일 뿐이다. 부모는 매 렌더에 값을 다시 건네므로 자식이 넣은 값은 다음 렌더에서 사라진다. 그래도 props는 고치지 않는다.',
     },
   },
   {
@@ -414,7 +414,7 @@ function App() {
     kind: 'practice',
     definition:
       '무엇을 그릴지도 값으로 고를 수 있다. 삼항 연산자(`a ? b : c`)나 `&&`로 조건에 따라 다른 JSX를 고른다. `&&`는 왼쪽이 0이면 0을 그리므로, 왼쪽을 불리언으로 만들어 쓴다.',
-    goal: 'done이 true인 카드에만 `<em> - 끝</em>`을 붙인다. App에 `const total = 3`을 두고, total이 0이면 목록 대신 `<p>할 일이 없다</p>`를 그린다. (제목의 렌더링은 리액트가 화면을 그리는 일을 가리킨다.)',
+    goal: 'done이 true인 카드에만 `<em> - 끝</em>`을 붙인다. App 함수 안에 `const total = 3`을 두고 `<h2>`의 3도 `{total}`로 바꾼 뒤, total이 0이면 목록 대신 `<p>할 일이 없다</p>`를 그린다. (렌더링은 리액트가 컴포넌트를 불러 무엇을 그릴지 정하는 일이다. 레슨 13에서 자세히 본다.)',
     starterCode: `function TodoCard({ title, done }) {
   return (
     <li>
@@ -593,7 +593,7 @@ function App() {
       ],
       answerIndex: 2,
       explanation:
-        'key는 "어느 항목인가"를 알려준다. 자리 번호를 쓰면 자리는 맞지만 항목이 어긋나, 그 자리에 있던 입력 상태가 그대로 남는다.',
+        'key는 "어느 항목인가"를 알려준다. 자리 번호를 key로 쓰면 리액트는 같은 번호를 같은 항목으로 본다. 중간에 항목이 끼어 번호가 밀려도, 그 번호 자리에 있던 입력 상태는 그대로 남는다.',
     },
   },
   {

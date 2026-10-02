@@ -99,7 +99,7 @@ console.log(todos[1].title) // 1번 항목의 title
       {
         question: '없는 키를 꺼내면 어떻게 되나',
         answer:
-          'undefined가 나온다. 오류가 나지 않으므로 todo.titel처럼 철자를 틀려도 조용하다. 화면에 아무것도 안 나올 때 가장 먼저 의심할 곳이다.',
+          'undefined가 나온다. 오류가 나지 않으므로 todo.titel처럼 철자를 틀려도 조용하다. 있어야 할 값 자리에 undefined가 찍히면 가장 먼저 의심할 곳이다.',
       },
       {
         question: '키를 변수로 고르려면 어떻게 하나',
@@ -197,7 +197,7 @@ console.log(numbered) // ['0. 장보기', '1. 설거지', '2. 빨래']`,
     id: 'js-filter-find',
     chapter: 'C',
     order: 14,
-    title: 'filter·find, 원본을 바꾸는 메서드',
+    title: 'filter·find와 원본을 바꾸는 push',
     tagline: '고르기, 찾기, 그리고 push',
     kind: 'practice',
     definition:
@@ -396,7 +396,7 @@ const oops = Object.assign(todos[1], { done: true })
     },
     why: [
       '맨 앞에 {}를 두는 것을 잊으면, 새 객체를 만든 줄 알았는데 원본 todos[1]이 바뀌어 있었다. 이 실수는 오류가 나지 않아서, 화면이 이상해진 뒤에야 알아챘다.',
-      '스프레드는 언제나 새 배열·새 객체를 만든다. 원본을 건드릴 길이 없어서, 리액트가 요구하는 "원본은 두고 새 값으로 바꾼다"를 한 줄로 쓸 수 있다.',
+      '스프레드는 언제나 새 배열·새 객체를 만든다. 맨 바깥의 원본은 고치지 않는다. 그래서 리액트가 요구하는 "원본은 두고 새 값으로 바꾼다"를 한 줄로 쓸 수 있다.',
     ],
     deeper: [
       {
@@ -477,7 +477,7 @@ try {
     deeper: [
       {
         question: 'JSON 글자에 담지 못하는 값은 무엇인가',
-        answer: `함수와 undefined는 빠진다. 글자로 옮길 수 있는 것은 문자열, 숫자, 불리언, null, 그리고 그것들을 담은 배열과 객체뿐이다.
+        answer: `객체의 속성 값이 함수나 undefined면 그 속성이 빠지고, 배열 안에 있으면 null로 바뀐다. 글자로 옮길 수 있는 것은 문자열, 숫자, 불리언, null, 그리고 그것들을 담은 배열과 객체뿐이다.
 
 console.log(JSON.stringify({ a: 1, f: () => 1, u: undefined })) // {"a":1}`,
       },
@@ -489,7 +489,7 @@ console.log(JSON.stringify({ a: 1, f: () => 1, u: undefined })) // {"a":1}`,
     ],
     // 챕터 C 스스로 해보기: 할 일 단계 없이 목표 출력만 준다
     challenge: {
-      goal: "챕터 C에서 배운 것만으로 쓴다. 아래 todos로 세 줄을 찍는다. 첫째, 끝나지 않은 할 일의 제목만 담은 배열. 둘째, id가 'b'인 할 일을 끝낸 새 목록에서 끝난 할 일의 개수. 셋째, 원본 todos에서 끝난 할 일의 개수. 셋째 줄로 원본이 그대로인지 확인한다.",
+      goal: "챕터 C까지 배운 것만으로 쓴다. 아래 todos로 세 줄을 찍는다. 첫째, 끝나지 않은 할 일의 제목만 담은 배열. 둘째, id가 'b'인 할 일을 끝낸 새 목록에서 끝난 할 일의 개수. 셋째, 원본 todos에서 끝난 할 일의 개수. 셋째 줄로 원본이 그대로인지 확인한다.",
       target: "['설거지', '빨래']\n2\n1",
       starterCode: `const todos = [
   { id: 'a', title: '장보기', done: true },

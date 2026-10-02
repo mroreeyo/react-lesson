@@ -8,7 +8,7 @@ export default [
     kind: 'practice',
     definition:
       '화면이 가질 수 있는 상태를 먼저 적고, 각 상태에서 무엇을 그릴지 정한다. 요소를 찾아 보이고 숨기는 것이 아니라, 상태를 바꿔서 화면을 고른다. 서로 하나만 고를 수 있는 상태들은 값 하나에 담는다.',
-    goal: '`filter` state를 만든다(`\'all\'`로 시작). 버튼 세 개로 `\'all\'`·`\'left\'`·`\'done\'`을 고르게 하고, `shown`을 filter에 따라 계산해 목록 대신 그린다. shown이 비면 `여기 보여줄 것이 없다`.',
+    goal: '`filter` state를 만든다(`\'all\'`로 시작). 버튼 세 개로 `\'all\'`·`\'left\'`·`\'done\'`을 고르게 하고, `shown`을 filter에 따라 계산하고, todos 대신 shown을 그린다. shown이 비면 `여기 보여줄 것이 없다`를 보여준다.',
     starterCode: `let nextId = 4
 
 function TodoCard({ todo, onToggle }) {
@@ -429,7 +429,7 @@ function App() {
       {
         question: '올리다 보면 App이 전부 들고 있게 되지 않는가',
         answer:
-          '그래서 올릴 곳은 "가장 가까운" 공통 부모다. 그리고 App이 커지면 로직을 reducer로 빼고, 내려보내는 길을 Context로 줄인다. 다음 세 레슨에서 이 순서대로 본다.',
+          '그래서 올릴 곳은 "가장 가까운" 공통 부모다. 그리고 App이 커지면 로직을 reducer로 빼고, 내려보내는 길을 Context로 줄인다. 레슨 22~24에서 이 순서대로 본다.',
       },
     ],
     sources: ['https://react.dev/learn/sharing-state-between-components'],
@@ -545,12 +545,12 @@ function App() {
       {
         question: 'key로 초기화하는 것과 useEffect로 맞추는 것은 무엇이 다른가',
         answer:
-          'key를 갈면 그 자리가 새로 시작하므로 안의 state가 전부 초기값이 된다. Effect로 맞추려면 어떤 state를 어떤 값으로 되돌릴지 하나씩 적어야 하고, 잠깐 이전 값이 보이는 순간이 생긴다.',
+          'key를 갈면 그 자리가 새로 시작하므로 안의 state가 전부 초기값이 된다. Effect로 맞추려면 어떤 state를 어떤 값으로 되돌릴지 하나씩 적어야 하고, 잠깐 이전 값이 보일 수 있다(Effect는 레슨 27에서 본다).',
       },
       {
         question: '조건에 따라 컴포넌트를 다른 자리에 그리면 어떻게 되는가',
         answer:
-          '자리가 달라지므로 state가 사라진다. `조건 ? <A/> : <B/>`에서 A와 B가 같은 컴포넌트여도 자리가 같으면 state가 남고, 트리 모양이 달라지면 사라진다. 자리는 "위치와 순서"로 정해진다.',
+          '자리가 달라지면 state가 사라진다. `조건 ? <Editor /> : <Editor />`처럼 같은 자리에 같은 컴포넌트가 오면 state가 남는다. 다른 컴포넌트가 오거나 감싸는 태그가 달라져 트리 모양이 바뀌면 사라진다. 자리는 트리 안의 위치와 순서로 정해진다.',
       },
     ],
     sources: ['https://react.dev/learn/preserving-and-resetting-state'],
@@ -741,7 +741,7 @@ function App() {
       {
         question: 'Redux와는 무슨 관계인가',
         answer:
-          '같은 발상이다. Redux는 이 reducer를 앱 전체에 하나 두고 미들웨어와 개발 도구를 붙인 것이다. useReducer는 그 발상만 컴포넌트 단위로 가져왔다. 라이브러리가 아니라 리액트에 들어 있는 훅이다.',
+          '같은 발상이다. Redux는 이 reducer를 앱 전체에 하나 두고, 편의 기능을 더한 라이브러리다. useReducer는 그 발상만 컴포넌트 단위로 가져왔다. 라이브러리가 아니라 리액트에 들어 있는 훅이다.',
       },
       {
         question: 'reducer 안에서 배열을 직접 고치면 어떻게 되는가',
@@ -931,7 +931,7 @@ function TodoRow({ todo, dispatch }) {
     },
     why: [
       '값 하나를 더 내려보내려면 거쳐 가는 컴포넌트를 전부 고쳐야 했다. 중간 컴포넌트의 props 목록이 자기가 쓰지 않는 것들로 길어졌다.',
-      'Context는 내려보내는 길을 만들지 않고, 읽는 쪽이 직접 가져가게 한다. 중간 컴포넌트는 그 값이 오가는 것을 모른다. 값이 바뀌면 그 값을 읽는 컴포넌트만 다시 그려진다.',
+      'Context는 내려보내는 길을 만들지 않고, 읽는 쪽이 직접 가져가게 한다. 중간 컴포넌트는 그 값이 오가는 것을 모른다. 값이 바뀌면 그 값을 읽는 컴포넌트는 중간 컴포넌트가 다시 그려지지 않더라도 반드시 다시 그려진다.',
     ],
     deeper: [
       {
@@ -942,7 +942,7 @@ function TodoRow({ todo, dispatch }) {
       {
         question: 'Context 값이 바뀌면 어디까지 다시 그려지는가',
         answer:
-          '그 값을 useContext로 읽는 컴포넌트 전부다. 중간에 있는 컴포넌트는 상관없다. 그래서 자주 바뀌는 값을 큰 Context 하나에 몰아 담으면 읽는 곳이 모두 함께 그려진다.',
+          '그 값을 useContext로 읽는 컴포넌트는 전부 다시 그려진다. 중간 컴포넌트가 다시 그려지는지는 Context와 상관없고, 그 부모가 다시 그려지는지에 달려 있다. 그래서 자주 바뀌는 값을 큰 Context 하나에 몰아 담으면 읽는 곳이 모두 함께 그려진다.',
       },
       {
         question: 'Provider 없이 읽으면 무엇이 나오는가',
@@ -952,15 +952,15 @@ function TodoRow({ todo, dispatch }) {
     ],
     sources: ['https://react.dev/learn/passing-data-deeply-with-context'],
     quiz: {
-      question: 'Context 값이 바뀔 때 다시 그려지는 것은 무엇인가',
+      question: 'Context 값이 바뀌면, 그 값을 useContext로 읽는 컴포넌트는 어떻게 되는가',
       options: [
-        'Provider 아래에 있는 모든 컴포넌트가 다시 그려진다',
-        '`useContext`로 그 값을 읽는 컴포넌트',
-        'Provider를 둔 컴포넌트 하나만 다시 그려진다',
+        '중간 컴포넌트가 새 값을 props로 넘겨 줘야 새 값을 받는다',
+        '중간 컴포넌트가 다시 그려지지 않아도 새 값으로 다시 그려진다',
+        '새로고침하기 전까지는 처음 받은 값을 계속 본다',
       ],
       answerIndex: 1,
       explanation:
-        '읽는 쪽이 다시 그려진다. 중간에 끼어 있기만 한 컴포넌트는 영향을 받지 않는다.',
+        '읽는 쪽은 Context를 통해 새 값을 받아 반드시 다시 그려진다. 중간 컴포넌트가 다시 그려지는지는 Context와 상관없고, 그 부모가 다시 그려지는지에 달려 있다.',
     },
   },
   {
@@ -971,7 +971,7 @@ function TodoRow({ todo, dispatch }) {
     tagline: '상태와 보내는 함수를 함께 내려보낸다',
     kind: 'practice',
     definition:
-      'reducer로 state를 바꾸는 방법을 한곳에 모으고, Context로 state와 dispatch를 트리 아래로 내려보낸다. 둘을 서로 다른 Context에 담으면, dispatch만 쓰는 컴포넌트는 state가 바뀌어도 다시 그려지지 않는다.',
+      'reducer로 state를 바꾸는 방법을 한곳에 모으고, Context로 state와 dispatch를 트리 아래로 내려보낸다. 둘을 서로 다른 Context에 담으면, dispatch만 쓰는 컴포넌트는 state가 바뀌었다는 이유로는 다시 그려지지 않는다. 부모가 다시 그려지면 같이 그려지는데, 그것까지 막는 방법은 레슨 33에서 본다.',
     goal: 'App을 `TodosContext.Provider`(todos)와 `DispatchContext.Provider`(dispatch)로 감싼다. FilterBar·TodoList는 `useContext(TodosContext)`로, TodoCard·AddForm은 `useContext(DispatchContext)`로 가져가게 하고, 그 props를 전부 지운다.',
     starterCode: `// 둘 다 만들어 두었지만 아직 아무도 안 쓴다. 값은 props로 내려가고 있다.
 const TodosContext = createContext(null)
@@ -1202,7 +1202,7 @@ function App() {
       {
         question: 'Context를 하나로 합쳐 `{ todos, dispatch }`를 담으면 무엇이 달라지는가',
         answer:
-          '객체를 매 렌더에 새로 만들면 값이 매번 달라진다. dispatch만 쓰는 AddForm도 todos가 바뀔 때마다 함께 다시 그려진다. 둘을 나눠 두면 dispatch Context는 바뀌지 않는다.',
+          '객체를 매 렌더에 새로 만들면 값이 매번 달라진다. dispatch만 쓰는 AddForm도 todos가 바뀔 때마다 함께 다시 그려진다. 둘을 나눠 두면 dispatch Context 값은 바뀌지 않는다. 그래서 AddForm을 memo(레슨 33)로 감싸면 건너뛸 수 있다.',
       },
       {
         question: 'filter는 왜 Context에 넣지 않았는가',
@@ -1212,7 +1212,7 @@ function App() {
       {
         question: '이 구조를 파일로 나누면 어떻게 두는가',
         answer:
-          'reducer와 Context와 Provider 컴포넌트를 한 파일에 두고, 쓰는 쪽은 그 파일에서 훅 두 개만 가져가게 한다. `useTodos()`와 `useTodosDispatch()`를 그 파일이 내보내는 식이다. 레슨 32에서 본다.',
+          'reducer와 Context와 Provider 컴포넌트를 한 파일에 두고, 쓰는 쪽은 그 파일에서 훅 두 개만 가져가게 한다. `useTodos()`와 `useTodosDispatch()`를 그 파일이 내보내는 식이다. 커스텀 훅은 레슨 32에서 본다.',
       },
     ],
     sources: ['https://react.dev/learn/scaling-up-with-reducer-and-context'],
@@ -1220,12 +1220,12 @@ function App() {
       question: 'state와 dispatch를 Context 두 개로 나누는 이유는 무엇인가',
       options: [
         '리액트가 Context 하나에 값 하나만 담도록 허용하기 때문이다',
-        'dispatch만 쓰는 곳이 state가 바뀔 때 같이 다시 그려지지 않게 하려고',
+        'dispatch만 읽는 곳이 state가 바뀌었다는 이유로 다시 그려지지 않게 하려고',
         'dispatch는 함수라서 Context에 객체와 함께 담을 수 없기 때문이다',
       ],
       answerIndex: 1,
       explanation:
-        '두 값을 한 객체에 담으면 매 렌더에 새 객체가 되어, dispatch만 읽는 곳도 함께 다시 그려진다.',
+        '두 값을 한 객체에 담으면 매 렌더에 새 객체가 되어, dispatch만 읽는 곳도 Context 때문에 다시 그려진다. 나눠 두면 dispatch Context 값은 바뀌지 않는다. 부모 때문에 다시 그려지는 것까지 막으려면 memo(레슨 33)를 함께 쓴다.',
     },
   },
 ]

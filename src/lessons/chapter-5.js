@@ -11,9 +11,10 @@ export default [
     tagline: '바뀐 게 없으면 건너뛴다',
     kind: 'practice',
     definition:
-      'memo는 props가 같으면 컴포넌트를 다시 그리지 않는다. useMemo는 계산 결과를, useCallback은 함수를 렌더 사이에 붙들어 둔다. 셋 다 "지난번과 같은 값"을 만들어 memo가 건너뛸 수 있게 하는 도구다. 이렇게 결과를 기억해 두는 것을 메모이제이션이라 한다.',
+      'memo는 props가 같으면 컴포넌트를 다시 그리지 않는다. useMemo는 계산 결과를, useCallback은 함수를 렌더 사이에 붙들어 둔다. useCallback과 useMemo는 렌더 사이에 같은 값을 유지해 memo가 건너뛸 수 있게 돕고, useMemo는 비싼 계산을 다시 하지 않게도 한다. 이렇게 결과를 기억해 두는 것을 메모이제이션이라 한다.',
     goal: '지금은 "부모만 다시 그리기"를 누르면 카드 세 장의 렌더 횟수도 같이 오른다. `TodoCard`를 `memo(...)`로 감싸고, `toggle`을 `useCallback(..., [])`으로, `left`를 `useMemo(..., [todos])`로 바꿔 카드 횟수가 멈추게 한다.',
-    starterCode: `function useRenderCount() {
+    starterCode: `// 렌더 횟수를 보려고 일부러 규칙을 어긴 측정용 코드다. 렌더 중에 ref를 바꾸지 않는다는 규칙(레슨 25)은 실제 코드에서는 지킨다
+function useRenderCount() {
   const count = useRef(0)
   count.current += 1
   return count.current
@@ -61,7 +62,8 @@ function App() {
   )
 }
 `,
-    solutionCode: `function useRenderCount() {
+    solutionCode: `// 렌더 횟수를 보려고 일부러 규칙을 어긴 측정용 코드다. 렌더 중에 ref를 바꾸지 않는다는 규칙(레슨 25)은 실제 코드에서는 지킨다
+function useRenderCount() {
   const count = useRef(0)
   count.current += 1
   return count.current
@@ -125,7 +127,7 @@ function App() {
       {
         question: 'toggle 안에서 todos 대신 prev를 쓴 이유는 무엇인가',
         answer:
-          '의존성 배열이 빈 배열이라 이 함수는 처음 렌더의 todos만 본다. 함수를 넘기면 리액트가 최신 값을 넣어 준다. 레슨 15에서 본 방식이다.',
+          '의존성 배열이 빈 배열이라 이 함수는 처음 렌더의 todos만 본다. setTodos에 함수를 넘기면 리액트가 그 함수에 최신 값을 넣어 준다. 레슨 15에서 본 방식이다.',
       },
     ],
     sources: ['https://react.dev/reference/react/memo'],
@@ -262,8 +264,8 @@ const TodoInput = forwardRef(function TodoInput(props, ref) {  // 두 번째 인
     tagline: '제출 중인지 리액트가 안다',
     kind: 'practice',
     definition:
-      'Action은 form에 건네는 비동기 함수다. useActionState는 그 함수를 감싸서, 지난 결과와 지금 제출 중인지를 함께 돌려준다. 제출 중 표시와 실패 처리를 직접 만들 필요가 없다.',
-    goal: '손으로 만든 pending·error state와 handleSubmit을 `useActionState`로 바꾼다. `async function addTodo(prev, formData)`를 만들어 지난 결과와 폼 내용으로 다음 결과를 돌려주고, `<form action={addAction}>`에 건다. `isPending`으로 버튼 문구를 바꾼다.',
+      'Action은 form에 건네는 비동기 함수다. 이 함수는 폼 안 칸들의 값을 담은 formData를 받는데, `formData.get("title")`은 name이 title인 칸의 글자를 준다. useActionState는 그 함수를 감싸서, 지난 결과와 지금 제출 중인지를 함께 돌려준다. 제출 중 표시를 직접 켜고 끌 필요가 없고, 실패는 돌려주는 결과에 담으면 된다.',
+    goal: '손으로 만든 pending·error state와 handleSubmit을 `useActionState`로 바꾼다. `async function addTodo(prev, formData)`를 만들어 지난 결과와 폼 내용으로 다음 결과를 돌려주고, `<form action={addAction}>`에 건다. input에서 value와 onChange를 지우고 `name="title"`을 준다. 결과는 `{ todos, error }` 모양이다. `isPending`으로 버튼 문구를 바꾼다.',
     starterCode: `let nextId = 2
 
 // 서버에 저장하는 척. 느낌표가 있으면 실패한다.
@@ -403,7 +405,7 @@ function App() {
       {
         question: 'onSubmit과 action은 무엇이 다른가',
         answer:
-          'onSubmit은 이벤트를 받는 핸들러라 preventDefault와 상태 관리를 직접 한다. action은 리액트가 제출을 가로채 부르는 함수라 그 일이 없다. 그리고 action은 비동기라는 것을 리액트가 알아서, 끝날 때까지를 "제출 중"으로 본다.',
+          'onSubmit은 이벤트를 받는 핸들러라 preventDefault와 상태 관리를 직접 한다. action은 리액트가 제출을 가로채 부르는 함수라 그 일이 없다. 그리고 리액트는 action이 돌려준 Promise가 끝날 때까지를 "제출 중"으로 본다.',
       },
       {
         question: '입력칸에 value를 안 준 이유는 무엇인가',
@@ -662,7 +664,7 @@ function TodoList() {
 }
 
 function Badge({ show }) {
-  // useContext였다면 if 안에서 부를 수 없다. use는 된다.
+  // useContext였다면 조건에 따라 return한 뒤에는 부를 수 없다. use는 된다.
   if (!show) return null
   const theme = use(ThemeContext)
   return <small>테마: {theme}</small>
@@ -697,7 +699,7 @@ function App() {
       {
         question: 'Suspense가 없으면 어떻게 되는가',
         answer:
-          '더 위의 Suspense를 찾는다. 이 편집기의 결과 패널은 기본으로 Suspense로 감싸 두었지만, 실제 앱에서 하나도 없으면 오류다. 기다리는 동안 무엇을 보여줄지는 반드시 정해야 한다.',
+          '더 위의 Suspense를 찾는다. 이 편집기의 결과 패널은 기본으로 Suspense로 감싸 두었지만, 실제 앱에서 하나도 없으면 앱 전체가 기다리며 아무것도 그리지 않는다. 기다리는 동안 무엇을 보여줄지는 반드시 정해야 한다.',
       },
       {
         question: 'use는 왜 if 안에서 불러도 되는가',
@@ -726,14 +728,14 @@ function App() {
     tagline: 'memo를 사람이 안 붙인다',
     kind: 'concept',
     definition:
-      'React Compiler는 빌드할 때 코드를 읽고, memo·useMemo·useCallback이 필요한 자리를 찾아 대신 붙인다. 레슨 33에서 손으로 하던 일을 코드를 고치지 않고도 얻는다.',
+      'React Compiler는 빌드할 때 코드를 읽고, memo·useMemo·useCallback이 필요한 자리를 찾아 같은 효과를 내는 기억 코드를 대신 넣는다. 레슨 33에서 손으로 하던 일을 코드를 고치지 않고도 얻는다.',
     figure: {
       steps: [
         { title: '내가 쓴 코드', note: 'memo·useMemo·useCallback 없이 순수하게 쓴 컴포넌트' },
         { title: 'React Compiler', note: '빌드할 때 각 값이 무엇에 따라 바뀌는지 읽는다' },
         { title: '나오는 코드', note: '참고한 값이 그대로면 지난 결과를 다시 쓰도록 기억이 붙는다' },
       ],
-      caption: '레슨 33에서 손으로 붙인 세 가지를 컴파일러가 대신 붙인다. 순수하지 않은 컴포넌트는 건너뛴다.',
+      caption: '레슨 33에서 손으로 붙인 세 가지와 같은 효과를 컴파일러가 대신 낸다. 순수하지 않은 컴포넌트는 건너뛴다.',
     },
     // 빌드 도구 얘기라 편집기가 아니다. 이 앱의 편집기는 컴파일러를 켜지 않았다.
     readOnly: [
@@ -758,7 +760,7 @@ function App() {
   const [todos, setTodos] = useState([])
   const [tick, setTick] = useState(0)
 
-  // toggle은 아무것도 안 바뀌므로 한 번만 만든다
+  // toggle은 바뀌는 값을 참고하지 않으므로 한 번만 만든다
   const toggle = 기억해둔_값_또는(() => (id) => { ... })
 
   // left는 todos가 바뀔 때만 다시 센다
@@ -824,7 +826,7 @@ const left = useMemo(() => todos.filter((t) => !t.done).length, [todos])
     figure: {
       steps: [
         { title: '서버', note: '서버 컴포넌트가 데이터베이스를 바로 읽고 화면 결과를 만든다. 이 코드는 브라우저로 안 간다' },
-        { title: '경계', note: "JSON으로 바꿀 수 있는 값만 넘어간다. 'use client' 표시가 경계다" },
+        { title: '경계', note: "리액트가 글자로 바꿔 보낼 수 있는 값(문자열·숫자·배열·보통 객체·Date 등)만 넘어간다. 'use client' 표시가 경계다" },
         { title: '브라우저', note: '클라이언트 컴포넌트만 내려와 state와 이벤트를 맡는다' },
       ],
       caption: '데이터 읽기와 무거운 코드는 서버에 남고, 움직이는 부분만 브라우저로 온다.',
@@ -849,7 +851,7 @@ export default async function TodoPage() {
       },
       {
         filename: 'TodoList.jsx — 클라이언트 컴포넌트',
-        code: `'use client'   // 이 줄부터 브라우저로 내려간다
+        code: `'use client'   // 이 파일부터 브라우저로 내려간다
 
 export default function TodoList({ todos }) {
   const [filter, setFilter] = useState('all')   // state는 여기서만
@@ -880,14 +882,14 @@ export default function TodoList({ todos }) {
     ],
     deeper: [
       {
-        question: '서버에서 클라이언트로 넘기는 값은 왜 JSON으로 바꿀 수 있어야 하는가',
+        question: '서버에서 클라이언트로 넘기는 값은 왜 글자로 바꿀 수 있어야 하는가',
         answer:
-          '서버와 브라우저는 다른 컴퓨터다. 값을 글자로 바꿔 보내야 한다(직렬화). 함수, 클래스 인스턴스, Date는 그대로 못 간다. 그래서 서버 컴포넌트가 클라이언트 컴포넌트에 onClick 같은 함수를 props로 줄 수 없다.',
+          '서버와 브라우저는 다른 컴퓨터다. 값을 글자로 바꿔 보내야 한다(직렬화). 보통 함수와 클래스 인스턴스는 그대로 못 간다. 그래서 서버 컴포넌트가 클라이언트 컴포넌트에 onClick 같은 함수를 props로 줄 수 없다.',
       },
       {
         question: "'use client'는 무엇을 뜻하는가",
         answer:
-          '"여기부터는 브라우저로 내려보내라"는 경계 표시다. 이 파일과 여기서 import하는 것이 전부 브라우저로 간다. 반대 방향 표시는 없다. 표시가 없으면 서버 컴포넌트다.',
+          '"여기부터는 브라우저로 내려보내라"는 경계 표시다. 이 파일과 여기서 import하는 것이 전부 브라우저로 간다. 서버 컴포넌트를 따로 표시하는 줄은 없고, 표시가 없으면 서버 컴포넌트다. `use server`는 이름이 비슷하지만 서버 함수를 표시하는 다른 용도다.',
       },
       {
         question: '이 앱에서는 왜 실습이 없는가',

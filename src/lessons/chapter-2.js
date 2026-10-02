@@ -186,7 +186,7 @@ function App() {
       code: `// 안 읽어도 된다. 줄마다 무엇인지만 적어 둔다.
 class TodoCard extends React.Component {          // 기억하는 컴포넌트는 class여야 했다
   constructor(props) {                            // 처음 만들어질 때 한 번 도는 자리
-    super(props)                                  // 부모 class에 props를 넘기는 정해진 줄
+    super(props)                                  // 물려받은 React.Component에 props를 넘기는 정해진 줄
     this.state = { done: false }                  // 기억할 값. useState(false)에 해당
     this.toggle = this.toggle.bind(this)          // 클릭 때 this가 사라지지 않게 묶는 줄
   }
@@ -256,7 +256,8 @@ class TodoCard extends React.Component {          // 기억하는 컴포넌트�
     readOnly: [
       {
         filename: '1. 트리거 — 처음 한 번, 그리고 state가 바뀔 때마다',
-        code: `const root = createRoot(document.getElementById('root'))
+        code: `// createRoot는 리액트가 그릴 자리(id가 root인 요소)를 잡고, root.render는 그 자리에 App을 처음 그린다. 이 앱에서는 편집기가 대신 해 준다
+const root = createRoot(document.getElementById('root'))
 root.render(<App />)   // 처음 한 번
 
 setDone(true)          // 이후에는 state가 바뀔 때마다
@@ -287,7 +288,7 @@ const result = App()
       {
         question: '렌더는 화면에 그리는 것이 아닌가',
         answer:
-          '아니다. 렌더는 "무엇을 그릴지 계산하는 것"이고, 화면에 실제로 반영하는 것은 커밋이다. 렌더만 하고 커밋하지 않을 수도 있다.',
+          '아니다. 렌더는 "무엇을 그릴지 계산하는 것"이고, 화면에 실제로 반영하는 것은 커밋이다. 렌더 결과가 지난번과 같으면 커밋 단계에서 화면을 하나도 건드리지 않는다.',
       },
     ],
     sources: ['https://react.dev/learn/render-and-commit'],
@@ -377,8 +378,8 @@ const result = App()
     tagline: '세 번 불러도 한 번만 오르는 이유',
     kind: 'practice',
     definition:
-      '리액트는 이벤트 하나가 끝날 때까지 바꿀 값을 모아 두었다가 한 번에 처리한다. 값 대신 함수를 넘기면 앞의 결과를 받아 이어서 계산한다.',
-    goal: '`addThreeRight`를 만든다. `setCount((n) => n + 1)`을 세 번 부른다. 그 함수를 잇는 두 번째 버튼 `+3 (함수를 넘기면)`을 추가하고, 두 버튼의 결과를 견준다.',
+      '리액트는 이벤트 하나가 끝날 때까지 바꿀 값을 줄 세워 모아 두었다가(이 줄을 업데이트 큐라 부른다) 한 번에 처리한다. 값 대신 `(n) => n + 1` 같은 함수를 넘기면, 리액트가 앞의 결과를 n에 넣어 이어서 계산한다.',
+    goal: '`addThreeRight`를 만든다. `setCount((n) => n + 1)`을 세 번 부른다. `onClick={addThreeRight}`를 건 버튼 `+3 (함수를 넘기면)`을 첫 버튼 옆에 추가하고, 두 버튼의 결과를 견준다.',
     starterCode: `function App() {
   const [count, setCount] = useState(0)
 
@@ -452,11 +453,11 @@ const result = App()
     kind: 'practice',
     jsPrereq: [
       { text: '스프레드는 얕은 복사다. 한 겹만 복사한다', js: 'js-spread' },
-      { text: 'onChange가 받는 e는 무슨 일이 났는지 담은 객체다. e.target이 그 일이 난 요소, e.target.value가 입력칸의 글자다', js: 'js-objects' },
+      { text: 'onChange가 받는 e는 무슨 일이 났는지 담은 객체다. e.target이 그 일이 난 요소, e.target.value가 입력칸의 글자다. 체크박스라면 e.target.checked가 체크 여부(true/false)다', js: 'js-objects' },
     ],
     definition:
       '객체 state는 직접 고치지 않는다. 스프레드로 복사해 바꿀 칸만 덮은 새 객체를 만들어 넘긴다.',
-    goal: '급함 체크박스를 잇는다: `onChange={(e) => setDraft({ ...draft, urgent: e.target.checked })}`. 그다음 title 쪽의 `...draft`를 지워 보고 무엇이 사라지는지 본 뒤 되돌린다.',
+    goal: '급함 체크박스를 잇는다: `onChange={(e) => setDraft({ ...draft, urgent: e.target.checked })}`. 그다음 title 쪽의 `...draft`를 지우고, 급함을 켠 채 제목을 입력해 본다. 무엇이 사라지는지 확인했으면 되돌린다.',
     starterCode: `function App() {
   const [draft, setDraft] = useState({ title: '', urgent: false })
 
@@ -665,12 +666,12 @@ function App() {
       {
         question: '비교를 깊게 하면 이 규칙이 필요 없지 않은가',
         answer:
-          '항목이 많은 배열을 매번 속까지 비교하면 그 비교가 오히려 비싸진다. 리액트는 얕게만 비교한다. 참조가 같으면 같은 것으로 본다.',
+          '항목이 많은 배열을 매번 속까지 비교하면 그 비교가 오히려 비싸진다. 리액트는 속을 비교하지 않는다. 넘긴 배열이 지난번과 같은 배열(같은 참조)인지만 본다.',
       },
       {
         question: 'toggle에서 `{ ...todo, done: !todo.done }`을 만드는 이유는 무엇인가',
         answer:
-          '배열만 새로 만들고 항목 객체를 그대로 고치면, 그 항목을 보고 있는 자식은 같은 객체를 받는다. memo로 감싼 자식이라면 건너뛴다. 바꾼 겹까지 새로 만들어야 한다.',
+          '배열만 새로 만들고 항목 객체를 그대로 고치면, 그 항목을 보고 있는 자식은 같은 객체를 받는다. memo로 감싼 자식(레슨 13 데모)은 같은 객체를 받으면 다시 그리지 않으므로, 체크해도 그 카드는 그대로다. 바꾼 겹까지 새로 만들어야 한다.',
       },
     ],
     sources: ['https://react.dev/learn/updating-arrays-in-state'],
@@ -683,7 +684,7 @@ function App() {
       ],
       answerIndex: 1,
       explanation:
-        '넘긴 배열이 지난번과 같은 배열이다. 리액트는 속을 들여다보지 않고 같은 배열인지만 보므로(얕은 비교), 바뀐 것이 없다고 보고 다시 그리지 않는다.',
+        '넘긴 배열이 지난번과 같은 배열이다. 리액트는 속을 들여다보지 않고 같은 배열인지만 보므로, 바뀐 것이 없다고 보고 다시 그리지 않는다.',
     },
   },
 ]

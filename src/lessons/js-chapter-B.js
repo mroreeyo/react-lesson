@@ -57,15 +57,19 @@ switch (filter) {
       {
         question: 'if의 조건 자리에 true·false가 아닌 값을 넣으면 어떻게 되나',
         answer:
-          "거짓처럼 취급되는 값이 정해져 있다. false, 0, 빈 글자 '', null, undefined다. 나머지는 전부 참처럼 취급된다. 그래서 if (title)은 title이 빈 글자가 아닐 때 실행된다. 이 규칙이 레슨 8에서 개수 0이 화면에 찍히는 함정의 뿌리다. JS 7에서 본다.",
+          "거짓처럼 취급되는 값이 정해져 있다. false, 0, 빈 글자 '', null, undefined, 그리고 숫자가 아님을 뜻하는 NaN이다. 나머지는 전부 참처럼 취급된다. 그래서 if (title)은 title이 빈 글자가 아닐 때 실행된다. 이 규칙이 레슨 8에서 개수 0이 화면에 찍히는 함정의 뿌리다. JS 7에서 본다.",
       },
       {
         question: 'if (done = true)는 왜 언제나 실행되나',
         answer: `=는 비교가 아니라 넣기다. done에 true를 넣고, 그 결과인 true로 조건을 본다. 그래서 늘 참이다. 같은지 물을 때는 ===를 쓴다(JS 4). done이 const면 넣을 수 없어 오류가 나고, let이면 오류 없이 조용히 틀린다.
 
 let done = false
-if (done = true) console.log('늘 찍힌다')   // 넣기
-if (done === true) console.log('같을 때만') // 비교`,
+if (done === true) {
+  console.log('같을 때만') // 비교: done이 false라 찍히지 않는다
+}
+if (done = true) {
+  console.log('늘 찍힌다') // 넣기: done에 true를 넣고, 그 true로 조건을 본다
+}`,
       },
     ],
     usedIn: [17, 22, 28],
@@ -88,7 +92,7 @@ if (done === true) console.log('같을 때만') // 비교`,
     tagline: '값이 되는 조건',
     kind: 'practice',
     definition:
-      '표현식(expression)은 값이 되는 코드다. `조건 ? A : B`는 조건이 true면 A, 아니면 B가 되는 표현식이고, `조건 && A`는 조건이 true일 때 A가 된다. if는 값이 되지 않는 문(statement)이라서 값을 넣을 자리에 쓸 수 없다.',
+      '표현식(expression)은 값이 되는 코드다. `조건 ? A : B`는 조건이 true면 A, 아니면 B가 되는 표현식이다. 값 세 개로 이루어져 삼항 연산자라 부른다. `조건 && A`는 조건이 true면 A가 되고, 아니면 조건 값 그대로가 된다. if는 값이 되지 않는 문(statement)이라서 값을 넣을 자리에 쓸 수 없다.',
     goal: [
       "`let label`부터 if/else 끝까지를 지우고 한 줄로 쓴다: `const label = done ? title + ' - 끝' : title + ' - 아직'`. 찍히는 것은 같다.",
       "`const left = 0`을 만들고 `console.log(left === 0 ? '다 끝났다' : '남은 것 ' + left + '개')`를 찍는다. left를 2로 바꿔 보고 0으로 돌린다.",
@@ -128,7 +132,7 @@ console.log(!done && '아직이다')
       },
       {
         question: '0 && 무엇은 왜 0인가',
-        answer: `&&는 앞이 거짓처럼 취급되는 값이면 그 값을 그대로 돌려준다. false는 화면에 그려지지 않지만 0은 그려진다. 그래서 개수 && ... 는 개수가 0일 때 화면에 0을 남긴다. 레슨 8에서 이 함정을 피한다.
+        answer: `&&는 앞이 거짓처럼 취급되는 값이면 그 값을 그대로 돌려준다. 리액트에서 false는 화면에 그려지지 않지만 0은 그려진다. 그래서 개수 && ... 는 개수가 0일 때 화면에 0을 남긴다. 레슨 8에서 이 함정을 피한다.
 
 console.log(0 && '있다')     // 0
 console.log(0 > 0 && '있다') // false`,
@@ -158,7 +162,7 @@ console.log(0 > 0 && '있다') // false`,
     goal: [
       "맨 위에 함수를 만든다. `function label(title, done) {`를 쓰고, 다음 줄에 `return done ? title + ' - 끝' : title + ' - 아직'`, 그 다음 줄에 `}`를 쓴다.",
       '두 console.log 안의 삼항을 `label(title1, done1)`과 `label(title2, done2)`로 바꾼다. 찍히는 것은 같다.',
-      "`console.log(label('빨래', false))`로 이름 없이 값을 바로 넘겨 본다.",
+      "`console.log(label('빨래', false))`로 변수에 담지 않고 값을 바로 넘겨 본다.",
       "빈 제목을 막는다. 함수 안, `return done ? ...` 줄 바로 위에 `if (title.trim() === '') return '(제목 없음)'`을 넣고, 아래에서 `console.log(label('  ', false))`를 찍는다. 실행할 줄이 하나면 if의 중괄호를 생략해도 된다.",
     ],
     starterCode: `// 할 일마다 같은 삼항을 되풀이하고 있다.
@@ -363,12 +367,12 @@ try {
     ],
     // 챕터 B 스스로 해보기: 할 일 단계 없이 목표 출력만 준다
     challenge: {
-      goal: "챕터 B에서 배운 것만으로 쓴다. 제목과 끝났는지를 받아 문장을 돌려주는 함수 summary를 만든다. 끝났으면 '제목 - 끝', 아니면 '제목 - 아직'을 돌려주고, 제목이 공백뿐이면 '제목이 비었다'라는 오류를 던진다. 아래 세 줄의 호출은 그대로 두고, 셋째 줄이 던지는 오류를 try/catch로 받아 아래 세 줄이 찍히게 한다.",
+      goal: "챕터 B까지 배운 것만으로 쓴다. 제목과 끝났는지를 받아 문장을 돌려주는 함수 summary를 만든다. 끝났으면 '제목 - 끝', 아니면 '제목 - 아직'을 돌려주고, 제목이 공백뿐이면 '제목이 비었다'라는 오류를 던진다. 아래 세 줄의 내용은 고치지 말고 try { } 안으로 옮겨, 셋째 줄이 던지는 오류를 받아 아래 세 줄이 찍히게 한다.",
       target: '장보기 - 끝\n설거지 - 아직\n못 만들었다: 제목이 비었다',
       starterCode: `// 여기에 summary 함수를 만든다
 
 
-// 아래 세 줄은 그대로 둔다. 셋째 줄은 오류를 던진다.
+// 아래 세 줄의 내용은 고치지 않는다. 셋째 줄은 오류를 던진다.
 console.log(summary('장보기', true))
 console.log(summary('설거지', false))
 console.log(summary('  ', false))
