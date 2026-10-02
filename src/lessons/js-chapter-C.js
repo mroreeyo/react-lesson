@@ -384,17 +384,18 @@ const toggled = todos.map((todo) => (todo.id === 'b' ? { ...todo, done: !todo.do
 console.log(toggled)
 `,
     before: {
-      text: '스프레드가 생기기 전에는 배열은 `concat`, 객체는 `Object.assign`으로 복사했다.',
+      text: '스프레드가 생기기 전에는 배열은 `concat`, 객체는 `Object.assign`으로 복사했다. `Object.assign(가, 나, 다)`는 나와 다의 속성을 맨 앞의 가에 써 넣고, 그 가를 돌려준다. 그래서 새 객체를 얻으려면 맨 앞에 빈 객체 `{}`를 둬야 했다.',
       code: `const added = todos.concat([{ id: 'c', title: '빨래', done: false }])
 
+// 맨 앞이 빈 객체 {}다. 빈 객체에 todos[1]의 속성과 done: true를 써 넣으므로, 새 객체가 나온다
 const doneB = Object.assign({}, todos[1], { done: true })
 
-// 첫 인자 {}를 빠뜨리면 새 객체를 만들지 않고 todos[1] 자체를 고친다
-Object.assign(todos[1], { done: true })
+// {}를 빠뜨렸다. 맨 앞이 todos[1]이라, todos[1]에 바로 써 넣는다. 원본이 바뀐다
+const oops = Object.assign(todos[1], { done: true })
 `,
     },
     why: [
-      'Object.assign은 첫 인자를 고친다. 빈 객체 {}를 맨 앞에 넣는 것을 잊으면, 새 객체를 만든 줄 알았는데 원본이 바뀌어 있었다.',
+      '맨 앞에 {}를 두는 것을 잊으면, 새 객체를 만든 줄 알았는데 원본 todos[1]이 바뀌어 있었다. 이 실수는 오류가 나지 않아서, 화면이 이상해진 뒤에야 알아챘다.',
       '스프레드는 언제나 새 배열·새 객체를 만든다. 원본을 건드릴 길이 없어서, 리액트가 요구하는 "원본은 두고 새 값으로 바꾼다"를 한 줄로 쓸 수 있다.',
     ],
     deeper: [
