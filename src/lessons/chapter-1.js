@@ -414,7 +414,7 @@ function App() {
     kind: 'practice',
     definition:
       '무엇을 그릴지도 값으로 고를 수 있다. 삼항 연산자(`a ? b : c`)나 `&&`로 조건에 따라 다른 JSX를 고른다. `&&`는 왼쪽이 0이면 0을 그리므로, 왼쪽을 불리언으로 만들어 쓴다.',
-    goal: 'done이 true인 카드에만 `<em> · 끝</em>`을 붙인다. App에 `const total = 3`을 두고, total이 0이면 목록 대신 `<p>할 일이 없다</p>`를 그린다. (제목의 렌더링은 리액트가 화면을 그리는 일을 가리킨다.)',
+    goal: 'done이 true인 카드에만 `<em> - 끝</em>`을 붙인다. App에 `const total = 3`을 두고, total이 0이면 목록 대신 `<p>할 일이 없다</p>`를 그린다. (제목의 렌더링은 리액트가 화면을 그리는 일을 가리킨다.)',
     starterCode: `function TodoCard({ title, done }) {
   return (
     <li>
@@ -442,7 +442,7 @@ function App() {
     <li>
       <input type="checkbox" checked={done} readOnly />
       <span>{title}</span>
-      {done && <em> · 끝</em>}
+      {done && <em> - 끝</em>}
     </li>
   )
 }
@@ -510,7 +510,7 @@ function TodoCard({ title, done }) {
     <li>
       <input type="checkbox" checked={done} readOnly />
       <span>{title}</span>
-      {done && <em> · 끝</em>}
+      {done && <em> - 끝</em>}
     </li>
   )
 }
@@ -539,7 +539,7 @@ function TodoCard({ title, done }) {
     <li>
       <input type="checkbox" checked={done} readOnly />
       <span>{title}</span>
-      {done && <em> · 끝</em>}
+      {done && <em> - 끝</em>}
     </li>
   )
 }
@@ -617,7 +617,7 @@ function TodoCard({ title, done }) {
     <li>
       <input type="checkbox" checked={done} readOnly />
       <span>{title}</span>
-      {done && <em> · 끝</em>}
+      {done && <em> - 끝</em>}
     </li>
   )
 }
@@ -646,7 +646,7 @@ function TodoCard({ title, done }) {
     <li>
       <input type="checkbox" checked={done} readOnly />
       <span>{title}</span>
-      {done && <em> · 끝</em>}
+      {done && <em> - 끝</em>}
     </li>
   )
 }

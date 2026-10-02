@@ -130,7 +130,7 @@ console.log(todo[key])     // 변수에 든 키로 꺼낸다`,
       '`배열.map(함수)`는 배열의 항목마다 함수를 불러, 함수가 돌려준 값들로 새 배열을 만든다. 원본 배열은 그대로 둔다.',
     goal: [
       '`const titles =` 오른쪽의 `[todos[0].title, todos[1].title, todos[2].title]`을 지우고, 그 자리에 `todos.map((todo) => todo.title)`을 쓴다. 결과는 같고, 할 일이 늘어도 고칠 곳이 없다.',
-      "끝난 것에 표시를 붙인 목록을 만든다: `const labels = todos.map((todo) => (todo.done ? todo.title + ' · 끝' : todo.title))`, 그리고 `console.log(labels)`.",
+      "끝난 것에 표시를 붙인 목록을 만든다: `const labels = todos.map((todo) => (todo.done ? todo.title + ' - 끝' : todo.title))`, 그리고 `console.log(labels)`.",
       '`console.log(todos)`를 찍어 원본이 그대로인지 본다.',
     ],
     starterCode: `const todos = [
@@ -153,7 +153,7 @@ console.log(titles)
 const titles = todos.map((todo) => todo.title)
 console.log(titles)
 
-const labels = todos.map((todo) => (todo.done ? todo.title + ' · 끝' : todo.title))
+const labels = todos.map((todo) => (todo.done ? todo.title + ' - 끝' : todo.title))
 console.log(labels)
 
 console.log(todos) // 원본은 그대로다
@@ -290,7 +290,7 @@ const done = todo.done
 console.log(title, done)
 
 function label(todo) {
-  return todo.done ? todo.title + ' · 끝' : todo.title
+  return todo.done ? todo.title + ' - 끝' : todo.title
 }
 console.log(label(todo))
 
@@ -308,7 +308,7 @@ console.log(title, done)
 // 매개변수 자리에서 바로 꺼낸다. 리액트 레슨 7에서 이 모양을 다시 만난다
 // 매개변수 title·done은 함수 안에 새로 생긴다. 함수 안에서는 위의 title·done을 가리고 이것이 쓰인다
 function label({ title, done }) {
-  return done ? title + ' · 끝' : title
+  return done ? title + ' - 끝' : title
 }
 console.log(label(todo))
 

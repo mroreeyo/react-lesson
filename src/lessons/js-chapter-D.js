@@ -268,7 +268,7 @@ console.log('다시 그린 뒤:', current)
       {
         filename: 'todo.js',
         code: `// 이 파일에서만 쓰는 이름. export가 없으므로 밖에서 못 본다
-const DONE_MARK = ' · 끝'
+const DONE_MARK = ' - 끝'
 
 // 이름을 붙여 내보낸다 (named export)
 export function label(todo) {

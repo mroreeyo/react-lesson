@@ -16,7 +16,7 @@ function TodoCard({ todo, onToggle }) {
     <li>
       <input type="checkbox" checked={todo.done} onChange={() => onToggle(todo.id)} />
       <span>{todo.title}</span>
-      {todo.done && <em> · 끝</em>}
+      {todo.done && <em> - 끝</em>}
     </li>
   )
 }
@@ -60,7 +60,7 @@ function TodoCard({ todo, onToggle }) {
     <li>
       <input type="checkbox" checked={todo.done} onChange={() => onToggle(todo.id)} />
       <span>{todo.title}</span>
-      {todo.done && <em> · 끝</em>}
+      {todo.done && <em> - 끝</em>}
     </li>
   )
 }
@@ -150,7 +150,7 @@ function TodoCard({ todo, onToggle }) {
     <li>
       <input type="checkbox" checked={todo.done} onChange={() => onToggle(todo.id)} />
       <span>{todo.title}</span>
-      {todo.done && <em> · 끝</em>}
+      {todo.done && <em> - 끝</em>}
     </li>
   )
 }
@@ -204,7 +204,7 @@ function TodoCard({ todo, onToggle }) {
     <li>
       <input type="checkbox" checked={todo.done} onChange={() => onToggle(todo.id)} />
       <span>{todo.title}</span>
-      {todo.done && <em> · 끝</em>}
+      {todo.done && <em> - 끝</em>}
     </li>
   )
 }
@@ -294,7 +294,7 @@ function TodoCard({ todo, onToggle }) {
     <li>
       <input type="checkbox" checked={todo.done} onChange={() => onToggle(todo.id)} />
       <span>{todo.title}</span>
-      {todo.done && <em> · 끝</em>}
+      {todo.done && <em> - 끝</em>}
     </li>
   )
 }
@@ -373,7 +373,7 @@ function TodoList({ todos, onToggle }) {
         <li key={todo.id}>
           <input type="checkbox" checked={todo.done} onChange={() => onToggle(todo.id)} />
           <span>{todo.title}</span>
-          {todo.done && <em> · 끝</em>}
+          {todo.done && <em> - 끝</em>}
         </li>
       ))}
     </ul>
@@ -799,7 +799,7 @@ function TodoCard({ todo, dispatch }) {
         onChange={() => dispatch({ type: 'toggled', id: todo.id })}
       />
       <span>{todo.title}</span>
-      {todo.done && <em> · 끝</em>}
+      {todo.done && <em> - 끝</em>}
     </li>
   )
 }
@@ -869,7 +869,7 @@ function TodoCard({ todo }) {
         onChange={() => dispatch({ type: 'toggled', id: todo.id })}
       />
       <span>{todo.title}</span>
-      {todo.done && <em> · 끝</em>}
+      {todo.done && <em> - 끝</em>}
     </li>
   )
 }
@@ -1021,7 +1021,7 @@ function TodoCard({ todo, dispatch }) {
         onChange={() => dispatch({ type: 'toggled', id: todo.id })}
       />
       <span>{todo.title}</span>
-      {todo.done && <em> · 끝</em>}
+      {todo.done && <em> - 끝</em>}
       <button onClick={() => dispatch({ type: 'deleted', id: todo.id })}>지우기</button>
     </li>
   )
@@ -1131,7 +1131,7 @@ function TodoCard({ todo }) {
         onChange={() => dispatch({ type: 'toggled', id: todo.id })}
       />
       <span>{todo.title}</span>
-      {todo.done && <em> · 끝</em>}
+      {todo.done && <em> - 끝</em>}
       <button onClick={() => dispatch({ type: 'deleted', id: todo.id })}>지우기</button>
     </li>
   )

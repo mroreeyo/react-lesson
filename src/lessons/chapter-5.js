@@ -49,7 +49,7 @@ function App() {
 
   return (
     <section>
-      <h2>할 일 {todos.length}개 · 남은 것 {left}개</h2>
+      <h2>할 일 {todos.length}개 - 남은 것 {left}개</h2>
       <p>App 렌더 {appRenders}회</p>
       <button onClick={() => setTick(tick + 1)}>부모만 다시 그리기 ({tick})</button>
       <ul>
@@ -98,7 +98,7 @@ function App() {
 
   return (
     <section>
-      <h2>할 일 {todos.length}개 · 남은 것 {left}개</h2>
+      <h2>할 일 {todos.length}개 - 남은 것 {left}개</h2>
       <p>App 렌더 {appRenders}회</p>
       <button onClick={() => setTick(tick + 1)}>부모만 다시 그리기 ({tick})</button>
       <ul>

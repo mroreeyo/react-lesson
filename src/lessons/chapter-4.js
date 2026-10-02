@@ -740,7 +740,7 @@ function App() {
         ))}
       </div>
       <input value={prefix} onChange={(e) => setPrefix(e.target.value)} />
-      <p>맞추는 대상 {filter} · 문구 {prefix}</p>
+      <p>맞추는 대상 {filter} - 문구 {prefix}</p>
       <button onClick={() => setLog([])}>기록 비우기</button>
       <ol>
         {log.map((line, i) => (
@@ -790,7 +790,7 @@ function App() {
         ))}
       </div>
       <input value={prefix} onChange={(e) => setPrefix(e.target.value)} />
-      <p>맞추는 대상 {filter} · 문구 {prefix}</p>
+      <p>맞추는 대상 {filter} - 문구 {prefix}</p>
       <button onClick={() => setLog([])}>기록 비우기</button>
       <ol>
         {log.map((line, i) => (
@@ -1026,7 +1026,7 @@ function TodoCard({ todo, dispatch }) {
         onChange={() => dispatch({ type: 'toggled', id: todo.id })}
       />
       <span>{todo.title}</span>
-      {todo.done && <em> · 끝</em>}
+      {todo.done && <em> - 끝</em>}
     </li>
   )
 }
@@ -1140,7 +1140,7 @@ function TodoCard({ todo, dispatch }) {
         onChange={() => dispatch({ type: 'toggled', id: todo.id })}
       />
       <span>{todo.title}</span>
-      {todo.done && <em> · 끝</em>}
+      {todo.done && <em> - 끝</em>}
     </li>
   )
 }

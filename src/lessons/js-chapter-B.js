@@ -20,16 +20,16 @@ export default [
 const done = false
 
 // done에 따라 한 줄만 찍고 싶다. 지금은 둘 다 찍힌다.
-console.log(title + ' · 끝')
-console.log(title + ' · 아직')
+console.log(title + ' - 끝')
+console.log(title + ' - 아직')
 `,
     solutionCode: `const title = '장보기'
 const done = false
 
 if (done) {
-  console.log(title + ' · 끝') // done이 true일 때만
+  console.log(title + ' - 끝') // done이 true일 때만
 } else {
-  console.log(title + ' · 아직') // 아닐 때
+  console.log(title + ' - 아직') // 아닐 때
 }
 
 const filter = 'left'
@@ -90,7 +90,7 @@ if (done === true) console.log('같을 때만') // 비교`,
     definition:
       '표현식(expression)은 값이 되는 코드다. `조건 ? A : B`는 조건이 true면 A, 아니면 B가 되는 표현식이고, `조건 && A`는 조건이 true일 때 A가 된다. if는 값이 되지 않는 문(statement)이라서 값을 넣을 자리에 쓸 수 없다.',
     goal: [
-      "`let label`부터 if/else 끝까지를 지우고 한 줄로 쓴다: `const label = done ? title + ' · 끝' : title + ' · 아직'`. 찍히는 것은 같다.",
+      "`let label`부터 if/else 끝까지를 지우고 한 줄로 쓴다: `const label = done ? title + ' - 끝' : title + ' - 아직'`. 찍히는 것은 같다.",
       "`const left = 0`을 만들고 `console.log(left === 0 ? '다 끝났다' : '남은 것 ' + left + '개')`를 찍는다. left를 2로 바꿔 보고 0으로 돌린다.",
       "`console.log(done && '끝났다')`와 `console.log(!done && '아직이다')`를 찍어 &&가 무엇이 되는지 본다.",
     ],
@@ -100,9 +100,9 @@ const done = false
 // 문장 하나를 고르는 데 여섯 줄을 쓴다.
 let label
 if (done) {
-  label = title + ' · 끝'
+  label = title + ' - 끝'
 } else {
-  label = title + ' · 아직'
+  label = title + ' - 아직'
 }
 console.log(label)
 `,
@@ -110,7 +110,7 @@ console.log(label)
 const done = false
 
 // 조건 ? true일 때의 값 : false일 때의 값
-const label = done ? title + ' · 끝' : title + ' · 아직'
+const label = done ? title + ' - 끝' : title + ' - 아직'
 console.log(label)
 
 const left = 0
@@ -156,7 +156,7 @@ console.log(0 > 0 && '있다') // false`,
     definition:
       '함수(function)는 이름 붙인 코드 묶음이다. `function 이름(매개변수) { ... }`로 만들고 `이름(인자)`로 부른다. 부르는 것을 호출(call)이라 한다. 부를 때 넘긴 값을 인자(argument)라 하고, 인자는 매개변수(parameter) 이름으로 들어간다. `return 값`은 그 값을 부른 자리로 돌려주며(반환) 함수를 거기서 끝낸다.',
     goal: [
-      "맨 위에 함수를 만든다. `function label(title, done) {`를 쓰고, 다음 줄에 `return done ? title + ' · 끝' : title + ' · 아직'`, 그 다음 줄에 `}`를 쓴다.",
+      "맨 위에 함수를 만든다. `function label(title, done) {`를 쓰고, 다음 줄에 `return done ? title + ' - 끝' : title + ' - 아직'`, 그 다음 줄에 `}`를 쓴다.",
       '두 console.log 안의 삼항을 `label(title1, done1)`과 `label(title2, done2)`로 바꾼다. 찍히는 것은 같다.',
       "`console.log(label('빨래', false))`로 이름 없이 값을 바로 넘겨 본다.",
       "빈 제목을 막는다. 함수 안, `return done ? ...` 줄 바로 위에 `if (title.trim() === '') return '(제목 없음)'`을 넣고, 아래에서 `console.log(label('  ', false))`를 찍는다. 실행할 줄이 하나면 if의 중괄호를 생략해도 된다.",
@@ -164,16 +164,16 @@ console.log(0 > 0 && '있다') // false`,
     starterCode: `// 할 일마다 같은 삼항을 되풀이하고 있다.
 const title1 = '장보기'
 const done1 = true
-console.log(done1 ? title1 + ' · 끝' : title1 + ' · 아직')
+console.log(done1 ? title1 + ' - 끝' : title1 + ' - 아직')
 
 const title2 = '설거지'
 const done2 = false
-console.log(done2 ? title2 + ' · 끝' : title2 + ' · 아직')
+console.log(done2 ? title2 + ' - 끝' : title2 + ' - 아직')
 `,
     solutionCode: `// 제목과 끝났는지를 받아(매개변수) 한 줄 문장을 돌려준다(return)
 function label(title, done) {
   if (title.trim() === '') return '(제목 없음)' // return을 만나면 여기서 끝난다
-  return done ? title + ' · 끝' : title + ' · 아직'
+  return done ? title + ' - 끝' : title + ' - 아직'
 }
 
 const title1 = '장보기'
@@ -223,24 +223,24 @@ console.log(result)    // undefined`,
     definition:
       '함수도 값이라서 변수에 담고, 다른 함수에 인자로 넘길 수 있다. `(매개변수) => 값`은 함수를 짧게 쓰는 화살표 함수(arrow function)다. 화살표 뒤가 중괄호 없이 값 하나면 return을 쓰지 않아도 그 값을 돌려준다.',
     goal: [
-      "같은 함수를 화살표로 만든다: `const label2 = (title, done) => (done ? title + ' · 끝' : title + ' · 아직')`. 그리고 `console.log(label2('설거지', false))`로 결과가 같은지 본다.",
+      "같은 함수를 화살표로 만든다: `const label2 = (title, done) => (done ? title + ' - 끝' : title + ' - 아직')`. 그리고 `console.log(label2('설거지', false))`로 결과가 같은지 본다.",
       '함수를 부르지 않고 찍어 본다: `console.log(label)`. 괄호를 붙이지 않으면 부르지 않고, 함수 자체가 값으로 쓰인다. 이 콘솔은 함수 label로 적고, 브라우저 개발자 도구는 ƒ label(title, done)처럼 적는다.',
       "함수를 받는 함수를 만든다. `function twice(fn) {`를 쓰고, 그 안에 `fn()`을 두 줄 쓰고, `}`로 닫는다. 그리고 `twice(() => console.log('불렸다'))`를 부른다. 넘긴 함수를 twice가 두 번 부른다. 매개변수가 없는 화살표 함수는 빈 괄호 `()`로 시작하고, 화살표 뒤에 console.log처럼 할 일 하나를 둘 수도 있다.",
     ],
     starterCode: `function label(title, done) {
-  return done ? title + ' · 끝' : title + ' · 아직'
+  return done ? title + ' - 끝' : title + ' - 아직'
 }
 
 console.log(label('장보기', true))
 `,
     solutionCode: `function label(title, done) {
-  return done ? title + ' · 끝' : title + ' · 아직'
+  return done ? title + ' - 끝' : title + ' - 아직'
 }
 
 console.log(label('장보기', true))
 
 // 같은 함수를 화살표로. 화살표 뒤가 값 하나면 그 값을 돌려준다
-const label2 = (title, done) => (done ? title + ' · 끝' : title + ' · 아직')
+const label2 = (title, done) => (done ? title + ' - 끝' : title + ' - 아직')
 console.log(label2('설거지', false))
 
 // 괄호 없이 쓰면 부르지 않는다. 함수 자체가 값이다
@@ -260,7 +260,7 @@ twice(() => console.log('불렸다'))
 })
 
 const label2 = function (title, done) {
-  return done ? title + ' · 끝' : title + ' · 아직'
+  return done ? title + ' - 끝' : title + ' - 아직'
 }
 `,
     },
@@ -312,7 +312,7 @@ const c = (n) => { return n + 1 } // a와 같다`,
     ],
     starterCode: `function label(title, done) {
   if (title.trim() === '') return '(제목 없음)'
-  return done ? title + ' · 끝' : title + ' · 아직'
+  return done ? title + ' - 끝' : title + ' - 아직'
 }
 
 console.log(label('장보기', true))
@@ -320,7 +320,7 @@ console.log(label('  ', false))
 `,
     solutionCode: `function label(title, done) {
   if (title.trim() === '') throw new Error('제목이 비었다') // 던지면 여기서 멈춘다
-  return done ? title + ' · 끝' : title + ' · 아직'
+  return done ? title + ' - 끝' : title + ' - 아직'
 }
 
 try {
@@ -363,8 +363,8 @@ try {
     ],
     // 챕터 B 스스로 해보기: 할 일 단계 없이 목표 출력만 준다
     challenge: {
-      goal: "챕터 B에서 배운 것만으로 쓴다. 제목과 끝났는지를 받아 문장을 돌려주는 함수 summary를 만든다. 끝났으면 '제목 · 끝', 아니면 '제목 · 아직'을 돌려주고, 제목이 공백뿐이면 '제목이 비었다'라는 오류를 던진다. 아래 세 줄의 호출은 그대로 두고, 셋째 줄이 던지는 오류를 try/catch로 받아 아래 세 줄이 찍히게 한다.",
-      target: '장보기 · 끝\n설거지 · 아직\n못 만들었다: 제목이 비었다',
+      goal: "챕터 B에서 배운 것만으로 쓴다. 제목과 끝났는지를 받아 문장을 돌려주는 함수 summary를 만든다. 끝났으면 '제목 - 끝', 아니면 '제목 - 아직'을 돌려주고, 제목이 공백뿐이면 '제목이 비었다'라는 오류를 던진다. 아래 세 줄의 호출은 그대로 두고, 셋째 줄이 던지는 오류를 try/catch로 받아 아래 세 줄이 찍히게 한다.",
+      target: '장보기 - 끝\n설거지 - 아직\n못 만들었다: 제목이 비었다',
       starterCode: `// 여기에 summary 함수를 만든다
 
 
@@ -375,7 +375,7 @@ console.log(summary('  ', false))
 `,
       solutionCode: `function summary(title, done) {
   if (title.trim() === '') throw new Error('제목이 비었다')
-  return done ? title + ' · 끝' : title + ' · 아직'
+  return done ? title + ' - 끝' : title + ' - 아직'
 }
 
 try {

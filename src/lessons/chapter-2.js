@@ -120,7 +120,7 @@ function App() {
     ],
     definition:
       'useState는 값 하나와 그 값을 바꾸는 함수를 돌려준다. 바꾸는 함수를 부르면 리액트가 그 컴포넌트를 다시 그린다. use로 시작하는 이런 함수를 훅이라 부른다.',
-    goal: 'TodoCard 안에 `const [done, setDone] = useState(false)`를 둔다. 체크박스의 `checked`를 `done`으로, `onChange`를 `() => setDone(!done)`으로 잇고, done이면 `<em> · 끝</em>`을 붙인다.',
+    goal: 'TodoCard 안에 `const [done, setDone] = useState(false)`를 둔다. 체크박스의 `checked`를 `done`으로, `onChange`를 `() => setDone(!done)`으로 잇고, done이면 `<em> - 끝</em>`을 붙인다.',
     starterCode: `const todos = [
   { id: 'a', title: '장보기' },
   { id: 'b', title: '설거지' },
@@ -163,7 +163,7 @@ function TodoCard({ title }) {
     <li>
       <input type="checkbox" checked={done} onChange={() => setDone(!done)} />
       <span>{title}</span>
-      {done && <em> · 끝</em>}
+      {done && <em> - 끝</em>}
     </li>
   )
 }
@@ -474,7 +474,7 @@ const result = App()
       </label>
       <p>
         {draft.title === '' ? '(비어 있음)' : draft.title}
-        {draft.urgent && ' · 급함'}
+        {draft.urgent && ' - 급함'}
       </p>
     </section>
   )
@@ -500,7 +500,7 @@ const result = App()
       </label>
       <p>
         {draft.title === '' ? '(비어 있음)' : draft.title}
-        {draft.urgent && ' · 급함'}
+        {draft.urgent && ' - 급함'}
       </p>
     </section>
   )
@@ -553,7 +553,7 @@ function TodoCard({ todo, onToggle }) {
     <li>
       <input type="checkbox" checked={todo.done} onChange={() => onToggle(todo.id)} />
       <span>{todo.title}</span>
-      {todo.done && <em> · 끝</em>}
+      {todo.done && <em> - 끝</em>}
     </li>
   )
 }
@@ -604,7 +604,7 @@ function TodoCard({ todo, onToggle }) {
     <li>
       <input type="checkbox" checked={todo.done} onChange={() => onToggle(todo.id)} />
       <span>{todo.title}</span>
-      {todo.done && <em> · 끝</em>}
+      {todo.done && <em> - 끝</em>}
     </li>
   )
 }
