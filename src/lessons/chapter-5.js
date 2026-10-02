@@ -120,12 +120,12 @@ function App() {
       {
         question: '전부 memo로 감싸면 되지 않는가',
         answer:
-          '비교에도 비용이 든다. props가 자주 바뀌는 컴포넌트는 비교만 하고 결국 그린다. 느려서 재 본 곳에만 붙인다. 레슨 38의 컴파일러가 이 판단을 대신하려는 것이다.',
+          '비교에도 비용이 든다. props가 자주 바뀌는 컴포넌트는 비교만 하고 결국 그린다. 실제로 재 보고 느린 곳에만 붙인다. 레슨 38의 컴파일러는 이 판단을 대신해 준다.',
       },
       {
-        question: 'toggle 안에서 todos 대신 prev를 쓴 이유',
+        question: 'toggle 안에서 todos 대신 prev를 쓴 이유는 무엇인가',
         answer:
-          '의존성 배열이 빈 배열이라 이 함수는 처음 렌더의 todos만 본다. 함수를 넘기면 리액트가 최신 값을 넣어 준다. 레슨 15의 그 방식이다.',
+          '의존성 배열이 빈 배열이라 이 함수는 처음 렌더의 todos만 본다. 함수를 넘기면 리액트가 최신 값을 넣어 준다. 레슨 15에서 본 방식이다.',
       },
     ],
     sources: ['https://react.dev/reference/react/memo'],
@@ -229,7 +229,7 @@ const TodoInput = forwardRef(function TodoInput(props, ref) {  // 두 번째 인
       {
         question: 'ref는 왜 그동안 다른 prop과 달리 취급됐는가',
         answer:
-          'key와 함께 리액트가 직접 쓰는 이름이었다. key는 "어느 항목인가", ref는 "어느 요소인가"를 리액트에 알려주는 용도라 컴포넌트에 넘기지 않고 가로챘다. 19에서 ref는 그 특별 취급을 벗었고 key는 그대로다.',
+          'key와 함께 리액트가 직접 쓰는 이름이었다. key는 "어느 항목인가", ref는 "어느 요소인가"를 리액트에 알려주는 용도라 컴포넌트에 넘기지 않고 가로챘다. 19부터 ref는 특별 취급을 받지 않지만, key는 여전히 특별하다.',
       },
       {
         question: 'ref를 안쪽 어디에 넘길지는 누가 정하는가',
@@ -396,19 +396,19 @@ function App() {
 `,
     },
     why: [
-      'pending을 켜고 끄는 코드, 오류를 지우고 넣는 코드, preventDefault가 폼마다 반복됐다. finally를 빠뜨리면 버튼이 잠긴 채 남았고, 제출 두 번을 빨리 누르면 앞 결과가 뒤 결과를 덮었다.',
-      'Action을 쓰면 그 반복을 리액트가 대신한다. 함수 하나를 form에 주면 제출 중 여부를 리액트가 세고, 결과를 돌려주면 다음 state가 된다. 입력칸도 제출이 끝나면 비워진다.',
+      'pending을 켜고 끄는 코드, 오류를 지우고 넣는 코드, preventDefault가 폼마다 반복됐다. finally를 빠뜨리면 버튼이 잠긴 채 남았고, 제출을 두 번 빨리 누르면 앞 결과가 뒤 결과를 덮었다.',
+      'Action을 쓰면 그 반복을 리액트가 대신한다. 함수 하나를 form에 주면 제출 중인지를 리액트가 챙기고, 결과를 돌려주면 다음 state가 된다. 입력칸도 제출이 끝나면 비워진다.',
     ],
     deeper: [
       {
         question: 'onSubmit과 action은 무엇이 다른가',
         answer:
-          'onSubmit은 이벤트를 받는 핸들러라 preventDefault와 상태 관리를 직접 한다. action은 리액트가 제출을 가로채 부르는 함수라 그 일이 없다. 그리고 action은 비동기라는 것을 리액트가 알아서, 끝날 때까지를 "제출 중"으로 센다.',
+          'onSubmit은 이벤트를 받는 핸들러라 preventDefault와 상태 관리를 직접 한다. action은 리액트가 제출을 가로채 부르는 함수라 그 일이 없다. 그리고 action은 비동기라는 것을 리액트가 알아서, 끝날 때까지를 "제출 중"으로 본다.',
       },
       {
-        question: '입력칸에 value를 안 준 이유',
+        question: '입력칸에 value를 안 준 이유는 무엇인가',
         answer:
-          'formData로 읽으므로 state에 넣을 필요가 없다. 제출이 끝나면 리액트가 폼을 비워 준다. 글자를 치는 동안 무엇을 하려면 그때 state로 바꾼다.',
+          'formData로 읽으므로 state에 넣을 필요가 없다. 제출이 끝나면 리액트가 폼을 비워 준다. 글자를 치는 동안 무언가를 해야 하면 그때 state로 바꾼다.',
       },
       {
         question: 'useActionState의 첫 인자는 왜 reducer처럼 생겼는가',
@@ -420,7 +420,7 @@ function App() {
     quiz: {
       question: '`useActionState`가 돌려주는 세 번째 값 `isPending`은 무엇인가',
       options: [
-        '마지막 제출이 실패했는지 알려 준다',
+        '마지막 제출이 실패했는지',
         'action이 아직 끝나지 않았는지',
         '폼에 채워지지 않은 칸이 남아 있는지',
       ],
@@ -560,7 +560,7 @@ function App() {
           'useOptimistic이 얹은 임시 값만 사라지고 진짜 state는 그대로다. 위 코드에서 실패하면 setTodos를 안 불렀으므로 todos는 원래대로이고, shown이 todos로 돌아간다. 화면에서 흐린 항목이 사라지는 것이 그 순간이다.',
       },
       {
-        question: 'addOptimistic을 action 밖에서 부르면',
+        question: 'addOptimistic을 action 밖에서 부르면 어떻게 되는가',
         answer:
           '경고가 나고 뜻대로 되지 않는다. 임시 값은 "action이 도는 동안"에만 뜻이 있다. 언제 버릴지를 action의 끝으로 정하기 때문이다.',
       },
@@ -588,7 +588,7 @@ function App() {
     chapter: '5',
     order: 37,
     title: 'use로 값과 Context 읽기',
-    tagline: '기다리는 것도 조건부도 된다',
+    tagline: 'Promise를 기다리고, if 안에서도 부른다',
     kind: 'practice',
     definition:
       'use는 Promise나 Context를 읽는 훅이다. Promise를 주면 끝날 때까지 가장 가까운 Suspense가 대신 그려지고, 끝나면 그 값으로 그린다. 다른 훅과 달리 if 안에서 불러도 된다.',
@@ -695,12 +695,12 @@ function App() {
           '렌더마다 새 Promise가 만들어진다. use는 그 Promise가 끝나기를 기다렸다가 다시 그리는데, 다시 그리면 또 새 Promise라서 영영 끝나지 않는다. 밖에서 만들거나, 서버 컴포넌트나 라이브러리가 만들어 넘겨준 것을 쓴다.',
       },
       {
-        question: 'Suspense가 없으면',
+        question: 'Suspense가 없으면 어떻게 되는가',
         answer:
-          '더 위의 Suspense를 찾는다. 이 편집기의 결과 패널은 기본으로 Suspense를 감싸 두었지만, 실제 앱에서 하나도 없으면 오류다. 기다리는 동안 무엇을 보여줄지는 반드시 정해야 한다.',
+          '더 위의 Suspense를 찾는다. 이 편집기의 결과 패널은 기본으로 Suspense로 감싸 두었지만, 실제 앱에서 하나도 없으면 오류다. 기다리는 동안 무엇을 보여줄지는 반드시 정해야 한다.',
       },
       {
-        question: 'use가 if 안에서 되는 이유',
+        question: 'use는 왜 if 안에서 불러도 되는가',
         answer:
           '다른 훅은 호출 순서로 어느 state인지 찾는다(레슨 12). use는 자기 state가 없다. 받은 Promise나 Context를 읽기만 하므로 순서가 밀려도 상관없다.',
       },
@@ -722,7 +722,7 @@ function App() {
     id: 'compiler',
     chapter: '5',
     order: 38,
-    title: 'React Compiler가 대신 해주는 일',
+    title: 'React Compiler가 대신 해 주는 일',
     tagline: 'memo를 사람이 안 붙인다',
     kind: 'concept',
     definition:
@@ -731,7 +731,7 @@ function App() {
       steps: [
         { title: '내가 쓴 코드', note: 'memo·useMemo·useCallback 없이 순수하게 쓴 컴포넌트' },
         { title: 'React Compiler', note: '빌드할 때 각 값이 무엇에 따라 바뀌는지 읽는다' },
-        { title: '나오는 코드', note: '기댄 값이 그대로면 지난 결과를 다시 쓰는 기억이 붙는다' },
+        { title: '나오는 코드', note: '참고한 값이 그대로면 지난 결과를 다시 쓰도록 기억이 붙는다' },
       ],
       caption: '레슨 33에서 손으로 붙인 세 가지를 컴파일러가 대신 붙인다. 순수하지 않은 컴포넌트는 건너뛴다.',
     },
@@ -784,7 +784,7 @@ const left = useMemo(() => todos.filter((t) => !t.done).length, [todos])
     ],
     deeper: [
       {
-        question: '컴파일러가 있어도 손으로 붙여야 하는 경우',
+        question: '컴파일러가 있어도 손으로 붙여야 하는 경우는 언제인가',
         answer:
           '컴포넌트가 규칙을 어기면 컴파일러는 그 컴포넌트를 건너뛴다. 렌더 중에 바깥 값을 고치거나 ref를 읽는 코드가 그렇다. 그리고 리액트 밖에서 온 값(라이브러리가 매번 새로 주는 객체)은 컴파일러도 같은지 알 수 없다.',
       },
@@ -875,8 +875,8 @@ export default function TodoList({ todos }) {
 `,
     },
     why: [
-      '내려받을 코드가 계속 커졌다. 데이터를 다듬는 라이브러리, 날짜 포맷, 마크다운 변환기가 전부 브라우저로 갔다. 그리고 요청이 순서대로였다. 코드를 받고, 그리고, 그다음에야 데이터를 요청하고, 그 안의 컴포넌트가 또 요청했다.',
-      '서버 컴포넌트는 데이터 읽는 일을 서버에서 끝내고 결과만 보낸다. 무거운 라이브러리는 서버에 남는다. 요청이 화면 뜨기 전에 끝나므로 기다리는 순서가 줄어든다.',
+      '내려받을 코드가 계속 커졌다. 데이터를 다듬는 라이브러리, 날짜 포맷, 마크다운 변환기가 전부 브라우저로 갔다. 그리고 요청이 순서대로였다. 코드를 받고, 화면을 그리고, 그다음에야 데이터를 요청하고, 그 안의 컴포넌트가 또 요청했다.',
+      '서버 컴포넌트는 데이터 읽는 일을 서버에서 끝내고 결과만 보낸다. 무거운 라이브러리는 서버에 남는다. 요청이 화면 뜨기 전에 끝나므로 기다리는 단계가 줄어든다.',
     ],
     deeper: [
       {
@@ -905,7 +905,7 @@ export default function TodoList({ todos }) {
       ],
       answerIndex: 1,
       explanation:
-        '서버 컴포넌트는 한 번 돌고 결과만 보낸다. 기억하거나 화면 뒤에 무언가 하는 일은 브라우저에서 도는 클라이언트 컴포넌트가 한다.',
+        '서버 컴포넌트는 한 번 돌고 결과만 보낸다. 값을 기억하거나 그린 뒤에 무언가를 하는 일은 브라우저에서 도는 클라이언트 컴포넌트가 한다.',
     },
   },
 ]

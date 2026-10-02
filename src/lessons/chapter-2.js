@@ -87,7 +87,7 @@ function App() {
       {
         question: '체크박스를 눌러도 왜 안 바뀌는가',
         answer:
-          '핸들러는 불렸다. 콘솔에 찍히는 것으로 확인할 수 있다. 바뀌지 않는 이유는 화면이 todos 배열을 보고 그려지고, 그 배열이 그대로이기 때문이다. 다음 레슨이 이 문제를 푼다.',
+          '핸들러는 불렸다. 콘솔에 찍히는 것으로 확인할 수 있다. 바뀌지 않는 이유는 화면이 todos 배열을 보고 그려지고, 그 배열이 그대로이기 때문이다. 다음 레슨에서 이 문제를 푼다.',
       },
       {
         question: 'onToggle이라는 이름은 리액트가 아는 이름인가',
@@ -186,7 +186,7 @@ function App() {
       code: `// 안 읽어도 된다. 줄마다 무엇인지만 적어 둔다.
 class TodoCard extends React.Component {          // 기억하는 컴포넌트는 class여야 했다
   constructor(props) {                            // 처음 만들어질 때 한 번 도는 자리
-    super(props)                                  // 부모 class에 props를 넘기는 의식
+    super(props)                                  // 부모 class에 props를 넘기는 정해진 줄
     this.state = { done: false }                  // 기억할 값. useState(false)에 해당
     this.toggle = this.toggle.bind(this)          // 클릭 때 this가 사라지지 않게 묶는 줄
   }
@@ -208,7 +208,7 @@ class TodoCard extends React.Component {          // 기억하는 컴포넌트�
     },
     why: [
       '기억할 값이 하나뿐인데도 class와 생성자와 bind가 따라왔다. 그리고 기억하는 능력은 class 컴포넌트만 가질 수 있어서, 함수로 쓴 컴포넌트에 state가 필요해지면 전부 class로 바꿔 써야 했다.',
-      '훅은 그 능력을 함수 안으로 가져왔다. useState 한 줄이면 함수 컴포넌트가 값을 기억한다. 옮겨 쓸 일도 없어졌다.',
+      '훅이 나오면서 함수 컴포넌트도 값을 기억할 수 있게 됐다. useState 한 줄이면 된다. class로 옮겨 쓸 일도 없어졌다.',
     ],
     deeper: [
       {
@@ -217,7 +217,7 @@ class TodoCard extends React.Component {          // 기억하는 컴포넌트�
           '리액트는 훅에 이름을 붙여 두지 않는다. 호출 순서로 어느 state인지 알아낸다. 첫 번째로 부른 useState가 첫 번째 값, 두 번째가 두 번째 값이다. 조건에 따라 건너뛰면 순서가 밀려서, 다음 렌더에 다른 값이 들어온다.',
       },
       {
-        question: '같은 컴포넌트를 세 번 그렸는데 state가 섞이지 않는 이유',
+        question: '같은 컴포넌트를 세 번 그렸는데 state가 섞이지 않는 이유는 무엇인가',
         answer:
           'state는 컴포넌트 함수에 붙어 있는 것이 아니라, 화면의 그 자리에 붙어 있다. 세 자리가 각각 자기 값을 들고 있다. 그래서 카드 하나를 눌러도 나머지는 그대로다.',
       },
@@ -232,7 +232,7 @@ class TodoCard extends React.Component {          // 기억하는 컴포넌트�
       ],
       answerIndex: 1,
       explanation:
-        '바꾸는 함수는 다시 그리라는 요청이다. 지금 돌고 있는 코드의 done은 그대로이고, 다음에 그릴 때 새 값이 들어온다. 레슨 14가 이 이야기를 더 한다.',
+        '바꾸는 함수는 다시 그리라는 요청이다. 지금 돌고 있는 코드의 done은 그대로이고, 다음에 그릴 때 새 값이 들어온다. 레슨 14에서 이어서 본다.',
     },
   },
   {
@@ -515,7 +515,7 @@ const result = App()
       {
         question: '중첩된 객체는 어떻게 고치는가',
         answer:
-          '바꿔야 하는 층마다 복사해야 한다. 스프레드는 한 겹만 복사하므로, 안쪽 객체는 원본과 같은 것을 가리킨다. 깊어지면 state 구조를 다시 보는 쪽이 낫다. 챕터 3이 그 이야기다.',
+          '바꿔야 하는 겹마다 복사해야 한다. 스프레드는 한 겹만 복사하므로, 안쪽 객체는 원본과 같은 것을 가리킨다. 깊어지면 state 구조를 다시 보는 쪽이 낫다. 챕터 3에서 다룬다.',
       },
     ],
     sources: ['https://react.dev/learn/updating-objects-in-state'],
@@ -528,7 +528,7 @@ const result = App()
       ],
       answerIndex: 1,
       explanation:
-        '새 객체가 나온다. 원본 draft는 그대로다. 리액트는 객체가 바뀌었는지를 이 "다른 객체인가"로 판단한다.',
+        '새 객체가 나온다. 원본 draft는 그대로다. 리액트는 객체가 바뀌었는지를 "다른 객체인가"로 판단한다.',
     },
   },
   {
@@ -668,9 +668,9 @@ function App() {
           '항목이 많은 배열을 매번 속까지 비교하면 그 비교가 오히려 비싸진다. 리액트는 얕게만 비교한다. 참조가 같으면 같은 것으로 본다.',
       },
       {
-        question: 'toggle에서 `{ ...todo, done: !todo.done }`을 만드는 이유',
+        question: 'toggle에서 `{ ...todo, done: !todo.done }`을 만드는 이유는 무엇인가',
         answer:
-          '배열만 새로 만들고 항목 객체를 그대로 고치면, 그 항목을 보고 있는 자식은 같은 객체를 받는다. memo로 감싼 자식이라면 건너뛴다. 바꾼 층까지 새로 만들어야 한다.',
+          '배열만 새로 만들고 항목 객체를 그대로 고치면, 그 항목을 보고 있는 자식은 같은 객체를 받는다. memo로 감싼 자식이라면 건너뛴다. 바꾼 겹까지 새로 만들어야 한다.',
       },
     ],
     sources: ['https://react.dev/learn/updating-arrays-in-state'],

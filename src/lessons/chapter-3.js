@@ -117,17 +117,17 @@ function App() {
       {
         question: '필터를 불리언 두 개로 두면 무엇이 달라지는가',
         answer:
-          '`showLeft`와 `showDone`을 따로 두면 둘 다 true이거나 둘 다 false인 상태가 생긴다. 화면에 뜻이 없는 조합이 만들어진다. 서로 배타적인 선택은 값 하나로 두는 쪽이 안전하다.',
+          '`showLeft`와 `showDone`을 따로 두면 둘 다 true이거나 둘 다 false인 상태가 생긴다. 화면에 뜻이 없는 조합이 만들어진다. 하나만 고를 수 있는 선택은 값 하나로 두는 쪽이 안전하다.',
       },
       {
         question: '요소를 숨기는 것과 안 그리는 것은 다른가',
         answer:
-          '다르다. CSS로 숨긴 요소는 여전히 화면에 있고 그 안의 입력값도 남아 있다. 안 그리면 그 요소가 사라지고 안에 있던 state도 함께 사라진다. 레슨 21이 그 이야기다.',
+          '다르다. CSS로 숨긴 요소는 여전히 화면에 있고 그 안의 입력값도 남아 있다. 안 그리면 그 요소가 사라지고 안에 있던 state도 함께 사라진다. 레슨 21에서 본다.',
       },
     ],
     sources: ['https://react.dev/learn/reacting-to-input-with-state'],
     quiz: {
-      question: '서로 배타적인 화면 상태 세 개를 다룰 때 권하는 방식은 무엇인가',
+      question: '셋 중 하나만 될 수 있는 화면 상태를 다룰 때 권하는 방식은 무엇인가',
       options: [
         '불리언 세 개를 두고 하나만 true로 유지한다',
         '값 하나에 세 상태 중 하나를 담는다',
@@ -256,12 +256,12 @@ function App() {
       {
         question: '계산이 비싸면 어떻게 하는가',
         answer:
-          '그때 useMemo로 결과를 기억해 둔다. state로 옮기는 것이 아니다. 여전히 계산이고, 다시 계산할 필요가 없을 때만 건너뛰는 것이다. 레슨 33이 그 자리다.',
+          '그때 useMemo로 결과를 기억해 둔다. state로 옮기는 것이 아니다. 여전히 계산이고, 다시 계산할 필요가 없을 때만 건너뛰는 것이다. 레슨 33에서 본다.',
       },
       {
         question: 'props를 초기값으로 받은 state는 어떤가',
         answer:
-          '같은 문제다. `useState(props.title)`은 props가 바뀌어도 따라가지 않는다. 처음 값만 받고 이후에는 별개로 산다. 그걸 원한 게 아니라면 state로 두지 않는다.',
+          '같은 문제다. `useState(props.title)`은 props가 바뀌어도 따라가지 않는다. 처음 값만 받고, 그 뒤로는 props와 따로 움직인다. 그걸 원한 게 아니라면 state로 두지 않는다.',
       },
     ],
     sources: ['https://react.dev/learn/choosing-the-state-structure'],
@@ -427,9 +427,9 @@ function App() {
           '목록이 그 값을 볼 방법이 없다. state는 그 컴포넌트와 그 아래에서만 보인다. 형제에게는 보이지 않으므로 공통 부모로 올린다.',
       },
       {
-        question: '올리다 보면 App이 전부 들고 있게 되는데',
+        question: '올리다 보면 App이 전부 들고 있게 되지 않는가',
         answer:
-          '그래서 올릴 곳은 "가장 가까운" 공통 부모다. 그리고 App이 커지면 로직을 reducer로 빼고, 내려보내는 길을 Context로 줄인다. 다음 세 레슨이 그 순서다.',
+          '그래서 올릴 곳은 "가장 가까운" 공통 부모다. 그리고 App이 커지면 로직을 reducer로 빼고, 내려보내는 길을 Context로 줄인다. 다음 세 레슨에서 이 순서대로 본다.',
       },
     ],
     sources: ['https://react.dev/learn/sharing-state-between-components'],
@@ -497,7 +497,7 @@ function App() {
     kind: 'practice',
     definition:
       'state는 컴포넌트가 아니라 화면 트리(컴포넌트가 부모·자식으로 겹친 모양)의 그 자리에 붙어 있다. 같은 자리에 같은 컴포넌트가 계속 있으면 state가 남고, 자리가 사라지면 state도 사라진다. key를 갈면 같은 자리라도 새 자리로 취급한다.',
-    goal: '이름 고치기 칸이 붙는다. 지금은 다른 할 일을 골라도 입력칸이 앞 것을 그대로 들고 있다. key를 줘서 새로 시작하게 고친다.',
+    goal: '이름을 고치는 칸이 있다. 지금은 다른 할 일을 골라도 입력칸이 앞 것을 그대로 들고 있다. key를 줘서 새로 시작하게 고친다.',
     starterCode: `function Editor({ todo, onRename }) {
   // 이 state는 Editor가 있는 자리에 붙어 있다. todo가 바뀌어도 그대로 남는다.
   const [text, setText] = useState(todo.title)
@@ -746,7 +746,7 @@ function App() {
       {
         question: 'reducer 안에서 배열을 직접 고치면 어떻게 되는가',
         answer:
-          '레슨 17과 같은 문제가 난다. reducer도 새 state를 돌려줘야 한다. push로 고친 같은 배열을 돌려주면 리액트는 바뀐 것이 없다고 본다.',
+          '레슨 17과 같은 문제가 생긴다. reducer도 새 state를 돌려줘야 한다. push로 고친 같은 배열을 돌려주면 리액트는 바뀐 것이 없다고 본다.',
       },
     ],
     sources: ['https://react.dev/learn/extracting-state-logic-into-a-reducer'],
@@ -947,7 +947,7 @@ function TodoRow({ todo, dispatch }) {
       {
         question: 'Provider 없이 읽으면 무엇이 나오는가',
         answer:
-          '`createContext`에 준 기본값이다. 위 코드는 `null`을 줬으므로, Provider 밖에서 읽으면 dispatch가 null이 되어 클릭할 때 터진다. 기본값은 "없을 때 무엇인가"를 정하는 자리다.',
+          '`createContext`에 준 기본값이다. 위 코드는 `null`을 줬으므로, Provider 밖에서 읽으면 dispatch가 null이 되어 클릭할 때 오류가 난다. 기본값은 "없을 때 무엇인가"를 정하는 자리다.',
       },
     ],
     sources: ['https://react.dev/learn/passing-data-deeply-with-context'],
@@ -968,7 +968,7 @@ function TodoRow({ todo, dispatch }) {
     chapter: '3',
     order: 24,
     title: 'reducer와 Context로 확장하기',
-    tagline: '상태와 보내는 길을 함께 내놓는다',
+    tagline: '상태와 보내는 함수를 함께 내려보낸다',
     kind: 'practice',
     definition:
       'reducer로 state를 바꾸는 방법을 한곳에 모으고, Context로 state와 dispatch를 트리 아래로 내려보낸다. 둘을 서로 다른 Context에 담으면, dispatch만 쓰는 컴포넌트는 state가 바뀌어도 다시 그려지지 않는다.',
@@ -1212,7 +1212,7 @@ function App() {
       {
         question: '이 구조를 파일로 나누면 어떻게 두는가',
         answer:
-          'reducer와 Context와 Provider 컴포넌트를 한 파일에 두고, 쓰는 쪽은 그 파일에서 훅 두 개만 가져가게 한다. `useTodos()`와 `useTodosDispatch()`를 그 파일이 내보내는 식이다. 레슨 32가 그 이야기다.',
+          'reducer와 Context와 Provider 컴포넌트를 한 파일에 두고, 쓰는 쪽은 그 파일에서 훅 두 개만 가져가게 한다. `useTodos()`와 `useTodosDispatch()`를 그 파일이 내보내는 식이다. 레슨 32에서 본다.',
       },
     ],
     sources: ['https://react.dev/learn/scaling-up-with-reducer-and-context'],
@@ -1220,8 +1220,8 @@ function App() {
       question: 'state와 dispatch를 Context 두 개로 나누는 이유는 무엇인가',
       options: [
         '리액트가 Context 하나에 값 하나만 담도록 허용하기 때문이다',
-        'dispatch만 쓰는 곳이 state가 바뀔 때 같이 다시 그려지지 않게',
-        'dispatch는 함수라서 Context에 객체와 함께 담을 수 없어서',
+        'dispatch만 쓰는 곳이 state가 바뀔 때 같이 다시 그려지지 않게 하려고',
+        'dispatch는 함수라서 Context에 객체와 함께 담을 수 없기 때문이다',
       ],
       answerIndex: 1,
       explanation:

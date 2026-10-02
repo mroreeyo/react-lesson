@@ -45,7 +45,7 @@ function App() {
       code: `// 안 읽어도 된다. 줄마다 무엇인지만 적어 둔다.
 class TodoCard extends React.Component {          // 함수 대신 class를 만들었다
   constructor(props) {                            // 처음 만들어질 때 한 번 도는 자리
-    super(props)                                  // 부모 class에 props를 넘기는 의식
+    super(props)                                  // 부모 class에 props를 넘기는 정해진 줄
     this.handleClick = this.handleClick.bind(this) // 클릭 때 this가 사라지지 않게 묶는 줄
   }
 
@@ -60,8 +60,8 @@ class TodoCard extends React.Component {          // 함수 대신 class를 만�
 `,
     },
     why: [
-      '메서드 안에서 this가 무엇인지 매번 챙겨야 했다. 챙기는 줄(bind)을 빠뜨리면 클릭했을 때 터졌고, 오류 메시지는 화면 그리기와 아무 상관이 없는 이야기를 했다.',
-      '배워야 할 것이 화면 만들기가 아니라 class 규칙이었다. 함수 컴포넌트는 그 층을 없앴다. 값을 돌려주는 함수 하나면 된다.',
+      '메서드 안에서 this가 무엇인지 매번 챙겨야 했다. 챙기는 줄(bind)을 빠뜨리면 클릭할 때 오류가 났고, 그 오류 메시지는 화면 그리기와 상관없는 내용이라 원인을 찾기 어려웠다.',
+      '배워야 할 것이 화면 만들기가 아니라 class 규칙이었다. 함수 컴포넌트에서는 그 규칙을 몰라도 된다. 값을 돌려주는 함수 하나면 된다.',
     ],
     deeper: [
       {
@@ -213,7 +213,7 @@ function App() {
     },
     why: [
       '코드만 봐서는 화면이 어떻게 생겼는지 안 보였다. 태그 하나를 옮기려면 괄호 짝을 세어야 했다.',
-      'JSX는 같은 호출을 태그 모양으로 적게 해 준다. 브라우저가 JSX를 이해하는 것은 아니어서, 실행 전에 위의 함수 호출로 바뀐다.',
+      'JSX를 쓰면 같은 호출을 태그 모양으로 적을 수 있다. 브라우저는 JSX를 읽지 못하므로, 실행하기 전에 위의 함수 호출로 바뀐다.',
     ],
     deeper: [
       {
@@ -384,7 +384,7 @@ function App() {
       {
         question: '자식이 받은 props를 고치면 어떻게 되는가',
         answer:
-          '고치지 않는다는 약속으로 쓴다. 자식이 바꿔도 부모가 가진 값은 그대로이고, 다음 렌더에서 원래 값으로 덮인다. 바꿔야 하는 값이면 state가 있을 자리다.',
+          'props는 고치지 않기로 정해 두고 쓴다. 자식이 바꿔도 부모가 가진 값은 그대로이고, 부모가 다시 그릴 때 원래 값으로 돌아간다. 바꿔야 하는 값이라면 state로 둔다.',
       },
       {
         question: '`done={false}`와 `done="false"`는 무엇이 다른가',
@@ -414,7 +414,7 @@ function App() {
     kind: 'practice',
     definition:
       '무엇을 그릴지도 값으로 고를 수 있다. 삼항 연산자(`a ? b : c`)나 `&&`로 조건에 따라 다른 JSX를 고른다. `&&`는 왼쪽이 0이면 0을 그리므로, 왼쪽을 불리언으로 만들어 쓴다.',
-    goal: 'done이 true인 카드에만 `<em> · 끝</em>`을 붙인다. App에 `const total = 3`을 두고, total이 0이면 목록 대신 `<p>할 일이 없다</p>`를 그린다. (제목의 렌더링은 리액트가 화면을 그리는 일을 부르는 말이다.)',
+    goal: 'done이 true인 카드에만 `<em> · 끝</em>`을 붙인다. App에 `const total = 3`을 두고, total이 0이면 목록 대신 `<p>할 일이 없다</p>`를 그린다. (제목의 렌더링은 리액트가 화면을 그리는 일을 가리킨다.)',
     starterCode: `function TodoCard({ title, done }) {
   return (
     <li>
@@ -574,10 +574,10 @@ function App() {
       {
         question: 'key를 아예 안 주면 어떻게 되는가',
         answer:
-          'index를 쓴 것과 같게 동작하고 경고가 뜬다. 경고를 없애려고 index를 넣는 것은 문제를 가린 것이다.',
+          'index를 쓴 것처럼 동작하고 경고가 뜬다. 경고를 없애려고 index를 넣는 것은 문제를 가린 것이다.',
       },
       {
-        question: 'key를 `Math.random()`으로 주면 안 되는 이유',
+        question: 'key를 `Math.random()`으로 주면 왜 안 되는가',
         answer:
           '매번 다른 이름표가 붙으므로 리액트는 모든 항목을 처음 보는 것으로 취급한다. 전부 지우고 새로 만든다.',
       },
@@ -676,7 +676,7 @@ function App() {
       {
         question: '그럼 값은 어디서 고치는가',
         answer:
-          '이벤트 핸들러 안이다. 클릭이나 입력에 응답하는 코드는 그리는 중이 아니라 그린 다음에 돈다. 다음 챕터가 그 자리다.',
+          '이벤트 핸들러 안이다. 클릭이나 입력에 응답하는 코드는 그리는 중이 아니라 그린 다음에 돈다. 다음 챕터에서 본다.',
       },
     ],
     sources: ['https://react.dev/learn/keeping-components-pure'],

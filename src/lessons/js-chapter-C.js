@@ -97,12 +97,12 @@ console.log(todos[1].title) // 1번 항목의 title
 `,
     deeper: [
       {
-        question: '없는 키를 꺼내면',
+        question: '없는 키를 꺼내면 어떻게 되나',
         answer:
-          'undefined가 나온다. 오류가 나지 않으므로 todo.titel처럼 철자를 틀려도 조용하다. 화면에 아무것도 안 나올 때 가장 먼저 의심할 자리다.',
+          'undefined가 나온다. 오류가 나지 않으므로 todo.titel처럼 철자를 틀려도 조용하다. 화면에 아무것도 안 나올 때 가장 먼저 의심할 곳이다.',
       },
       {
-        question: '키를 변수로 고르려면',
+        question: '키를 변수로 고르려면 어떻게 하나',
         answer: `점 대신 대괄호를 쓴다. 대괄호 안에는 키 이름을 글자로 넣거나, 키 이름이 든 변수를 넣는다.
 
 const key = 'title'
@@ -168,7 +168,7 @@ for (let i = 0; i < todos.length; i++) {
     },
     why: [
       '무엇을 만드는지(제목 목록)보다 어떻게 도는지(번호, 멈출 조건, 하나 올리기)가 먼저 보였다. 번호를 한 칸 잘못 세면 조용히 틀렸다.',
-      'map은 "항목 하나를 이렇게 바꾼다"만 쓰게 한다. 리액트는 목록을 화면으로 바꿀 때 이것을 쓴다. 레슨 9의 `todos.map((todo) => <li>...</li>)`가 같은 모양이다.',
+      'map을 쓰면 "항목 하나를 이렇게 바꾼다"만 쓰면 된다. 리액트는 목록을 화면으로 바꿀 때 이것을 쓴다. 레슨 9의 `todos.map((todo) => <li>...</li>)`가 같은 모양이다.',
     ],
     deeper: [
       {
@@ -179,7 +179,7 @@ const numbered = todos.map((todo, i) => i + '. ' + todo.title)
 console.log(numbered) // ['0. 장보기', '1. 설거지', '2. 빨래']`,
       },
       {
-        question: 'map에 넘긴 함수가 아무것도 돌려주지 않으면',
+        question: 'map에 넘긴 함수가 아무것도 돌려주지 않으면 어떻게 되나',
         answer:
           '항목마다 undefined가 들어간 배열이 된다. 화살표 뒤에 중괄호를 쓰고 return을 빠뜨리는 실수가 흔하다(JS 9). 리액트에서 목록이 통째로 안 보이면 이것부터 본다.',
       },
@@ -324,7 +324,7 @@ console.log(first, second)
           'useState는 [지금 값, 값을 바꾸는 함수] 두 칸짜리 배열을 돌려준다. 그것을 순서대로 꺼내 이름을 붙인 것이다. 이름은 우리가 정한다. 배열은 순서로 꺼내므로 [a, b]라고 써도 된다. 이 줄은 레슨 1에서 처음 나오고, 레슨 12에서 제대로 배운다.',
       },
       {
-        question: '꺼내면서 이름을 바꾸거나, 없는 키를 꺼내면',
+        question: '꺼내면서 이름을 바꾸거나, 없는 키를 꺼내면 어떻게 되나',
         answer: `키 뒤에 콜론을 쓰면 다른 이름으로 받는다. 없는 키를 꺼내면 undefined다.
 
 const { title: name, memo } = todo
@@ -395,7 +395,7 @@ Object.assign(todos[1], { done: true })
     },
     why: [
       'Object.assign은 첫 인자를 고친다. 빈 객체 {}를 맨 앞에 넣는 것을 잊으면, 새 객체를 만든 줄 알았는데 원본이 바뀌어 있었다.',
-      '스프레드는 언제나 새 배열·새 객체를 만든다. 원본을 건드릴 길이 없어서, 리액트가 요구하는 "원본은 두고 새 값으로 바꾼다"를 한 줄로 쓰게 한다.',
+      '스프레드는 언제나 새 배열·새 객체를 만든다. 원본을 건드릴 길이 없어서, 리액트가 요구하는 "원본은 두고 새 값으로 바꾼다"를 한 줄로 쓸 수 있다.',
     ],
     deeper: [
       {
@@ -407,7 +407,7 @@ copy[0].done = false
 console.log(todos[0].done) // false: 안의 객체는 같은 것이다`,
       },
       {
-        question: '같은 키가 두 번 나오면',
+        question: '같은 키가 두 번 나오면 어떻게 되나',
         answer: `뒤에 쓴 것이 이긴다. 그래서 바꿀 속성은 스프레드 뒤에 쓴다.
 
 console.log({ ...todos[1], done: true }) // done: true
@@ -475,7 +475,7 @@ try {
 `,
     deeper: [
       {
-        question: 'JSON 글자에 못 담는 값은',
+        question: 'JSON 글자에 담지 못하는 값은 무엇인가',
         answer: `함수와 undefined는 빠진다. 글자로 옮길 수 있는 것은 문자열, 숫자, 불리언, null, 그리고 그것들을 담은 배열과 객체뿐이다.
 
 console.log(JSON.stringify({ a: 1, f: () => 1, u: undefined })) // {"a":1}`,
