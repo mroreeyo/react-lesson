@@ -7,7 +7,7 @@ export default [
     tagline: '데이터를 바꾸면 화면이 따라온다',
     kind: 'practice',
     definition:
-      '리액트는 데이터를 화면으로 바꾸는 함수를 쓰게 하고, 데이터가 바뀔 때 화면을 맞춰 고치는 일을 가져간다.',
+      '리액트에서는 데이터를 받아 화면을 돌려주는 함수만 쓰면 된다. 데이터가 바뀌면 화면을 거기에 맞게 고치는 일은 리액트가 맡는다.',
     goal: '버튼을 눌러 숫자를 바꾸면 화면이 저절로 따라온다. useState는 지금은 "값을 기억하는 칸"이라고만 알아 두면 된다. 레슨 12에서 제대로 본다.',
     starterCode: `function App() {
   const [count, setCount] = useState(0)
@@ -37,7 +37,7 @@ document.querySelector('#add').addEventListener('click', () => {
     ],
     deeper: [
       {
-        question: 'DOM을 직접 만지지 않게 해 준 대가로 리액트가 가져간 것은 무엇인가',
+        question: 'DOM을 직접 고치지 않게 된 대신, 무엇을 리액트에 맡기게 되었나',
         answer:
           '언제 다시 그릴지를 리액트가 정한다. 그래서 "내가 방금 바꿨는데 왜 화면이 그대로인가" 같은 질문이 생기고, 그 답이 앞으로의 레슨이다.',
       },
@@ -51,7 +51,7 @@ document.querySelector('#add').addEventListener('click', () => {
         '변수를 바꾼 뒤, 화면이 따라오도록 새로고침 함수를 부른다',
       ],
       answerIndex: 1,
-      explanation: '데이터 한 군데만 고친다. 화면을 맞추는 일이 리액트가 가져간 몫이다.',
+      explanation: '데이터 한 군데만 고친다. 화면을 거기에 맞추는 일은 리액트가 맡는다.',
     },
   },
   {
@@ -62,7 +62,7 @@ document.querySelector('#add').addEventListener('click', () => {
     tagline: '막히면 JS 기초로 돌아간다',
     kind: 'checklist',
     definition:
-      '앞으로 나올 레슨이 기대는 JS 문법을 하나씩 확인하는 관문이다. 코드마다 주석의 결과가 왜 나오는지 설명할 수 있으면 지나간다. 막히는 항목은 옆에 달린 JS 레슨으로 돌아간다. 특히 뒤의 두 항목(참조, 클로저)은 리액트에서 가장 많이 막히는 자리의 뿌리다.',
+      '앞으로 나올 레슨에 필요한 JS 문법을 하나씩 확인하는 관문이다. 코드마다 주석의 결과가 왜 나오는지 설명할 수 있으면 지나간다. 막히는 항목은 옆에 달린 JS 레슨으로 돌아간다. 특히 뒤의 두 항목(참조, 클로저)은 꼭 확인한다. 리액트에서 막히는 문제 대부분이 이 둘에서 시작된다.',
     items: [
       {
         title: 'map은 새 배열을 돌려준다',

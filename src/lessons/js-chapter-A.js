@@ -91,7 +91,7 @@ console.log([3, '3'])  // 묶음 안에서는 글자에 따옴표가 붙는다
       {
         question: "typeof null은 왜 'object'인가",
         answer:
-          "쳐 보면 object가 나온다. JS 초창기의 실수인데, 고치면 그 동작에 기대던 옛 웹사이트가 깨지므로 그대로 남았다. 어떤 값이 null인지 알고 싶으면 typeof 대신 `값 === null`로 묻는다. === 는 JS 4에서 배운다.",
+          "쳐 보면 object가 나온다. JS 초창기의 실수인데, 고치면 그 동작을 전제로 만든 옛 웹사이트가 깨지므로 그대로 남았다. 어떤 값이 null인지 알고 싶으면 typeof 대신 `값 === null`로 묻는다. === 는 JS 4에서 배운다.",
       },
       {
         question: 'undefined와 null은 어떻게 다른가',

@@ -195,7 +195,7 @@ function App() {
     tagline: '계산할 수 있는 값은 state에 두지 않는다',
     kind: 'practice',
     definition:
-      '다른 state로 계산할 수 있는 값은 state에 두지 않는다. 두 곳에 같은 사실이 있으면 한쪽이 반드시 늦는다.',
+      '다른 state로 계산할 수 있는 값은 state에 두지 않는다. 같은 사실이 두 곳에 있으면 언젠가 한쪽만 고쳐져 둘이 어긋난다.',
     goal: '지금 이 코드는 틀렸다. 체크박스를 눌러 보면 남은 개수가 안 맞는다. leftCount를 state에서 빼고 계산으로 바꾼다.',
     starterCode: `let nextId = 4
 
@@ -971,7 +971,7 @@ function TodoRow({ todo, dispatch }) {
     tagline: '상태와 보내는 길을 함께 내놓는다',
     kind: 'practice',
     definition:
-      'reducer로 바꾸는 방법을 모으고, Context로 state와 dispatch를 트리 아래에 내놓는다. 둘을 Context 두 개로 나누면, dispatch만 쓰는 컴포넌트는 state가 바뀌어도 다시 그려지지 않는다.',
+      'reducer로 state를 바꾸는 방법을 한곳에 모으고, Context로 state와 dispatch를 트리 아래로 내려보낸다. 둘을 서로 다른 Context에 담으면, dispatch만 쓰는 컴포넌트는 state가 바뀌어도 다시 그려지지 않는다.',
     goal: 'App을 `TodosContext.Provider`(todos)와 `DispatchContext.Provider`(dispatch)로 감싼다. FilterBar·TodoList는 `useContext(TodosContext)`로, TodoCard·AddForm은 `useContext(DispatchContext)`로 가져가게 하고, 그 props를 전부 지운다.',
     starterCode: `// 둘 다 만들어 두었지만 아직 아무도 안 쓴다. 값은 props로 내려가고 있다.
 const TodosContext = createContext(null)
@@ -1156,7 +1156,7 @@ function TodoList({ filter }) {
 }
 
 function AddForm() {
-  // todos는 안 읽는다. 보내는 길만 가져간다.
+  // todos는 읽지 않는다. 보내는 함수(dispatch)만 꺼내 쓴다.
   const dispatch = useContext(DispatchContext)
   const [draft, setDraft] = useState('')
 

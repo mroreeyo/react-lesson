@@ -95,7 +95,7 @@ class TodoCard extends React.Component {          // 함수 대신 class를 만�
     title: '컴포넌트 import와 export',
     tagline: '파일을 나누고 이름으로 가져온다',
     kind: 'concept',
-    definition: '컴포넌트를 파일마다 하나씩 두고, 쓰는 쪽에서 import로 가져온다. export default는 이름 없이 값 하나를 내보내고 가져오는 쪽이 이름을 붙인다. 이름을 붙여 내보내면(named) 가져올 때 중괄호로 그 이름을 적는다.',
+    definition: '컴포넌트를 파일마다 하나씩 두고, 쓰는 쪽에서 import로 가져온다. export default로 내보낸 값은 가져오는 쪽에서 이름을 정한다. 이름을 붙여 내보낸(named) 값은 가져올 때 중괄호 안에 그 이름을 그대로 적는다.',
     figure: {
       steps: [
         { title: 'TodoCard.jsx', note: 'export default로 컴포넌트 하나를 내보낸다' },
@@ -334,7 +334,7 @@ function App() {
       { text: '구조 분해로 객체에서 필요한 것만 꺼낸다', js: 'js-destructuring' },
     ],
     definition:
-      'props는 부모가 자식에게 건네는 값이다. 자식은 읽기만 한다. 자식이 바꿔도 부모가 다음에 그릴 때 원래 값으로 덮인다.',
+      'props는 부모가 자식에게 건네는 값이다. 자식은 읽기만 한다. 자식이 바꿔도 부모가 다시 그릴 때 원래 값으로 돌아간다.',
     goal: 'TodoCard가 `title`과 `done`을 props로 받게 한다. App에서 세 장을 각각 다른 값으로 그린다: 장보기(끝남), 설거지, 빨래. 위의 `title` 변수는 지운다.',
     starterCode: `const title = '장보기'
 
@@ -413,7 +413,7 @@ function App() {
     tagline: '조건에 따라 다른 것을 그린다',
     kind: 'practice',
     definition:
-      '무엇을 그릴지도 값이다. 삼항 연산자(`a ? b : c`)나 `&&`로 조건에 따라 다른 JSX를 값으로 고른다. `&&`는 왼쪽이 0이면 0을 그리므로 왼쪽을 불리언으로 만든다.',
+      '무엇을 그릴지도 값으로 고를 수 있다. 삼항 연산자(`a ? b : c`)나 `&&`로 조건에 따라 다른 JSX를 고른다. `&&`는 왼쪽이 0이면 0을 그리므로, 왼쪽을 불리언으로 만들어 쓴다.',
     goal: 'done이 true인 카드에만 `<em> · 끝</em>`을 붙인다. App에 `const total = 3`을 두고, total이 0이면 목록 대신 `<p>할 일이 없다</p>`를 그린다. (제목의 렌더링은 리액트가 화면을 그리는 일을 부르는 말이다.)',
     starterCode: `function TodoCard({ title, done }) {
   return (

@@ -397,7 +397,7 @@ function App() {
     },
     why: [
       'pending을 켜고 끄는 코드, 오류를 지우고 넣는 코드, preventDefault가 폼마다 반복됐다. finally를 빠뜨리면 버튼이 잠긴 채 남았고, 제출 두 번을 빨리 누르면 앞 결과가 뒤 결과를 덮었다.',
-      'Action은 그 반복을 리액트가 가져간다. 함수 하나를 form에 주면 제출 중 여부를 리액트가 세고, 결과를 돌려주면 다음 state가 된다. 입력칸도 제출이 끝나면 비워진다.',
+      'Action을 쓰면 그 반복을 리액트가 대신한다. 함수 하나를 form에 주면 제출 중 여부를 리액트가 세고, 결과를 돌려주면 다음 state가 된다. 입력칸도 제출이 끝나면 비워진다.',
     ],
     deeper: [
       {
@@ -726,11 +726,11 @@ function App() {
     tagline: 'memo를 사람이 안 붙인다',
     kind: 'concept',
     definition:
-      'React Compiler는 빌드할 때 코드를 읽어 memo·useMemo·useCallback을 붙일 자리를 찾아 대신 붙인다. 코드를 고치지 않아도 레슨 33에서 손으로 한 일이 된다.',
+      'React Compiler는 빌드할 때 코드를 읽고, memo·useMemo·useCallback이 필요한 자리를 찾아 대신 붙인다. 레슨 33에서 손으로 하던 일을 코드를 고치지 않고도 얻는다.',
     figure: {
       steps: [
         { title: '내가 쓴 코드', note: 'memo·useMemo·useCallback 없이 순수하게 쓴 컴포넌트' },
-        { title: 'React Compiler', note: '빌드할 때 각 값이 무엇에 기대는지 읽는다' },
+        { title: 'React Compiler', note: '빌드할 때 각 값이 무엇에 따라 바뀌는지 읽는다' },
         { title: '나오는 코드', note: '기댄 값이 그대로면 지난 결과를 다시 쓰는 기억이 붙는다' },
       ],
       caption: '레슨 33에서 손으로 붙인 세 가지를 컴파일러가 대신 붙인다. 순수하지 않은 컴포넌트는 건너뛴다.',

@@ -7,7 +7,7 @@ export default [
     tagline: '화면과 상관없는 값을 들고 있는다',
     kind: 'practice',
     definition:
-      'useRef는 렌더 사이에 남지만 바꿔도 다시 그리지 않는 칸을 준다. 화면에 나오지 않는 값을 둘 자리다.',
+      'useRef는 값을 담아 두는 칸을 준다. 이 칸의 값은 다시 그려도 남고, 바꿔도 화면을 다시 그리지 않는다. 화면에 나오지 않는 값을 둘 자리다.',
     goal: '모듈 바깥의 `let nextId`를 지우고 App 안에 `const nextId = useRef(2)`를 둔다. add에서 `\'n\' + nextId.current`로 번호를 만들고 `nextId.current = nextId.current + 1`로 올린다.',
     starterCode: `// 챕터 3 방식. 컴포넌트 바깥에 있어서, App을 두 군데 그리면 번호를 나눠 쓰게 된다.
 let nextId = 2

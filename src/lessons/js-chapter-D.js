@@ -1,4 +1,4 @@
-// JS 기초 챕터 D. 리액트가 기대는 깊은 곳. 같은 것인가, 함수는 무엇을 기억하나, 나중에 오는 값은 어떻게 기다리나.
+// JS 기초 챕터 D. 리액트를 받치는 JS. 같은 것인가, 함수는 무엇을 기억하나, 나중에 오는 값은 어떻게 기다리나.
 // 21~23은 콘솔의 '나중' 표시로 실행 순서를 보게 한다. 타이머는 1초 안쪽으로 둔다.
 export default [
   {
@@ -609,7 +609,7 @@ count().then((n) => console.log(n))     // 3`,
     tagline: '기다리고, 실패를 받고, 끝을 알린다',
     kind: 'practice',
     definition:
-      'await를 차례로 쓰면 앞의 일이 끝나야 다음 일이 시작된다. 실패는 try/catch로 받고, 성공이든 실패든 "끝났다"는 표시는 try/catch 뒤에 둔다. 리액트 레슨 35가 할 일을 저장할 때 하는 일이 이것이다.',
+      'await를 차례로 쓰면 앞의 일이 끝나야 다음 일이 시작된다. 실패는 try/catch로 받고, 성공이든 실패든 "끝났다"는 표시는 try/catch 뒤에 둔다. 리액트 레슨 35에서 할 일을 저장하는 코드가 바로 이 모양이다.',
     goal: [
       'add 앞에 async를 붙인다. 그리고 `fakeSave(title)` 줄과 `saved.push(title)` 줄을 `const result = await fakeSave(title)`와 `saved.push(result)`로 바꾼다. 이제 저장이 끝난 뒤에 목록에 넣는다.',
       "부르는 쪽을 async 함수로 감싼다. `async function main() {`를 열고 그 안에 `await add('장보기')`, `await add('설거지!')`, `await add('빨래')`를 한 줄씩 쓴다. 원래 있던 `add('장보기')` 줄은 지우고, 마지막 console.log 줄을 main 안 맨 아래로 옮긴 뒤 `}`로 닫는다. 그 아래에 `main()`을 쓴다. '설거지!'에서 오류가 나고, 빨래는 저장되지 않는다.",
